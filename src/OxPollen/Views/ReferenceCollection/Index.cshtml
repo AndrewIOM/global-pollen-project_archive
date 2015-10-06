@@ -1,0 +1,28 @@
+﻿@model List<OxPollen.ViewModels.TaxonViewModel>
+
+@{
+    ViewBag.Title = "Reference Collection";
+}
+
+<h1>Pollen Reference Collection</h1>
+<p>Our reference collection contains pollen taxa for which grains have been submitted and successfully identified.</p>
+<div class="row">
+    <div class="col-md-12">
+        <ul class="media-list">
+            @foreach (var taxa in Model)
+            {
+                <li class="media">
+                    <div class="media-left">
+                        <a asp-action="Index" asp-controller="ReferenceCollection" asp-route-taxonId="@taxa.Id" title="View @taxa.LatinName">
+                            <img class="media-object" src="~/images/pollensample.jpg" alt="Pollen Sample Image" height="64" width="64">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">@taxa.LatinName</h4>
+                        <h5>@taxa.CommonName</h5>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>    

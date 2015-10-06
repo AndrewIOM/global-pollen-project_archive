@@ -1,0 +1,42 @@
+﻿@model List<ApplicationUser>
+@{
+    ViewBag.Title = "Manage Users";
+}
+
+@Html.Partial("_AdminOptions")
+
+<h2>Manage Users</h2>
+<div class="row">
+    <div class="col-sm-3">
+        User ID
+    </div>
+    <div class="col-sm-3">
+        User Name
+    </div>
+    <div class="col-sm-3">
+        Email
+    </div>
+    <div class="col-sm-3">
+        Roles
+    </div>
+    @foreach (var user in Model)
+    {
+        <div class="col-sm-3">
+            @user.Id
+        </div>
+        <div class="col-sm-3">
+            @user.UserName
+        </div>
+        <div class="col-sm-3">
+            @user.Email
+        </div>
+        <div class="col-sm-3">
+            <ul>
+                @foreach (var role in user.Roles)
+                {
+                    <li>@role.RoleId</li>
+                }
+            </ul>
+        </div>
+    }
+</div>

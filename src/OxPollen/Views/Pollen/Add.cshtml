@@ -1,0 +1,84 @@
+﻿@model PollenRecord
+
+<h1>Add Unidentified Pollen</h1>
+
+@using (Html.BeginForm("AddUnidentifiedPollen", "Pollen", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+{
+    <div class="form-group">
+        <p>Please upload a photo of your unidentified pollen grain:</p>
+        @Html.LabelFor(m => m.PhotoUrl)
+        <input type="file" name="FileUpload" />
+    </div>
+
+    <p>Do you know the location where the pollen was collected?</p>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="input-group">
+                <input type="text" class="form-control" id="Latitude" placeholder="Latitude">
+                <div class="input-group-addon">Decimal Degrees</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="input-group">
+                <input type="text" class="form-control" id="Longitude" placeholder="Longitude">
+                <div class="input-group-addon">Decimal Degrees</div>
+            </div>
+        </div>
+    </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+                    <div id="map"></div>
+                </div>
+            </div>
+
+                <input type="submit" name="Submit" id="Submit" value="Upload" />
+}
+
+<style>
+    #map {
+        height: 500px;
+        border: 1px solid #000;
+    }
+</style>
+
+<script type="text/javascript">
+    window.onload = function () {
+        console.log("loading google maps");
+        var latlng = new google.maps.LatLng(51.4975941, -0.0803232);
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: latlng,
+            zoom: 5,
+            mapTypeId: google.maps.MapTypeId.TERRAIN
+        });
+
+        var marker;
+        function placeMarker(location) {
+            if (marker) {
+                marker.setPosition(location);
+            } else {
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    title: "Pollen Sample Location",
+                    draggable: true
+                });
+                google.maps.event.addListener(marker, 'dragend', function (event) {
+                    updateLocationFormFields(event.latLng);
+                });
+            }
+        }
+
+        google.maps.event.addListener(map, 'click', function (event) {
+            placeMarker(event.latLng);
+            updateLocationFormFields(event.latLng);
+        });
+
+        function updateLocationFormFields(latLng) {
+            var lat = latLng.lat().toFixed(4);
+            var lon = latLng.lng().toFixed(4);
+            document.getElementById('Latitude').value = lat;
+            document.getElementById('Longitude').value = lon;
+        }
+    };
+</script>
