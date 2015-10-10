@@ -1,0 +1,27 @@
+﻿@model List<PollenRecord>
+
+@{
+    ViewBag.Title = "Unidentified Pollen Grains";
+}
+
+<h1>Unidentified Pollen Grains</h1>
+
+@if (Model.Count == 0)
+{
+    <p>There are currently no unidentified pollen grains!</p>
+    <p>Why not submit one?</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var grain in Model)
+        {
+            <div class="col-md-2">
+                <a asp-action="Index">
+                    <img src="@grain.PhotoUrl" style="width:100%;height:100%" />
+                    <p>Submitted by user id @grain.UserId</p>
+                </a>
+            </div>
+        }
+    </div>
+}

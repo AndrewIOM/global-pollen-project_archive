@@ -1,104 +1,76 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-        <li data-target="#myCarousel" data-slide-to="3"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="~/images/ASP-NET-Banners-01.png" alt="ASP.NET" class="img-responsive">
-            <div class="container">
-                <div class="carousel-caption">
-                    <p>
-                        Learn how to build ASP.NET apps that can run anywhere.
-                        <a class="btn btn-default btn-default" href="http://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
-                            Learn More
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/Banner-02-VS.png" alt="Visual Studio" class="img-responsive">
-            <div class="container">
-                <div class="carousel-caption">
-                    <p>
-                        There are powerful new features in Visual Studio for building modern web apps.
-                        <a class="btn btn-default btn-default" href="http://go.microsoft.com/fwlink/?LinkID=525030&clcid=0x409">
-                            Learn More
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/ASP-NET-Banners-02.png" alt="Package Management" class="img-responsive">
-            <div class="container">
-                <div class="carousel-caption">
-                    <p>
-                        Bring in libraries from NuGet, Bower, and npm, and automate tasks using Grunt or Gulp.
-                        <a class="btn btn-default btn-default" href="http://go.microsoft.com/fwlink/?LinkID=525029&clcid=0x409">
-                            Learn More
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/Banner-01-Azure.png" alt="Microsoft Azure" class="img-responsive">
-            <div class="container">
-                <div class="carousel-caption">
-                    <p>
-                        Learn how Microsoft's Azure cloud platform allows you to build, deploy, and scale web apps.
-                        <a class="btn btn-default btn-default" href="http://go.microsoft.com/fwlink/?LinkID=525027&clcid=0x409">
-                            Learn More
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
+<header class="homepage-header">
+    <div class="container">
+        <h1>OxPollen</h1>
+        <p>The Open Platform for Pollen Identification</p>
     </div>
-</div>
+</header>
 
-<div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-        <ul>
-            <li>Sample pages using ASP.NET 5 (MVC 6)</li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkId=518007">Gulp</a> and <a href="http://go.microsoft.com/fwlink/?LinkId=518004">Bower</a> for managing client-side resources</li>
-            <li>Theming using <a href="http://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
-        </ul>
+<div class="container">
+    <!-- Do Stuff -->
+    <div class="row">
+        <div class="col-sm-4">
+            <img class="img-circle img-responsive home-tri-image" src="~/images/pepperpollen.png" alt="">
+            <h2>Submit Your Pollen</h2>
+            <p>These marketing boxes are a great place to put some information. These can contain summaries of what the company does, promotional information, or anything else that is relevant to the company. These will usually be below-the-fold.</p>
+        </div>
+        <div class="col-sm-4">
+            <img class="img-circle img-responsive home-tri-image" src="~/images/pepperpollen.png" alt="">
+            <h2>Add Your Expertise</h2>
+            <p>The images are set to be circular and responsive. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.</p>
+        </div>
+        <div class="col-sm-4">
+            <img class="img-circle img-responsive home-tri-image" src="~/images/pepperpollen.png" alt="">
+            <h2>A Collective Reference</h2>
+            <p>As more grains become identified, our reference collection will fill with pollen taxa and a range of example images for each. As OxPollen is linked to the Global Biodiversity Information Facility (GBIF) and Neotoma, you can explore the distribution of your species in space and time. </p>
+        </div>
     </div>
-    <div class="col-md-3">
-        <h2>New concepts</h2>
-        <ul>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of ASP.NET 5</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkId=518008">Fundamentals in ASP.NET 5</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=517849">Client-Side Development using npm, Bower and Gulp</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=517850">Develop on different platforms</a></li>
-        </ul>
+    <hr />
+
+    <!-- About OxPollen -->
+    <div class="row">
+        <div class="col-sm-8">
+            <h2>How It Works</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et molestiae similique eligendi reiciendis sunt distinctio odit? Quia, neque, ipsa, adipisci quisquam ullam deserunt accusantium illo iste exercitationem nemo voluptates asperiores.</p>
+            <p>
+                <a class="btn btn-default btn-lg" href="#">Get Started »</a>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <h2>After More Info?</h2>
+            <address>
+                <strong>OxPollen, Long-Term Ecology Lab</strong>
+                <br>Department of Zoology
+                <br>University of Oxford
+                <br>
+            </address>
+            <address>
+                <abbr title="Phone">P:</abbr>(123) 456-7890
+                <br>
+                <abbr title="Email">E:</abbr> <a href="mailto:#">oxpollen@zoo.ox.ac.uk</a>
+            </address>
+        </div>
     </div>
-    <div class="col-md-3">
-        <h2>Customize app</h2>
-        <ul>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=398600">Add Controllers and Views</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=398602">Add Data using EntityFramework</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=398603">Add Authentication using Identity</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=517848">Manage client-side packages using Bower/ Gulp</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Deploy</h2>
-        <ul>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=517851">Run your app locally</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=517852">Run your app on .NET Core</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=517853">Run commands in your app</a></li>
-            <li><a href="http://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
-        </ul>
-    </div>
+    <hr />
+
+
+    <!-- Most Wanted Pollen Section Here? -->
+    <div class="row">
+            <h2>Most Wanted</h2>
+            <p>These pollen grains have remained unidentified for the longest time. Can you help?</p>
+            <div class="pollen-grid">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="~/grain-images/4efc4aed-3ed8-4ae9-95d1-362349a2cdaa.jpg" alt="..." style="height:125px">
+                        <p>Submitted 1 year, 2 months and 3 days ago by Will, University of Oxford</p>
+                        <img style="text-align: left; margin-right: auto; display: block;" alt="Pollen Location" src="http://maps.google.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&amp;zoom=2&amp;size=200x125&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C40.702147,-74.015794&amp&amp;amp;sensor=false">
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </div>

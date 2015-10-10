@@ -3,40 +3,31 @@
     ViewBag.Title = "Manage Users";
 }
 
-@Html.Partial("_AdminOptions")
+<div class="container">
+    @Html.Partial("_AdminOptions")
 
-<h2>Manage Users</h2>
-<div class="row">
-    <div class="col-sm-3">
-        User ID
-    </div>
-    <div class="col-sm-3">
-        User Name
-    </div>
-    <div class="col-sm-3">
-        Email
-    </div>
-    <div class="col-sm-3">
-        Roles
-    </div>
-    @foreach (var user in Model)
-    {
-        <div class="col-sm-3">
-            @user.Id
-        </div>
-        <div class="col-sm-3">
-            @user.UserName
-        </div>
-        <div class="col-sm-3">
-            @user.Email
-        </div>
-        <div class="col-sm-3">
-            <ul>
-                @foreach (var role in user.Roles)
-                {
-                    <li>@role.RoleId</li>
-                }
-            </ul>
-        </div>
-    }
+    <h3>User Accounts</h3>
+    <p>The following users have active accounts on OxPollen</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Institutional Affiliation</th>
+                <th>Contact</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.FullName</td>
+                <td>@user.Institution</td>
+                <td><button type="button" class="btn" href="mailto:@user.Email">Email</button></td>
+                <td><button type="button" class="btn btn-danger">Ban User</button></td>
+            </tr>
+        }
+    </table>
 </div>

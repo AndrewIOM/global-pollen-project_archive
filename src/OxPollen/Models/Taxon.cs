@@ -17,5 +17,8 @@ namespace OxPollen.Models
 
         public int GbifId { get; set; }
         public int NeotomaId { get; set; }
+
+        //Navigation Properties
+        public virtual List<PollenRecord> Records { get; set; }
     }
 }

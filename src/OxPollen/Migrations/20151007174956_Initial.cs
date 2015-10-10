@@ -23,30 +23,6 @@ namespace OxPollen.Migrations
                     table.PrimaryKey("PK_IdentityRole", x => x.Id);
                 });
             migration.CreateTable(
-                name: "IdentityUser",
-                columns: table => new
-                {
-                    Id = table.Column(type: "nvarchar(450)", nullable: false),
-                    AccessFailedCount = table.Column(type: "int", nullable: false),
-                    ConcurrencyStamp = table.Column(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column(type: "nvarchar(max)", nullable: true),
-                    EmailConfirmed = table.Column(type: "bit", nullable: false),
-                    LockoutEnabled = table.Column(type: "bit", nullable: false),
-                    LockoutEnd = table.Column(type: "datetimeoffset", nullable: true),
-                    NormalizedEmail = table.Column(type: "nvarchar(max)", nullable: true),
-                    NormalizedUserName = table.Column(type: "nvarchar(max)", nullable: true),
-                    PasswordHash = table.Column(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column(type: "bit", nullable: false),
-                    SecurityStamp = table.Column(type: "nvarchar(max)", nullable: true),
-                    TwoFactorEnabled = table.Column(type: "bit", nullable: false),
-                    UserName = table.Column(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IdentityUser", x => x.Id);
-                });
-            migration.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
@@ -168,13 +144,15 @@ namespace OxPollen.Migrations
                 {
                     PollenRecordId = table.Column(type: "int", nullable: false)
                         .Annotation("SqlServer:ValueGeneration", "Identity"),
-                    ApproximateAge = table.Column(type: "float", nullable: false),
+                    ApproximateAge = table.Column(type: "float", nullable: true),
                     HasConfirmedIdentity = table.Column(type: "bit", nullable: false),
                     Latitude = table.Column(type: "float", nullable: false),
                     Longitude = table.Column(type: "float", nullable: false),
                     PhotoUrl = table.Column(type: "nvarchar(max)", nullable: true),
                     TaxonTaxonId = table.Column(type: "int", nullable: true),
-                    UserId = table.Column(type: "nvarchar(450)", nullable: true)
+                    TimeAdded = table.Column(type: "datetime2", nullable: false),
+                    TimeIdentityConfirmed = table.Column(type: "datetime2", nullable: false),
+                    UserId = table.Column(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -184,11 +162,27 @@ namespace OxPollen.Migrations
                         columns: x => x.TaxonTaxonId,
                         referencedTable: "Taxon",
                         referencedColumn: "TaxonId");
+                });
+            migration.CreateTable(
+                name: "Identification",
+                columns: table => new
+                {
+                    IdentificationId = table.Column(type: "int", nullable: false)
+                        .Annotation("SqlServer:ValueGeneration", "Identity"),
+                    DateOfIdentification = table.Column(type: "datetime2", nullable: false),
+                    GbifId = table.Column(type: "int", nullable: false),
+                    RecordPollenRecordId = table.Column(type: "int", nullable: true),
+                    TaxonName = table.Column(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Identification", x => x.IdentificationId);
                     table.ForeignKey(
-                        name: "FK_PollenRecord_IdentityUser_UserId",
-                        columns: x => x.UserId,
-                        referencedTable: "IdentityUser",
-                        referencedColumn: "Id");
+                        name: "FK_Identification_PollenRecord_RecordPollenRecordId",
+                        columns: x => x.RecordPollenRecordId,
+                        referencedTable: "PollenRecord",
+                        referencedColumn: "PollenRecordId");
                 });
         }
         
@@ -196,11 +190,11 @@ namespace OxPollen.Migrations
         {
             migration.DropTable("AspNetRoles");
             migration.DropTable("AspNetRoleClaims");
-            migration.DropTable("IdentityUser");
             migration.DropTable("AspNetUserClaims");
             migration.DropTable("AspNetUserLogins");
             migration.DropTable("AspNetUserRoles");
             migration.DropTable("AspNetUsers");
+            migration.DropTable("Identification");
             migration.DropTable("PollenRecord");
             migration.DropTable("Taxon");
         }

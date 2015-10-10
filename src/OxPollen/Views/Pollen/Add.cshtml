@@ -1,46 +1,88 @@
 ﻿@model PollenRecord
-
-<h1>Add Unidentified Pollen</h1>
-
-@using (Html.BeginForm("AddUnidentifiedPollen", "Pollen", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
-{
-    <div class="form-group">
-        <p>Please upload a photo of your unidentified pollen grain:</p>
-        @Html.LabelFor(m => m.PhotoUrl)
-        <input type="file" name="FileUpload" />
-    </div>
-
-    <p>Do you know the location where the pollen was collected?</p>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="input-group">
-                <input type="text" class="form-control" id="Latitude" placeholder="Latitude">
-                <div class="input-group-addon">Decimal Degrees</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="input-group">
-                <input type="text" class="form-control" id="Longitude" placeholder="Longitude">
-                <div class="input-group-addon">Decimal Degrees</div>
-            </div>
-        </div>
-    </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-                    <div id="map"></div>
-                </div>
-            </div>
-
-                <input type="submit" name="Submit" id="Submit" value="Upload" />
+@section scripts{
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
 }
 
-<style>
-    #map {
-        height: 500px;
-        border: 1px solid #000;
+<div class="container">
+
+    <h2>Add Unidentified Pollen</h2>
+    <p>Intro blurb about uploading your own unidentified pollen...</p>
+
+    @using (Html.BeginForm("AddUnidentifiedPollen", "Pollen", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+    {
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <label>Upload a Photo</label>
+            </div>
+            <div class="col-md-10">
+                <div class="fileinput fileinput-new" data-provides="fileinput">
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+                    <div>
+                        <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" name="files" id="files"></span>
+                        <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                    </div>
+                </div>
+                <span asp-validation-for="PhotoUrl" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <label>Where was the pollen grain collected from?</label>
+            </div>
+            <div class="col-md-10">
+                <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+                <div id="map"></div>
+                <br />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                @Html.LabelFor(m => m.Latitude)
+            </div>
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" asp-for="Latitude" class="form-control" id="Latitude" placeholder="Latitude" />
+                    <span class="input-group-addon">Decimal Degrees</span>
+                </div>
+                <span asp-validation-for="Latitude" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                @Html.LabelFor(m => m.Longitude)
+            </div>
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" asp-for="Longitude" class="form-control" id="Longitude" placeholder="Longitude" />
+                    <span class="input-group-addon">Decimal Degrees</span>
+                </div>
+                <span asp-validation-for="Longitude" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <label>Approximate Age of Sample (Optional)</label>
+            </div>
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" class="form-control" asp-for="ApproximateAge" placeholder="Age" />
+                    <div class="input-group-addon">Years Before Present</div>
+                </div>
+                <span asp-validation-for="ApproximateAge" class="text-danger"></span>
+            </div>
+        </div>
+        <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Upload" />
     }
-</style>
+</div>
 
 <script type="text/javascript">
     window.onload = function () {

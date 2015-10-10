@@ -106,7 +106,14 @@ namespace OxPollen.Controllers
             EnsureDatabaseCreated(_applicationDbContext);
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Title = model.Title,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Institution = model.Institution
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

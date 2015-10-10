@@ -5,6 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>@ViewData["Title"] - OxPollen</title>
 
+        <!-- Fonts -->
+        <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
         <environment names="Development">
             <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
             <link rel="stylesheet" href="~/lib/bootstrap-touch-carousel/dist/css/bootstrap-touch-carousel.css" />
@@ -30,12 +34,22 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a asp-controller="Home" asp-action="Index" class="navbar-brand">OxPollen</a>
+                    <a asp-controller="Home" asp-action="Index" class="navbar-brand">
+                        OxPollen
+                    </a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pollen Records<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-action="Index" asp-controller="Pollen">Unidentified Grains</a></li>
+                                <li><a asp-action="Add" asp-controller="Pollen"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Submit a Grain!</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Help</a></li>
+                            </ul>
+                        </li>
                         <li><a asp-controller="ReferenceCollection" asp-action="Index">Reference Collection</a></li>
-                        <li><a asp-controller="Pollen" asp-action="Add">Add Pollen</a></li>
                         <li><a asp-controller="Home" asp-action="About">About</a></li>
                         <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
                     </ul>
@@ -43,13 +57,15 @@
                 </div>
             </div>
         </div>
-        <div class="container body-content">
             @RenderBody()
             <hr />
-            <footer>
-                <p>&copy; 2015 - OxPollen</p>
-            </footer>
-        </div>
+        <footer class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>&copy; 2015 - OxPollen</p>
+                </div>
+            </div>
+        </footer>
 
         <environment names="Development">
             <script src="~/lib/jquery/dist/jquery.js"></script>

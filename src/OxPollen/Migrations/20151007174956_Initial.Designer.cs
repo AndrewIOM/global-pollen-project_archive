@@ -11,7 +11,7 @@ namespace OxPollen.Migrations
     {
         public override string Id
         {
-            get { return "20151005192040_Initial"; }
+            get { return "20151007174956_Initial"; }
         }
         
         public override string ProductVersion
@@ -56,42 +56,6 @@ namespace OxPollen.Migrations
                     b.Key("Id");
                     
                     b.Annotation("Relational:TableName", "AspNetRoleClaims");
-                });
-            
-            builder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .GenerateValueOnAdd();
-                    
-                    b.Property<int>("AccessFailedCount");
-                    
-                    b.Property<string>("ConcurrencyStamp");
-                    
-                    b.Property<string>("Email");
-                    
-                    b.Property<bool>("EmailConfirmed");
-                    
-                    b.Property<bool>("LockoutEnabled");
-                    
-                    b.Property<DateTimeOffset?>("LockoutEnd");
-                    
-                    b.Property<string>("NormalizedEmail");
-                    
-                    b.Property<string>("NormalizedUserName");
-                    
-                    b.Property<string>("PasswordHash");
-                    
-                    b.Property<string>("PhoneNumber");
-                    
-                    b.Property<bool>("PhoneNumberConfirmed");
-                    
-                    b.Property<string>("SecurityStamp");
-                    
-                    b.Property<bool>("TwoFactorEnabled");
-                    
-                    b.Property<string>("UserName");
-                    
-                    b.Key("Id");
                 });
             
             builder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUserClaim<string>", b =>
@@ -178,13 +142,32 @@ namespace OxPollen.Migrations
                     b.Annotation("Relational:TableName", "AspNetUsers");
                 });
             
+            builder.Entity("OxPollen.Models.Identification", b =>
+                {
+                    b.Property<int>("IdentificationId")
+                        .GenerateValueOnAdd()
+                        .StoreGeneratedPattern(StoreGeneratedPattern.Identity);
+                    
+                    b.Property<DateTime>("DateOfIdentification");
+                    
+                    b.Property<int>("GbifId");
+                    
+                    b.Property<int?>("RecordPollenRecordId");
+                    
+                    b.Property<string>("TaxonName");
+                    
+                    b.Property<string>("UserId");
+                    
+                    b.Key("IdentificationId");
+                });
+            
             builder.Entity("OxPollen.Models.PollenRecord", b =>
                 {
                     b.Property<int>("PollenRecordId")
                         .GenerateValueOnAdd()
                         .StoreGeneratedPattern(StoreGeneratedPattern.Identity);
                     
-                    b.Property<double>("ApproximateAge");
+                    b.Property<double?>("ApproximateAge");
                     
                     b.Property<bool>("HasConfirmedIdentity");
                     
@@ -195,6 +178,10 @@ namespace OxPollen.Migrations
                     b.Property<string>("PhotoUrl");
                     
                     b.Property<int?>("TaxonTaxonId");
+                    
+                    b.Property<DateTime>("TimeAdded");
+                    
+                    b.Property<DateTime>("TimeIdentityConfirmed");
                     
                     b.Property<string>("UserId");
                     
@@ -250,15 +237,18 @@ namespace OxPollen.Migrations
                         .ForeignKey("UserId");
                 });
             
+            builder.Entity("OxPollen.Models.Identification", b =>
+                {
+                    b.Reference("OxPollen.Models.PollenRecord")
+                        .InverseCollection()
+                        .ForeignKey("RecordPollenRecordId");
+                });
+            
             builder.Entity("OxPollen.Models.PollenRecord", b =>
                 {
                     b.Reference("OxPollen.Models.Taxon")
                         .InverseCollection()
                         .ForeignKey("TaxonTaxonId");
-                    
-                    b.Reference("Microsoft.AspNet.Identity.EntityFramework.IdentityUser")
-                        .InverseCollection()
-                        .ForeignKey("UserId");
                 });
         }
     }

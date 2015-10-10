@@ -85,6 +85,22 @@ namespace OxPollen.Models
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name ="Title")]
+        public string Title { get; set; }
+
+        [Required]
+        [Display(Name = "Forename(s)")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Surname")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Institutional Affiliation")]
+        public string Institution { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }

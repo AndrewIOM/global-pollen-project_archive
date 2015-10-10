@@ -32,5 +32,10 @@ namespace OxPollen.Controllers
             var pollen = _context.Taxa.ToList();
             return View("PollenView", pollen);
         }
+
+        public IActionResult AddPollen()
+        {
+            return View("PollenAdd", new Taxon());
+        }
     }
 }

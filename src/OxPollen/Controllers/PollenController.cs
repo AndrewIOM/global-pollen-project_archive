@@ -6,15 +6,35 @@ using OxPollen.Models;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using System.Security.Claims;
+using Microsoft.AspNet.Http;
+using System.Threading.Tasks;
+using Microsoft.Net.Http.Headers;
+using Microsoft.Framework.Runtime;
 
 namespace OxPollen.Controllers
 {
     public class PollenController : Controller
     {
-        // GET: /<controller>/
-        public IActionResult Index()
+        private readonly PollenDbContext _context;
+        private IApplicationEnvironment _hostingEnvironment;
+        public PollenController(PollenDbContext context, IApplicationEnvironment hostingEnvironment)
         {
-            return View();
+            _context = context;
+            _hostingEnvironment = hostingEnvironment;
+        }
+
+        // GET: /<controller>/
+        public IActionResult Index(int? id)
+        {
+            if (id.HasValue)
+            {
+                var result = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == id);
+                if (result == null) return View(_context.PollenRecords.ToList());
+                return View("Details", result);
+            }
+
+            var model = _context.PollenRecords.ToList();
+            return View(model);
         }
 
         [Authorize]
@@ -28,14 +48,37 @@ namespace OxPollen.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(PollenRecord result)
+        public async Task<IActionResult> Add(PollenRecord result, IList<IFormFile> files)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || files.Count == 0)
             {
-                return View();
+                if (files.Count == 0) ModelState.AddModelError("PhotoUrl", "You must upload an image of your pollen grain");
+                return View(result);
             }
 
-            throw new NotImplementedException();
+            result.UserId = User.GetUserId();
+            result.Taxon = null;
+            result.HasConfirmedIdentity = false;
+
+            //Handle files
+            foreach (var file in files)
+            {
+                var fileName = ContentDispositionHeaderValue
+                    .Parse(file.ContentDisposition)
+                    .FileName
+                    .Trim('"');// FileName returns "fileName.ext"(with double quotes) in beta 3
+                if (fileName.EndsWith(".jpg"))// Important for security if saving in webroot
+                {
+                    var guid = Guid.NewGuid();
+                    var filePath = _hostingEnvironment.ApplicationBasePath + "\\wwwroot\\grain-images\\" + guid + ".jpg";
+                    await file.SaveAsAsync(filePath);
+                    result.PhotoUrl = "\\grain-images\\" + guid + ".jpg";
+                }
+            }
+
+            _context.Add(result);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

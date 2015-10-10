@@ -15,6 +15,17 @@ namespace OxPollen.Models
 
     public class ApplicationUser : IdentityUser
     {
+        public string Title { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Institution { get; set; }
 
+        public string FullName
+        {
+            get
+            {
+                return Title + " " + FirstName + " " + LastName;
+            }
+        }
     }
 }
