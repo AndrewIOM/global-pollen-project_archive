@@ -4,14 +4,12 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
 }
 
-<div class="container">
+<h2>Add Unidentified Pollen</h2>
+<p>Intro blurb about uploading your own unidentified pollen...</p>
 
-    <h2>Add Unidentified Pollen</h2>
-    <p>Intro blurb about uploading your own unidentified pollen...</p>
-
-    @using (Html.BeginForm("AddUnidentifiedPollen", "Pollen", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
-    {
-        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+@using (Html.BeginForm("AddUnidentifiedPollen", "Pollen", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+{
+    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
 
         <div class="row">
             <div class="col-md-2">
@@ -81,8 +79,7 @@
             </div>
         </div>
         <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Upload" />
-    }
-</div>
+}
 
 <script type="text/javascript">
     window.onload = function () {
