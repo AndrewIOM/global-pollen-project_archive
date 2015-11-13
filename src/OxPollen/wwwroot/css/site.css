@@ -62,3 +62,7 @@ body {
     .pollen-grid {
         width: 100%;
     }
+
+    display-panel {
+        background-color: gold;
+    }

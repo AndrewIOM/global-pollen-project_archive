@@ -26,15 +26,28 @@ namespace OxPollen.Controllers
         // GET: /<controller>/
         public IActionResult Index(int? id)
         {
-            if (id.HasValue)
-            {
-                var result = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == id);
-                if (result == null) return View(_context.PollenRecords.ToList());
-                return View("Details", result);
-            }
-
             var model = _context.PollenRecords.ToList();
             return View(model);
+        }
+
+        public IActionResult Details(int id)
+        {
+            var result = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == id);
+            if (result == null) return View(_context.PollenRecords.ToList());
+            return View(result);
+        }
+
+        [Authorize]
+        public IActionResult Identify(Identification result)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(result);
+            }
+
+            
+
+            return View(result)
         }
 
         [Authorize]
@@ -59,6 +72,7 @@ namespace OxPollen.Controllers
             result.UserId = User.GetUserId();
             result.Taxon = null;
             result.HasConfirmedIdentity = false;
+            result.TimeAdded = DateTime.Now;
 
             //Handle files
             foreach (var file in files)
