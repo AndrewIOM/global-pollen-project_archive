@@ -7,11 +7,11 @@ using OxPollen.Models;
 namespace OxPollen.Migrations
 {
     [ContextType(typeof(PollenDbContext))]
-    partial class Initial
+    partial class debugchanges
     {
         public override string Id
         {
-            get { return "20151007174956_Initial"; }
+            get { return "20151114102656_debugchanges"; }
         }
         
         public override string ProductVersion
@@ -117,6 +117,10 @@ namespace OxPollen.Migrations
                     
                     b.Property<bool>("EmailConfirmed");
                     
+                    b.Property<string>("FirstName");
+                    
+                    b.Property<string>("LastName");
+                    
                     b.Property<bool>("LockoutEnabled");
                     
                     b.Property<DateTimeOffset?>("LockoutEnd");
@@ -125,6 +129,8 @@ namespace OxPollen.Migrations
                     
                     b.Property<string>("NormalizedUserName");
                     
+                    b.Property<string>("Organisation");
+                    
                     b.Property<string>("PasswordHash");
                     
                     b.Property<string>("PhoneNumber");
@@ -132,6 +138,8 @@ namespace OxPollen.Migrations
                     b.Property<bool>("PhoneNumberConfirmed");
                     
                     b.Property<string>("SecurityStamp");
+                    
+                    b.Property<string>("Title");
                     
                     b.Property<bool>("TwoFactorEnabled");
                     
@@ -148,13 +156,11 @@ namespace OxPollen.Migrations
                         .GenerateValueOnAdd()
                         .StoreGeneratedPattern(StoreGeneratedPattern.Identity);
                     
-                    b.Property<DateTime>("DateOfIdentification");
-                    
-                    b.Property<int>("GbifId");
-                    
                     b.Property<int?>("RecordPollenRecordId");
                     
                     b.Property<string>("TaxonName");
+                    
+                    b.Property<DateTime>("TimeIdentified");
                     
                     b.Property<string>("UserId");
                     

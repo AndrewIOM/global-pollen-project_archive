@@ -97,8 +97,8 @@ namespace OxPollen.Models
         public string LastName { get; set; }
 
         [Required]
-        [Display(Name = "Institutional Affiliation")]
-        public string Institution { get; set; }
+        [Display(Name = "Organisation")]
+        public string Organisation { get; set; }
 
         [Required]
         [EmailAddress]

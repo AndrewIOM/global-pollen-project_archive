@@ -4,7 +4,7 @@
   },
   "Data": {
     "DefaultConnection": {
-      "ConnectionString": "Data Source=(localdb)\\v12.0;Initial Catalog=pollentest2;Integrated Security=True"
+      "ConnectionString": "Data Source=(localdb)\\v12.0;Initial Catalog=pollentest3;Integrated Security=True"
     }
   }
 }

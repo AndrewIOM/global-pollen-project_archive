@@ -112,7 +112,7 @@ namespace OxPollen.Controllers
                     Title = model.Title,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    Institution = model.Institution
+                    Organisation = model.Organisation
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

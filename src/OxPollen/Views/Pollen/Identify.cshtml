@@ -1,0 +1,120 @@
+﻿@model OxPollen.ViewModels.IdentificationViewModel
+
+@{
+    ViewBag.Title = "Grain Details #" + Model.Grain.PollenRecordId;
+    var timeSinceAdd = DateTime.Now - Model.Grain.TimeAdded;
+}
+
+@* Breadcrumb *@
+<div class="row">
+    <br />
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a asp-action="Index">Unidentified Grains</a></li>
+            <li class="active">Grain #@Model.Grain.PollenRecordId</li>
+        </ol>
+    </div>
+</div>
+
+@* Header *@
+<div class="row">
+    <div class="col-md-12">
+        <h1>Pollen Grain #@Model.Grain.PollenRecordId</h1>
+        <h4>Status: Unidentified</h4>
+        @if (Model.Grain.HasConfirmedIdentity)
+        { <p>Confirmed!!</p>}
+    </div>
+</div>
+
+<div class="row">
+    @* Left Column: Photos *@
+    <div class="col-md-6">
+        <img src="@Model.Grain.PhotoUrl" style="width:100%; height:100%" />
+    </div>
+    @* Right Column: Details and IDs *@
+    <div class="col-md-6">
+        @if (timeSinceAdd.Days == 0)
+        {
+            <p>Added today.</p>
+        }
+        else
+        {
+            <p>Added @timeSinceAdd.Days.ToString() days ago.</p>
+        }
+        <p>
+            Approximate Age: @Model.Grain.ApproximateAge @if (!Model.Grain.ApproximateAge.HasValue)
+            {
+                <span>Unknown</span>
+            }
+        </p>
+        <p>Number of IDs: @Model.Grain.Identifications.Count</p>
+        <label>Location</label>
+        <img style="text-align: left; margin-right: auto; display: block; max-width: 100%" alt="Pollen Location"
+             src="http://maps.google.com/maps/api/staticmap?center=@Model.Grain.Latitude,@Model.Grain.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Grain.Latitude,@Model.Grain.Longitude&amp&amp;amp;sensor=false">
+        @if (User.Identity.IsAuthenticated)
+        {
+            @if (Model.AlreadyIdentifiedByUser)
+            {
+                <p>Thank you for your identification.</p>
+            }
+            else
+            {
+                <h3>Can you identify this grain?</h3>
+                <div class="row">
+                    @using (Html.BeginForm("Identify", "Pollen", FormMethod.Post, new { @class = "form" }))
+                    {
+                        @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
+                        @Html.HiddenFor(m => m.GrainId)
+                        <div class="row">
+                            <div class="col-md-12">
+                                @Html.LabelFor(m => m.TaxonName)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <input type="text" asp-for="TaxonName" class="form-control" />
+                                <span asp-validation-for="TaxonName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-2">
+                                <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p>Log in to identify this grain</p>
+        }
+
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Current Identifications</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Pollen Taxon</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    @foreach (var taxa in Model.Grain.Identifications.Select(m => m.TaxonName).Distinct())
+                    {
+                        int count = Model.Grain.Identifications.Where(m => m.TaxonName == taxa).Count();
+                        <tr>
+                            <td>@taxa</td>
+                            <td><span class="badge">@count</span></td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <a asp-action="Index" asp-controller="Pollen" class="btn btn-default" role="button">Back</a>
+    </div>
+</div>

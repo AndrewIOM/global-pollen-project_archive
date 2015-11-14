@@ -8,11 +8,11 @@ namespace OxPollen.Models
     public class Identification
     {
         public int IdentificationId { get; set; }
-        public PollenRecord Record { get; set; }
         public string UserId { get; set; }
-        public DateTime DateOfIdentification { get; set; }
-
+        public DateTime TimeIdentified { get; set; }
         public string TaxonName { get; set; }
-        public int GbifId { get; set; }
+
+        //Navigation Properties
+        public PollenRecord Record { get; set; }
     }
 }

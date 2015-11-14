@@ -10,6 +10,9 @@ using Microsoft.AspNet.Http;
 using System.Threading.Tasks;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Framework.Runtime;
+using OxPollen.ViewModels;
+using Microsoft.Data.Entity;
+using OxPollen.Services;
 
 namespace OxPollen.Controllers
 {
@@ -30,24 +33,65 @@ namespace OxPollen.Controllers
             return View(model);
         }
 
-        public IActionResult Details(int id)
+        [HttpGet]
+        public IActionResult Identify(int id)
         {
-            var result = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == id);
-            if (result == null) return View(_context.PollenRecords.ToList());
-            return View(result);
+            //TODO Lazy loading not implemented in EF beta 5
+            var record = _context.PollenRecords.Include(c => c.Identifications).ToList()
+                .FirstOrDefault(m => m.PollenRecordId == id);
+            if (record == null)
+            {
+                //If invalid ID, redirect to index view
+                return RedirectToAction("Index");
+            }
+
+            bool identifiedByMe = false;
+            var identifications = record.Identifications.Select(m => m.UserId);
+            if (User.IsSignedIn())
+            {
+                identifiedByMe = (identifications.Contains(User.GetUserId())) ? true : false;
+            }
+
+            var viewModel = new IdentificationViewModel()
+            {
+                AlreadyIdentifiedByUser = identifiedByMe,
+                Grain = record,
+                GrainId = record.PollenRecordId
+            };
+
+            return View(viewModel);
         }
 
         [Authorize]
-        public IActionResult Identify(Identification result)
+        [HttpPost]
+        public IActionResult Identify(IdentificationViewModel result)
         {
+            //Refetch data
+            var record = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == result.GrainId);
+            result.Grain = record;
+
             if (!ModelState.IsValid)
             {
                 return View(result);
             }
 
-            
+            var identification = new Identification();
+            identification.Record = record;
+            identification.TaxonName = result.TaxonName;
+            identification.TimeIdentified = DateTime.Now;
+            identification.UserId = User.GetUserId();
 
-            return View(result)
+            _context.Identifications.Add(identification);
+            _context.SaveChanges();
+            UpdateGrainIdentificationStatus(identification.Record.PollenRecordId);
+
+            //TODO Stop this refetching
+            var record2 = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == result.GrainId);
+            result.Grain = record2;
+
+            //TempData["successMessage"] = "Thank you! Your identification has been registered.";
+            result.AlreadyIdentifiedByUser = true;
+            return View(result);
         }
 
         [Authorize]
@@ -94,5 +138,29 @@ namespace OxPollen.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        private void UpdateGrainIdentificationStatus(int grainId)
+        {
+            //TODO Remove temp fix for lack of lazy loading in beta5
+            var grain = _context.PollenRecords.Include(c => c.Identifications).ToList()
+                .FirstOrDefault(m => m.PollenRecordId == grainId);
+            if (grain == null) return;
+
+            var totalIdentifications = grain.Identifications.Count;
+            if (totalIdentifications < 3)
+            {
+                grain.HasConfirmedIdentity = false;
+            }
+            else
+            {
+                int percentAgreementRequired = 100;
+                var groups = grain.Identifications.GroupBy(m => m.TaxonName);
+                var percentAgreement = (groups.Count() / (percentAgreementRequired / 100)) * 100;
+                grain.HasConfirmedIdentity = percentAgreement >= percentAgreementRequired ? true : false;
+            }
+
+            _context.SaveChanges();
+        }
+
     }
 }

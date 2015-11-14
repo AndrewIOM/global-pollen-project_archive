@@ -10,6 +10,7 @@ namespace OxPollen.Models
     public class PollenDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<PollenRecord> PollenRecords { get; set; }
+        public DbSet<Identification> Identifications { get; set; }
         public DbSet<Taxon> Taxa { get; set; }
     }
 
@@ -18,8 +19,7 @@ namespace OxPollen.Models
         public string Title { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Institution { get; set; }
-
+        public string Organisation { get; set; }
         public string FullName
         {
             get

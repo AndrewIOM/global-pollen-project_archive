@@ -5,7 +5,7 @@ using Microsoft.Data.Entity.Relational.Migrations.Operations;
 
 namespace OxPollen.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         public override void Up(MigrationBuilder migration)
         {
@@ -31,14 +31,18 @@ namespace OxPollen.Migrations
                     ConcurrencyStamp = table.Column(type: "nvarchar(max)", nullable: true),
                     Email = table.Column(type: "nvarchar(max)", nullable: true),
                     EmailConfirmed = table.Column(type: "bit", nullable: false),
+                    FirstName = table.Column(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column(type: "nvarchar(max)", nullable: true),
                     LockoutEnabled = table.Column(type: "bit", nullable: false),
                     LockoutEnd = table.Column(type: "datetimeoffset", nullable: true),
                     NormalizedEmail = table.Column(type: "nvarchar(max)", nullable: true),
                     NormalizedUserName = table.Column(type: "nvarchar(max)", nullable: true),
+                    Organisation = table.Column(type: "nvarchar(max)", nullable: true),
                     PasswordHash = table.Column(type: "nvarchar(max)", nullable: true),
                     PhoneNumber = table.Column(type: "nvarchar(max)", nullable: true),
                     PhoneNumberConfirmed = table.Column(type: "bit", nullable: false),
                     SecurityStamp = table.Column(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column(type: "nvarchar(max)", nullable: true),
                     TwoFactorEnabled = table.Column(type: "bit", nullable: false),
                     UserName = table.Column(type: "nvarchar(max)", nullable: true)
                 },

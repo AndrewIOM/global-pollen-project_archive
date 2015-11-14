@@ -23,6 +23,16 @@ namespace OxPollen.Models
         public DateTime TimeIdentityConfirmed { get; set; }
         public Taxon Taxon { get; set; }
 
+        //Bounty
+        public int Bounty
+        {
+            get
+            {
+                int daysSinceSubmission = (DateTime.Now - TimeAdded).Days;
+                return daysSinceSubmission;
+            }
+        }
+
         public PollenRecord()
         {
             HasConfirmedIdentity = false;

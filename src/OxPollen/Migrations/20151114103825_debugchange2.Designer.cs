@@ -7,9 +7,19 @@ using OxPollen.Models;
 namespace OxPollen.Migrations
 {
     [ContextType(typeof(PollenDbContext))]
-    partial class PollenDbContextModelSnapshot : ModelSnapshot
+    partial class debugchange2
     {
-        public override void BuildModel(ModelBuilder builder)
+        public override string Id
+        {
+            get { return "20151114103825_debugchange2"; }
+        }
+        
+        public override string ProductVersion
+        {
+            get { return "7.0.0-beta5-13549"; }
+        }
+        
+        public override void BuildTargetModel(ModelBuilder builder)
         {
             builder
                 .Annotation("SqlServer:ValueGeneration", "Identity");

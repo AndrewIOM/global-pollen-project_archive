@@ -7,11 +7,11 @@ using OxPollen.Models;
 namespace OxPollen.Migrations
 {
     [ContextType(typeof(PollenDbContext))]
-    partial class userproperties
+    partial class initial
     {
         public override string Id
         {
-            get { return "20151007175433_userproperties"; }
+            get { return "20151114091716_initial"; }
         }
         
         public override string ProductVersion
@@ -119,8 +119,6 @@ namespace OxPollen.Migrations
                     
                     b.Property<string>("FirstName");
                     
-                    b.Property<string>("Institution");
-                    
                     b.Property<string>("LastName");
                     
                     b.Property<bool>("LockoutEnabled");
@@ -130,6 +128,8 @@ namespace OxPollen.Migrations
                     b.Property<string>("NormalizedEmail");
                     
                     b.Property<string>("NormalizedUserName");
+                    
+                    b.Property<string>("Organisation");
                     
                     b.Property<string>("PasswordHash");
                     
