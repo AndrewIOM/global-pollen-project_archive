@@ -5,7 +5,7 @@ using Microsoft.Data.Entity.Relational.Migrations.Operations;
 
 namespace OxPollen.Migrations
 {
-    public partial class initial : Migration
+    public partial class bounty : Migration
     {
         public override void Up(MigrationBuilder migration)
         {
@@ -28,6 +28,7 @@ namespace OxPollen.Migrations
                 {
                     Id = table.Column(type: "nvarchar(450)", nullable: false),
                     AccessFailedCount = table.Column(type: "int", nullable: false),
+                    Bounty = table.Column(type: "float", nullable: false),
                     ConcurrencyStamp = table.Column(type: "nvarchar(max)", nullable: true),
                     Email = table.Column(type: "nvarchar(max)", nullable: true),
                     EmailConfirmed = table.Column(type: "bit", nullable: false),
@@ -173,10 +174,9 @@ namespace OxPollen.Migrations
                 {
                     IdentificationId = table.Column(type: "int", nullable: false)
                         .Annotation("SqlServer:ValueGeneration", "Identity"),
-                    DateOfIdentification = table.Column(type: "datetime2", nullable: false),
-                    GbifId = table.Column(type: "int", nullable: false),
                     RecordPollenRecordId = table.Column(type: "int", nullable: true),
                     TaxonName = table.Column(type: "nvarchar(max)", nullable: true),
+                    TimeIdentified = table.Column(type: "datetime2", nullable: false),
                     UserId = table.Column(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

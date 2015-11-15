@@ -30,9 +30,9 @@ namespace OxPollen.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index(int? id)
+        public IActionResult Index()
         {
-            var model = _context.PollenRecords.ToList();
+            var model = _context.PollenRecords.Where(m => !m.HasConfirmedIdentity).OrderBy(m => m.Bounty).ToList();
             return View(model);
         }
 

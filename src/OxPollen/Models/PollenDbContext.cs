@@ -27,5 +27,6 @@ namespace OxPollen.Models
                 return Title + " " + FirstName + " " + LastName;
             }
         }
+        public double Bounty { get; set; }
     }
 }

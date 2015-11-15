@@ -7,11 +7,11 @@ using OxPollen.Models;
 namespace OxPollen.Migrations
 {
     [ContextType(typeof(PollenDbContext))]
-    partial class debugchanges
+    partial class bounty
     {
         public override string Id
         {
-            get { return "20151114102656_debugchanges"; }
+            get { return "20151115190241_bounty"; }
         }
         
         public override string ProductVersion
@@ -109,6 +109,8 @@ namespace OxPollen.Migrations
                         .GenerateValueOnAdd();
                     
                     b.Property<int>("AccessFailedCount");
+                    
+                    b.Property<double>("Bounty");
                     
                     b.Property<string>("ConcurrencyStamp")
                         .ConcurrencyToken();

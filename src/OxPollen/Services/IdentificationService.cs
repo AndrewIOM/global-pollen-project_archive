@@ -18,14 +18,22 @@ namespace OxPollen.Services
 
         public void SaveIdentification(Identification newIdentification)
         {
+            var bounty = newIdentification.Record.Bounty;
             _context.Identifications.Add(newIdentification);
             _context.SaveChanges();
             UpdateGrainIdentificationStatus(newIdentification.Record.PollenRecordId);
+
+            ////Handle bounty
+            //var usersCorrectlyIdentified 
+            //UpdateUserBounty(newIdentification.UserId, bounty);
         }
 
-        public List<Identification> Get(string userId)
+        private void UpdateUserBounty(string userId, int bountyChange)
         {
-            throw new NotImplementedException();
+            var user = _context.Users.FirstOrDefault(m => m.Id == userId);
+            if (user == null) throw new Exception("User was null!");
+            user.Bounty += bountyChange;
+            _context.SaveChanges();
         }
 
         private void UpdateGrainIdentificationStatus(int grainId)
@@ -35,6 +43,7 @@ namespace OxPollen.Services
                 .FirstOrDefault(m => m.PollenRecordId == grainId);
             if (grain == null) return;
 
+            var grainBounty = grain.Bounty;
             var totalIdentifications = grain.Identifications.Count;
             if (totalIdentifications < 3)
             {
@@ -71,6 +80,14 @@ namespace OxPollen.Services
                         existingTaxon.Records.Add(grain);
                     }
 
+                    //Update User Bounties
+                    var usersWithCorrectAnswer = grain.Identifications.Where(m => m.TaxonName == agreedName).Select(m => m.UserId);
+                    foreach (var user in usersWithCorrectAnswer)
+                    {
+                        var dbUser = _context.Users.FirstOrDefault(m => m.Id == user);
+                        if (dbUser == null) throw new Exception("Problem updating bounties");
+                        dbUser.Bounty += grainBounty;
+                    }
                 } else
                 {
                     grain.HasConfirmedIdentity = false;

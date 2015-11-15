@@ -1,0 +1,34 @@
+﻿@model Taxon
+
+@{
+    ViewBag.Title = Model.LatinName;
+}
+
+@* Breadcrumb *@
+<div class="row">
+    <br />
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a asp-action="Index">Pollen Reference Collection</a></li>
+            <li class="active">@Model.TaxonId: @Model.LatinName</li>
+        </ol>
+    </div>
+</div>
+
+@* Header *@
+<div class="row">
+    <div class="col-md-12">
+        <h1>@Model.LatinName</h1>
+        <h4>@Model.Records.Count confirmed grains</h4>
+    </div>
+</div>
+
+@* Photo Tiles *@
+<div class="row">
+    @foreach (var record in Model.Records)
+    {
+        <div class="col-sm-2">
+            <a href="@Url.Action("Identify", "Pollen", new { id = @record.PollenRecordId } )"><img src="@record.PhotoUrl" style="width:100%" /></a>
+        </div>
+    }
+</div>

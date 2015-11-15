@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using OxPollen.Models;
 using OxPollen.ViewModels;
+using Microsoft.Data.Entity;
 
 namespace OxPollen.Controllers
 {
@@ -17,21 +18,32 @@ namespace OxPollen.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index(int? taxonId)
+        public IActionResult Index()
         {
-            if (taxonId != null)
-            {
-                var taxon = _context.Taxa.FirstOrDefault(m => m.TaxonId == taxonId);
-                return View("Details", taxon);
-            }
-
-            var model = _context.Taxa.Select(m => new TaxonViewModel()
+            var taxa = _context.Taxa.Include(m => m.Records).ToList();
+            var model = taxa.Select(m => new TaxonViewModel()
             {
                 CommonName = m.CommonName,
                 Id = m.TaxonId,
-                LatinName = m.LatinName
+                LatinName = m.LatinName,
+                ImageUrl = m.Records.FirstOrDefault() == null ? "/images/pollensample.jpg" : m.Records.FirstOrDefault().PhotoUrl,
+                ConfirmedGrainsCount = m.Records.Count,
+                ContentionRating = 1.3 //m.Records.Select(r => r.Identifications.Select(i => i.TaxonName).Distinct().Count()).Sum()
             }).ToList();
             return View(model);
+        }
+
+        public IActionResult View(int id)
+        {
+            if (id == 0) return new BadRequestResult();
+            var taxa = _context.Taxa.Include(m => m.Records).ToList();
+
+            var taxon = taxa.FirstOrDefault(m => m.TaxonId == id);
+            if (taxon != null)
+            {
+                return View("View", taxon);
+            }
+            return new RedirectToActionResult("Index", "ReferenceCollection", null);
         }
     }
 }

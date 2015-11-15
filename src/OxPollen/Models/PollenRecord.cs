@@ -29,7 +29,9 @@ namespace OxPollen.Models
             get
             {
                 int daysSinceSubmission = (DateTime.Now - TimeAdded).Days;
-                return daysSinceSubmission;
+
+                if (daysSinceSubmission == 0) return 4;
+                return daysSinceSubmission + 1;
             }
         }
 

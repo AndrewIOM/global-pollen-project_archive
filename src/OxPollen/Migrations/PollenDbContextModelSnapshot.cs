@@ -100,6 +100,8 @@ namespace OxPollen.Migrations
                     
                     b.Property<int>("AccessFailedCount");
                     
+                    b.Property<double>("Bounty");
+                    
                     b.Property<string>("ConcurrencyStamp")
                         .ConcurrencyToken();
                     
