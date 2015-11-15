@@ -93,6 +93,7 @@ namespace OxPollen
             // Register application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<IdentificationService, IdentificationService>();
         }
 
         // Configure is called after ConfigureServices is called.

@@ -4,24 +4,58 @@
     ViewBag.Title = "Unidentified Pollen Grains";
 }
 
-<h1>Unidentified Pollen Grains</h1>
-
+@* Header *@
+<div class="row">
+    <div class="col-md-12">
+        <h1>Pollen Grains</h1>
+        <p>These pollen grains remain unidentified. Can you help?</p>
+        <div class="filters">
+            <span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span> Sorted by
+            <div class="dropdown" style="display:inline;">
+                <button class="btn btn-default dropdown-toggle" type="button" id="filterMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Highest Bounty
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="filterMenu">
+                    <li><a href="#">Highest Bounty</a></li>
+                    <li><a href="#">Most Recent</a></li>
+                    <li><a href="#">Hotness</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 @if (Model.Count == 0)
 {
-    <p>There are currently no unidentified pollen grains!</p>
-    <p>Why not submit one?</p>
+    <div class="row">
+        <p>There are currently no unidentified pollen grains!</p>
+        <p>Why not submit one?</p>
+    </div>
 }
 else
 {
     <div class="row">
-        @foreach (var grain in Model)
-        {
-            <div class="col-md-2">
-                <a href="@Url.Action("Identify", new { id = @grain.PollenRecordId } )">
-                    <img src="@grain.PhotoUrl" style="width:100%;height:100%" />
-                    <p>Submitted by user id @grain.UserId</p>
-                </a>
-            </div>
-        }
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Bounty</th>
+                        <th></th>
+                        <th>Date Submitted</th>
+                        <th>Identify</th>
+                    </tr>
+                </thead>
+                @foreach (var grain in Model)
+                {
+                    <a href="@Url.Action("Identify", new { id = @grain.PollenRecordId } )"></a>
+                    <tr>
+                        <td>300</td>
+                        <td><a href="@Url.Action("Identify", new { id = @grain.PollenRecordId } )"><img src="@grain.PhotoUrl" style="max-width:200px;width:100%;height:auto" /></a></td>
+                        <td>@grain.TimeAdded</td>
+                        <td><a role="button" class="btn btn-primary" href="@Url.Action("Identify", new { id = @grain.PollenRecordId } )">Identify</a></td>
+                    </tr>
+                }
+            </table>
+        </div>
     </div>
 }

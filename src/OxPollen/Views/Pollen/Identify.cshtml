@@ -20,9 +20,12 @@
 <div class="row">
     <div class="col-md-12">
         <h1>Pollen Grain #@Model.Grain.PollenRecordId</h1>
-        <h4>Status: Unidentified</h4>
         @if (Model.Grain.HasConfirmedIdentity)
-        { <p>Confirmed!!</p>}
+        { <h4>Identified as @Model.Grain.Taxon.LatinName</h4>}
+        else
+        {
+            <h4>Unidentified</h4>
+        }
     </div>
 </div>
 

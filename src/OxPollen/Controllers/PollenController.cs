@@ -19,11 +19,14 @@ namespace OxPollen.Controllers
     public class PollenController : Controller
     {
         private readonly PollenDbContext _context;
+        private readonly IdentificationService _idService;
         private IApplicationEnvironment _hostingEnvironment;
-        public PollenController(PollenDbContext context, IApplicationEnvironment hostingEnvironment)
+
+        public PollenController(PollenDbContext context, IdentificationService idService, IApplicationEnvironment env)
         {
             _context = context;
-            _hostingEnvironment = hostingEnvironment;
+            _idService = idService;
+            _hostingEnvironment = env;
         }
 
         // GET: /<controller>/
@@ -37,7 +40,7 @@ namespace OxPollen.Controllers
         public IActionResult Identify(int id)
         {
             //TODO Lazy loading not implemented in EF beta 5
-            var record = _context.PollenRecords.Include(c => c.Identifications).ToList()
+            var record = _context.PollenRecords.Include(c => c.Identifications).Include(c => c.Taxon).ToList()
                 .FirstOrDefault(m => m.PollenRecordId == id);
             if (record == null)
             {
@@ -81,12 +84,12 @@ namespace OxPollen.Controllers
             identification.TimeIdentified = DateTime.Now;
             identification.UserId = User.GetUserId();
 
-            _context.Identifications.Add(identification);
-            _context.SaveChanges();
+            _idService.SaveIdentification(identification);
             UpdateGrainIdentificationStatus(identification.Record.PollenRecordId);
 
             //TODO Stop this refetching
-            var record2 = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == result.GrainId);
+            var record2 = _context.PollenRecords.Include(c => c.Identifications).Include(c => c.Taxon).ToList()
+                .FirstOrDefault(m => m.PollenRecordId == result.GrainId);
             result.Grain = record2;
 
             //TempData["successMessage"] = "Thank you! Your identification has been registered.";
