@@ -4,15 +4,14 @@ using System.Linq;
 using Microsoft.AspNet.Mvc;
 using OxPollen.Models;
 using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
 using System.Security.Claims;
 using Microsoft.AspNet.Http;
 using System.Threading.Tasks;
 using Microsoft.Net.Http.Headers;
-using Microsoft.Framework.Runtime;
 using OxPollen.ViewModels;
 using Microsoft.Data.Entity;
 using OxPollen.Services;
+using Microsoft.Dnx.Runtime;
 
 namespace OxPollen.Controllers
 {
