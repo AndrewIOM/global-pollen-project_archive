@@ -130,7 +130,7 @@ namespace OxPollen.Controllers
                 if (fileName.EndsWith(".jpg"))// Important for security if saving in webroot
                 {
                     var guid = Guid.NewGuid();
-                    var filePath = _hostingEnvironment.ApplicationBasePath + "\\wwwroot\\grain-images\\" + guid + ".jpg";
+                    var filePath = _hostingEnvironment.ApplicationBasePath + "\\..\\..\\..\\wwwroot\\grain-images\\" + guid + ".jpg";
                     await file.SaveAsAsync(filePath);
                     result.PhotoUrl = "\\grain-images\\" + guid + ".jpg";
                 }
@@ -139,6 +139,11 @@ namespace OxPollen.Controllers
             _context.Add(result);
             _context.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Help()
+        {
+            return View();
         }
 
         private void UpdateGrainIdentificationStatus(int grainId)
