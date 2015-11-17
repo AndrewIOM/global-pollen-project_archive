@@ -10,6 +10,7 @@ using Microsoft.AspNet.Mvc;
 using OxPollen;
 using OxPollen.Models;
 using OxPollen.Services;
+using OxPollen.ViewModels;
 
 namespace OxPollen.Controllers
 {

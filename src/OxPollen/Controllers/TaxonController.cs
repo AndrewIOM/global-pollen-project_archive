@@ -9,10 +9,10 @@ using Microsoft.Data.Entity;
 
 namespace OxPollen.Controllers
 {
-    public class ReferenceCollectionController : Controller
+    public class TaxonController : Controller
     {
-        private readonly PollenDbContext _context;
-        public ReferenceCollectionController(PollenDbContext context)
+        private readonly Models.OxPollenDbContext _context;
+        public TaxonController(Models.OxPollenDbContext context)
         {
             _context = context;
         }

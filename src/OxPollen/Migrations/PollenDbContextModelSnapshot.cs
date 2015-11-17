@@ -7,7 +7,7 @@ using OxPollen.Models;
 
 namespace OxPollen.Migrations
 {
-    [DbContext(typeof(PollenDbContext))]
+    [DbContext(typeof(Models.OxPollenDbContext))]
     partial class PollenDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -1,10 +1,7 @@
-﻿@model List<OxPollen.ViewModels.BountyViewModel>
+﻿@model OxPollen.ViewModels.BountyChartsViewModel
 
 @{
     ViewBag.Title = "Bounty";
-
-    var topOrganisations = Model.GroupBy(m => m.Organisation).OrderByDescending(m => m.Select(n => n.Bounty).Sum()).Take(5);
-    var topIndividuals = Model.OrderByDescending(m => m.Bounty);
 }
 
 @* Header *@
@@ -25,10 +22,10 @@
                     <th>Bounty</th>
                 </tr>
             </thead>
-            @foreach (var user in topIndividuals)
+            @foreach (var user in Model.TopIndividuals)
             {
                 <tr>
-                    <td>@user.FullName</td>
+                    <td>@user.Name</td>
                     <td>@user.Bounty</td>
                 </tr>
             }
@@ -43,11 +40,11 @@
                     <th>Bounty</th>
                 </tr>
             </thead>
-            @foreach (var org in topOrganisations)
+            @foreach (var org in Model.TopOrgs)
             {
                 <tr>
-                    <td>@org.Key</td>
-                    <td>@org.Select(m => m.Bounty).Sum()</td>
+                    <td>@org.Name</td>
+                    <td>@org.Bounty</td>
                 </tr>
             }
         </table>

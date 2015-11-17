@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc.Rendering;
 
-namespace OxPollen.Models
+namespace OxPollen.ViewModels
 {
     public class ExternalLoginConfirmationViewModel
     {

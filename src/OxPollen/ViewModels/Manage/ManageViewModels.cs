@@ -7,7 +7,7 @@ using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc.Rendering;
 
-namespace OxPollen.Models
+namespace OxPollen.ViewModels
 {
     public class IndexViewModel
     {

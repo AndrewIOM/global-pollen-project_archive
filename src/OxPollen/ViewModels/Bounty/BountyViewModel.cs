@@ -7,8 +7,13 @@ namespace OxPollen.ViewModels
 {
     public class BountyViewModel
     {
-        public string FullName { get; set; }
-        public string Organisation { get; set; }
+        public string Name { get; set; }
         public double Bounty { get; set; }
+    }
+
+    public class BountyChartsViewModel
+    {
+        public List<BountyViewModel> TopOrgs { get; set; }
+        public List<BountyViewModel> TopIndividuals { get; set; }
     }
 }
