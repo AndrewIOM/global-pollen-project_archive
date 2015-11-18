@@ -69,12 +69,18 @@ namespace OxPollen.Controllers
         public IActionResult Identify(IdentificationViewModel result)
         {
             //Refetch data
-            var record = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == result.GrainId);
+            var record = _context.PollenRecords.Include(m => m.Identifications).ToList().FirstOrDefault(m => m.PollenRecordId == result.GrainId);
             result.Grain = record;
 
             if (!ModelState.IsValid)
             {
                 return View(result);
+            }
+
+            var userId = User.GetUserId();
+            if (record.Identifications.Select(m => m.UserId).Contains(userId))
+            {
+                return RedirectToAction("Identify", new { id = result.GrainId });
             }
 
             var identification = new Identification();
@@ -130,7 +136,7 @@ namespace OxPollen.Controllers
                 if (fileName.EndsWith(".jpg"))// Important for security if saving in webroot
                 {
                     var guid = Guid.NewGuid();
-                    var filePath = _hostingEnvironment.ApplicationBasePath + "\\..\\..\\..\\wwwroot\\grain-images\\" + guid + ".jpg";
+                    var filePath = "C:\\OxPollen\\wwwroot\\grain-images\\" + guid + ".jpg";
                     await file.SaveAsAsync(filePath);
                     result.PhotoUrl = "\\grain-images\\" + guid + ".jpg";
                 }

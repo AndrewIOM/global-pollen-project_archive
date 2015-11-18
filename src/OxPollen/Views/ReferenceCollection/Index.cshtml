@@ -8,24 +8,31 @@
 <p>Our reference collection contains pollen taxa for which grains have been submitted and successfully identified.</p>
 <div class="row">
     <div class="col-md-12">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Latin Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            @foreach (var taxon in Model)
-            {
-                <tr>
-                    <td>
-                        <img class="media-object" src="@taxon.ImageUrl" alt="Pollen Sample Image" height="92">
-                    </td>
-                    <td>@taxon.LatinName</td>
-                    <td><a role="button" class="btn btn-primary" href="@Url.Action("View", new { id = @taxon.Id } )">View Details</a></td>
-                </tr>
-            }
-        </table>
+        @if (Model.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Latin Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                @foreach (var taxon in Model)
+                {
+                    <tr>
+                        <td>
+                            <img class="media-object" src="@taxon.ImageUrl" alt="Pollen Sample Image" height="92">
+                        </td>
+                        <td>@taxon.LatinName</td>
+                        <td><a role="button" class="btn btn-primary" href="@Url.Action("View", new { id = @taxon.Id } )">View Details</a></td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <p>Our reference collection is currently empty. Get identifying!</p>
+        }
     </div>
 </div>    
