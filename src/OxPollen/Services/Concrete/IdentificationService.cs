@@ -1,17 +1,16 @@
 ﻿using Microsoft.Data.Entity;
 using OxPollen.Models;
+using OxPollen.Services.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace OxPollen.Services
+namespace OxPollen.Services.Concrete
 {
-    public class IdentificationService
+    public class IdentificationService : IIdentificationService
     {
-        private readonly PollenDbContext _context;
-
-        public IdentificationService(PollenDbContext context)
+        private readonly OxPollenDbContext _context;
+        public IdentificationService(Models.OxPollenDbContext context)
         {
             _context = context;
         }
@@ -20,12 +19,8 @@ namespace OxPollen.Services
         {
             var bounty = newIdentification.Record.Bounty;
             _context.Identifications.Add(newIdentification);
+            EvaluateGrainIdentificationStatus(newIdentification.Record.PollenRecordId);
             _context.SaveChanges();
-            UpdateGrainIdentificationStatus(newIdentification.Record.PollenRecordId);
-
-            ////Handle bounty
-            //var usersCorrectlyIdentified 
-            //UpdateUserBounty(newIdentification.UserId, bounty);
         }
 
         private void UpdateUserBounty(string userId, int bountyChange)
@@ -33,17 +28,13 @@ namespace OxPollen.Services
             var user = _context.Users.FirstOrDefault(m => m.Id == userId);
             if (user == null) throw new Exception("User was null!");
             user.Bounty += bountyChange;
-            _context.SaveChanges();
         }
 
-        private void UpdateGrainIdentificationStatus(int grainId)
+        private void EvaluateGrainIdentificationStatus(int grainId)
         {
-            //TODO Remove temp fix for lack of lazy loading in beta5
-            var grain = _context.PollenRecords.Include(c => c.Identifications).ToList()
-                .FirstOrDefault(m => m.PollenRecordId == grainId);
+            var grain = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == grainId);
             if (grain == null) return;
 
-            var grainBounty = grain.Bounty;
             var totalIdentifications = grain.Identifications.Count;
             if (totalIdentifications < 3)
             {
@@ -86,15 +77,13 @@ namespace OxPollen.Services
                     {
                         var dbUser = _context.Users.FirstOrDefault(m => m.Id == user);
                         if (dbUser == null) throw new Exception("Problem updating bounties");
-                        dbUser.Bounty += grainBounty;
+                        dbUser.Bounty += grain.Bounty;
                     }
                 } else
                 {
                     grain.HasConfirmedIdentity = false;
                 }
             }
-
-            _context.SaveChanges();
         }
     }
 }

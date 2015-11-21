@@ -7,7 +7,7 @@ using OxPollen.Models;
 
 namespace OxPollen.Migrations
 {
-    [DbContext(typeof(PollenDbContext))]
+    [DbContext(typeof(Models.OxPollenDbContext))]
     [Migration("20151117173841_initial")]
     partial class initial
     {

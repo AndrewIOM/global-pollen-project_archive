@@ -1,39 +1,44 @@
 ﻿using Microsoft.AspNet.Mvc;
 using Microsoft.Dnx.Runtime;
 using OxPollen.Models;
-using OxPollen.Services;
+using OxPollen.Services.Abstract;
 using OxPollen.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OxPollen.Controllers
 {
     public class BountyController : Controller
     {
-        private readonly PollenDbContext _context;
-        private readonly IdentificationService _idService;
-        private IApplicationEnvironment _hostingEnvironment;
+        private readonly IIdentificationService _idService;
+        private readonly IUserService _userService;
 
-        public BountyController(PollenDbContext context, IdentificationService idService, IApplicationEnvironment env)
+        public BountyController(IIdentificationService id, IUserService user)
         {
-            _context = context;
-            _idService = idService;
-            _hostingEnvironment = env;
+            _idService = id;
+            _userService = user;
         }
 
         // GET: /<controller>/
         public IActionResult Index()
         {
-            var model = _context.Users.Select(m => new BountyViewModel()
+            var users = _userService.GetAll();
+            var topOrgs = users.GroupBy(m => m.Organisation)
+                .OrderByDescending(m => m.Select(n => n.Bounty).Sum()).Take(5);
+            var topUsers = users.OrderByDescending(m => m.Bounty).Take(5);
+            var model = new BountyChartsViewModel()
             {
-                FullName = m.FullName,
-                Organisation = m.Organisation, 
-                Bounty = m.Bounty
-            }).ToList();
+                TopIndividuals = topUsers.Select(m => new BountyViewModel()
+                {
+                    Name = m.FullName,
+                    Bounty = m.Bounty
+                }).ToList(),
+                TopOrgs = topOrgs.Select(m => new BountyViewModel()
+                {
+                    Name = m.Key,
+                    Bounty = m.Select(o => o.Bounty).Sum()
+                }).ToList()
+            };
             return View(model);
         }
-
     }
 }

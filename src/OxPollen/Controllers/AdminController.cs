@@ -14,8 +14,8 @@ namespace OxPollen.Controllers
     //[Authorize(Roles ="Admin")]
     public class AdminController : Controller
     {
-        private readonly PollenDbContext _context;
-        public AdminController(PollenDbContext context)
+        private readonly OxPollenDbContext _context;
+        public AdminController(OxPollenDbContext context)
         {
             _context = context;
         }

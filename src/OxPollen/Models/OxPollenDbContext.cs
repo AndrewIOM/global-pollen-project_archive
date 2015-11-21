@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OxPollen.Models
 {
-    public class PollenDbContext : IdentityDbContext<ApplicationUser>
+    public class OxPollenDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<PollenRecord> PollenRecords { get; set; }
         public DbSet<Identification> Identifications { get; set; }

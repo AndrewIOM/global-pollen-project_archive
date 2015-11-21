@@ -9,6 +9,8 @@ using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
 using OxPollen.Models;
 using OxPollen.Services;
+using OxPollen.Services.Abstract;
+using OxPollen.Services.Concrete;
 
 namespace OxPollen
 {
@@ -41,12 +43,12 @@ namespace OxPollen
             // Add Entity Framework services to the services container.
             services.AddEntityFramework()
                 .AddSqlServer()
-                .AddDbContext<PollenDbContext>(options =>
+                .AddDbContext<Models.OxPollenDbContext>(options =>
                     options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
 
             // Add Identity services to the services container.
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<PollenDbContext>()
+                .AddEntityFrameworkStores<Models.OxPollenDbContext>()
                 .AddDefaultTokenProviders();
 
             // Add MVC services to the services container.
@@ -59,7 +61,10 @@ namespace OxPollen
             // Register application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
-            services.AddTransient<IdentificationService, IdentificationService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IIdentificationService, IdentificationService>();
+            services.AddTransient<IGrainService, GrainService>();
+            services.AddTransient<IFileStoreService, ImageService>();
         }
 
         // Configure is called after ConfigureServices is called.

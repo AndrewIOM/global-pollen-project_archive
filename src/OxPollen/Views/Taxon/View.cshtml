@@ -28,7 +28,7 @@
     @foreach (var record in Model.Records)
     {
         <div class="col-sm-2">
-            <a href="@Url.Action("Identify", "Pollen", new { id = @record.PollenRecordId } )"><img src="@record.PhotoUrl" style="width:100%" /></a>
+            <a href="@Url.Action("Identify", "Grain", new { id = @record.PollenRecordId } )"><img src="@record.PhotoUrl" style="width:100%" /></a>
         </div>
     }
 </div>
