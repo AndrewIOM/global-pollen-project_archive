@@ -29,7 +29,7 @@ namespace OxPollen.Migrations
                     OrganisationId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CountryCode = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,8 +181,11 @@ namespace OxPollen.Migrations
                     GrainId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AgeYearsBeforePresent = table.Column<int>(nullable: true),
+                    Family = table.Column<string>(nullable: true),
+                    Genus = table.Column<string>(nullable: true),
                     Latitude = table.Column<double>(nullable: false),
                     Longitude = table.Column<double>(nullable: false),
+                    Species = table.Column<string>(nullable: true),
                     SubmittedById = table.Column<string>(nullable: false),
                     TaxonTaxonId = table.Column<int>(nullable: true),
                     TimeAdded = table.Column<DateTime>(nullable: false)

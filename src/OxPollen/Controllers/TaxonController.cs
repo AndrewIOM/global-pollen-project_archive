@@ -42,8 +42,10 @@ namespace OxPollen.Controllers
             var taxon = _context.Taxa.FirstOrDefault(m => m.TaxonId == id);
             if (taxon != null)
             {
-                var grains = _context.PollenRecords.Include(m => m.Images).Include(m => m.Taxon)
-                    .Where(m => m.Taxon.TaxonId == taxon.TaxonId).ToList();
+                List<Grain> grains = null;
+                if (taxon.Rank == Taxonomy.Species) grains = _context.PollenRecords.Include(m => m.Images).Where(m => m.Genus + " " + m.Species == taxon.LatinName).ToList();
+                if (taxon.Rank == Taxonomy.Genus) grains = _context.PollenRecords.Include(m => m.Images).Where(m => m.Genus == taxon.LatinName).ToList();
+                if (taxon.Rank == Taxonomy.Family) grains = _context.PollenRecords.Include(m => m.Images).Where(m => m.Family == taxon.LatinName).ToList();
                 taxon.Records = grains;
                 return View("View", taxon);
             }

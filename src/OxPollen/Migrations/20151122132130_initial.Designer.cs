@@ -8,7 +8,7 @@ using OxPollen.Models;
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    [Migration("20151121213858_initial")]
+    [Migration("20151122132130_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,9 +164,15 @@ namespace OxPollen.Migrations
 
                     b.Property<int?>("AgeYearsBeforePresent");
 
+                    b.Property<string>("Family");
+
+                    b.Property<string>("Genus");
+
                     b.Property<double>("Latitude");
 
                     b.Property<double>("Longitude");
+
+                    b.Property<string>("Species");
 
                     b.Property<string>("SubmittedById")
                         .IsRequired();
@@ -221,7 +227,8 @@ namespace OxPollen.Migrations
 
                     b.Property<string>("CountryCode");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.HasKey("OrganisationId");
                 });

@@ -25,6 +25,8 @@ namespace OxPollen.Models
 
         //Identifications
         public virtual List<Identification> Identifications { get; set; }
-        public virtual Taxon Taxon { get; set; }
+        public string Species { get; set; }
+        public string Genus { get; set; }
+        public string Family { get; set; }
     }
 }

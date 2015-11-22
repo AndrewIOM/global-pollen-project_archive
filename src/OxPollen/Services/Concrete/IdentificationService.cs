@@ -46,7 +46,6 @@ namespace OxPollen.Services.Concrete
 
         public void SaveIdentification(Identification newIdentification)
         {
-            //TODO Link up family-genus-species
             //TODO Reinstate user bounties
 
             _context.Identifications.Add(newIdentification);
@@ -55,7 +54,7 @@ namespace OxPollen.Services.Concrete
             Taxon familyTaxon = null;
             Taxon genusTaxon = null;
             Taxon speciesTaxon = null;
-            var grain = newIdentification.Grain;
+            var grain = _context.PollenRecords.FirstOrDefault(m => m.GrainId == newIdentification.Grain.GrainId); //Get tracked object
             var confirmedFamilyName = GetFamily(grain);
             if (!string.IsNullOrEmpty(confirmedFamilyName))
             {
@@ -71,6 +70,7 @@ namespace OxPollen.Services.Concrete
                 }
                 familyTaxon.Records.Add(grain);
                 _context.Add(familyTaxon);
+                grain.Family = confirmedFamilyName;
             }
 
             var confirmedGenusName = GetGenus(grain);
@@ -84,11 +84,12 @@ namespace OxPollen.Services.Concrete
                         LatinName = confirmedGenusName,
                         Rank = Taxonomy.Genus,
                         Records = new List<Grain>(),
-                        ParentTaxa = familyTaxon != null ? familyTaxon : null
+                        ParentTaxa = genusTaxon != null ? genusTaxon : null
                     };
                 }
                 genusTaxon.Records.Add(grain);
                 _context.Add(genusTaxon);
+                grain.Genus = confirmedGenusName;
             }
 
             var confirmedSpeciesName = GetSpecies(grain);
@@ -107,6 +108,7 @@ namespace OxPollen.Services.Concrete
                 }
                 speciesTaxon.Records.Add(grain);
                 _context.Add(speciesTaxon);
+                grain.Species = confirmedSpeciesName;
             }
 
             _context.SaveChanges();

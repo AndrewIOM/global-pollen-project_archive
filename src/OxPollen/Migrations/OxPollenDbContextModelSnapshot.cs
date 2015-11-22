@@ -163,9 +163,15 @@ namespace OxPollen.Migrations
 
                     b.Property<int?>("AgeYearsBeforePresent");
 
+                    b.Property<string>("Family");
+
+                    b.Property<string>("Genus");
+
                     b.Property<double>("Latitude");
 
                     b.Property<double>("Longitude");
+
+                    b.Property<string>("Species");
 
                     b.Property<string>("SubmittedById")
                         .IsRequired();
