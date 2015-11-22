@@ -10,80 +10,135 @@ namespace OxPollen.Services.Concrete
     public class IdentificationService : IIdentificationService
     {
         private readonly OxPollenDbContext _context;
-        public IdentificationService(Models.OxPollenDbContext context)
+        public IdentificationService(OxPollenDbContext context)
         {
             _context = context;
         }
 
+        public bool HasConfirmedIdentity(Grain grain)
+        {
+            var family = GetFamily(grain);
+            var genus = GetGenus(grain);
+            var species = GetSpecies(grain);
+            if (!string.IsNullOrEmpty(family) || !string.IsNullOrEmpty(genus)
+                || !string.IsNullOrEmpty(species))
+                return true;
+            return false;
+        }
+
+        public string GetFamily(Grain grain)
+        {
+            var family = GetConfirmedIdentity(grain.Identifications.Select(m => m.Family).ToList());
+            return family;
+        }
+
+        public string GetGenus(Grain grain)
+        {
+            var genus = GetConfirmedIdentity(grain.Identifications.Select(m => m.Genus).ToList());
+            return genus;
+        }
+
+        public string GetSpecies(Grain grain)
+        {
+            var species = GetConfirmedIdentity(grain.Identifications.Select(m => m.Species).ToList());
+            return species;
+        }
+
         public void SaveIdentification(Identification newIdentification)
         {
-            var bounty = newIdentification.Record.Bounty;
+            //TODO Link up family-genus-species
+            //TODO Reinstate user bounties
+
             _context.Identifications.Add(newIdentification);
-            EvaluateGrainIdentificationStatus(newIdentification.Record.PollenRecordId);
+
+            //Evaluate identification status
+            Taxon familyTaxon = null;
+            Taxon genusTaxon = null;
+            Taxon speciesTaxon = null;
+            var grain = newIdentification.Grain;
+            var confirmedFamilyName = GetFamily(grain);
+            if (!string.IsNullOrEmpty(confirmedFamilyName))
+            {
+                familyTaxon = _context.Taxa.FirstOrDefault(m => m.LatinName == confirmedFamilyName && m.Rank == Taxonomy.Family);
+                if (familyTaxon == null)
+                {
+                    familyTaxon = new Taxon()
+                    {
+                        LatinName = confirmedFamilyName,
+                        Rank = Taxonomy.Family,
+                        Records = new List<Grain>()
+                    };
+                }
+                familyTaxon.Records.Add(grain);
+                _context.Add(familyTaxon);
+            }
+
+            var confirmedGenusName = GetGenus(grain);
+            if (!string.IsNullOrEmpty(confirmedGenusName))
+            {
+                genusTaxon = _context.Taxa.FirstOrDefault(m => m.LatinName == confirmedGenusName && m.Rank == Taxonomy.Genus);
+                if (genusTaxon == null)
+                {
+                    genusTaxon = new Taxon()
+                    {
+                        LatinName = confirmedGenusName,
+                        Rank = Taxonomy.Genus,
+                        Records = new List<Grain>(),
+                        ParentTaxa = familyTaxon != null ? familyTaxon : null
+                    };
+                }
+                genusTaxon.Records.Add(grain);
+                _context.Add(genusTaxon);
+            }
+
+            var confirmedSpeciesName = GetSpecies(grain);
+            if (!string.IsNullOrEmpty(confirmedSpeciesName))
+            {
+                speciesTaxon = _context.Taxa.FirstOrDefault(m => m.LatinName == confirmedSpeciesName && m.Rank == Taxonomy.Species);
+                if (speciesTaxon == null)
+                {
+                    speciesTaxon = new Taxon()
+                    {
+                        LatinName = confirmedSpeciesName,
+                        Rank = Taxonomy.Species,
+                        Records = new List<Grain>(),
+                        ParentTaxa = genusTaxon != null ? genusTaxon : null
+                    };
+                }
+                speciesTaxon.Records.Add(grain);
+                _context.Add(speciesTaxon);
+            }
+
             _context.SaveChanges();
         }
 
-        private void UpdateUserBounty(string userId, int bountyChange)
+        //private void UpdateUserBounty(string userId, int bountyChange)
+        //{
+        //    var user = _context.Users.FirstOrDefault(m => m.Id == userId);
+        //    if (user == null) throw new Exception("User was null!");
+        //    user.BountyScore += bountyChange;
+        //}
+
+        private string GetConfirmedIdentity(List<string> ids)
         {
-            var user = _context.Users.FirstOrDefault(m => m.Id == userId);
-            if (user == null) throw new Exception("User was null!");
-            user.Bounty += bountyChange;
+            if (ids.Count < 3) return null;
+
+            int percentAgreementRequired = 100;
+            var groups = ids.GroupBy(m => m);
+            var percentAgreement = (groups.Count() / (percentAgreementRequired / 100)) * 100;
+            if (percentAgreement >= percentAgreementRequired)
+            {
+                var agreedName = groups.OrderBy(m => m.Key).First().Key;
+                return agreedName;
+            }
+            return null;
         }
 
-        private void EvaluateGrainIdentificationStatus(int grainId)
+        public bool IsIdentifiedByUser(int grainId, string userId)
         {
-            var grain = _context.PollenRecords.FirstOrDefault(m => m.PollenRecordId == grainId);
-            if (grain == null) return;
-
-            var totalIdentifications = grain.Identifications.Count;
-            if (totalIdentifications < 3)
-            {
-                grain.HasConfirmedIdentity = false;
-            }
-            else
-            {
-                int percentAgreementRequired = 100;
-                var groups = grain.Identifications.GroupBy(m => m.TaxonName);
-                var percentAgreement = (groups.Count() / (percentAgreementRequired / 100)) * 100;
-
-                if (percentAgreement >= percentAgreementRequired)
-                {
-                    grain.HasConfirmedIdentity = true;
-                    grain.TimeIdentityConfirmed = DateTime.Now;
-
-                    //Add or Update Taxon
-                    var agreedName = groups.OrderBy(m => m.Key).First().Key;
-                    var existingTaxon = _context.Taxa.FirstOrDefault(m => string.Equals(m.LatinName, agreedName, StringComparison.OrdinalIgnoreCase));
-                    if (existingTaxon == null)
-                    {
-                        //Create new taxon and link
-                        var taxon = new Taxon()
-                        {
-                            CommonName = "",
-                            LatinName = agreedName
-                        };
-                        taxon.Records = new List<PollenRecord>();
-                        taxon.Records.Add(grain);
-                        _context.Taxa.Add(taxon);
-                    } else
-                    {
-                        //Update existing taxon
-                        existingTaxon.Records.Add(grain);
-                    }
-
-                    //Update User Bounties
-                    var usersWithCorrectAnswer = grain.Identifications.Where(m => m.TaxonName == agreedName).Select(m => m.UserId);
-                    foreach (var user in usersWithCorrectAnswer)
-                    {
-                        var dbUser = _context.Users.FirstOrDefault(m => m.Id == user);
-                        if (dbUser == null) throw new Exception("Problem updating bounties");
-                        dbUser.Bounty += grain.Bounty;
-                    }
-                } else
-                {
-                    grain.HasConfirmedIdentity = false;
-                }
-            }
-        }
+            var grainIds = _context.Identifications.Include(m => m.Grain).Include(m => m.User)
+                .Where(m => m.Grain.GrainId == grainId && m.User.Id == userId);
+            if (grainIds.Count() > 0) return true;
+            return false;        }
     }
 }

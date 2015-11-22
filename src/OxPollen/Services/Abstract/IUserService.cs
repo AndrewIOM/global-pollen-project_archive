@@ -8,9 +8,9 @@ namespace OxPollen.Services.Abstract
 {
     public interface IUserService
     {
-        IEnumerable<ApplicationUser> GetAll();
-        ApplicationUser GetById(string id);
-        IEnumerable<string> GetOrganisations();
+        IEnumerable<AppUser> GetAll();
+        AppUser GetById(string id);
+        IEnumerable<Organisation> GetOrganisations();
 
     }
 }

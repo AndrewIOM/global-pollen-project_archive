@@ -11,8 +11,8 @@ namespace OxPollen.Controllers
 {
     public class TaxonController : Controller
     {
-        private readonly Models.OxPollenDbContext _context;
-        public TaxonController(Models.OxPollenDbContext context)
+        private readonly OxPollenDbContext _context;
+        public TaxonController(OxPollenDbContext context)
         {
             _context = context;
         }
@@ -20,15 +20,15 @@ namespace OxPollen.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-            var taxa = _context.Taxa.Include(m => m.Records).ToList();
+            var taxa = _context.Taxa.Include(m => m.Records).Include(m => m.ParentTaxa).ToList();
             var model = taxa.Select(m => new TaxonViewModel()
             {
-                CommonName = m.CommonName,
                 Id = m.TaxonId,
-                LatinName = m.LatinName,
-                ImageUrl = m.Records.FirstOrDefault() == null ? "/images/pollensample.jpg" : m.Records.FirstOrDefault().PhotoUrl,
-                ConfirmedGrainsCount = m.Records.Count,
-                ContentionRating = 1.3 //m.Records.Select(r => r.Identifications.Select(i => i.TaxonName).Distinct().Count()).Sum()
+
+                LatinName = m.Rank == Taxonomy.Species ? m.ParentTaxa.LatinName + " " + m.LatinName : m.LatinName,
+                KeyImageUrl = "/images/pollensample.jpg",
+                ConfirmedGrainsCount = m.Records.Count(),
+                Rank = m.Rank
             }).ToList();
             return View(model);
         }

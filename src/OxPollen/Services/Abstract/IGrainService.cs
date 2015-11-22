@@ -8,8 +8,8 @@ namespace OxPollen.Services.Abstract
 {
     public interface IGrainService
     {
-        IEnumerable<PollenRecord> GetUnidentifiedGrains();
-        PollenRecord GetById(int id);
-        void Add(PollenRecord newRecord);
+        IEnumerable<Grain> GetUnidentifiedGrains();
+        Grain GetById(int id);
+        void Add(Grain newRecord);
     }
 }

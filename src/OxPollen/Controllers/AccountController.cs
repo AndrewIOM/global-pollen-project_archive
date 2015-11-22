@@ -16,16 +16,16 @@ namespace Test2.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly OxPollen.Models.OxPollenDbContext _applicationDbContext;
         private static bool _databaseChecked;
 
         public AccountController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
             OxPollen.Models.OxPollenDbContext applicationDbContext)
@@ -103,13 +103,22 @@ namespace Test2.Controllers
             EnsureDatabaseCreated(_applicationDbContext);
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser {
+                var org = _applicationDbContext.Organisations.FirstOrDefault(o => o.Name == model.Organisation);
+                if (org == null)
+                {
+                    org = new Organisation()
+                    {
+                        Name = model.Organisation
+                    };
+                }
+
+                var user = new AppUser {
                     UserName = model.Email,
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Title = model.Title,
-                    Organisation = model.Organisation
+                    Organisation = org
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -210,7 +219,7 @@ namespace Test2.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new AppUser { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -461,7 +470,7 @@ namespace Test2.Controllers
             }
         }
 
-        private async Task<ApplicationUser> GetCurrentUserAsync()
+        private async Task<AppUser> GetCurrentUserAsync()
         {
             return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
         }

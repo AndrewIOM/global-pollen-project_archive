@@ -1,4 +1,4 @@
-﻿@model List<PollenRecord>
+﻿@model List<OxPollen.ViewModels.GrainViewModel>
 
 @{
     ViewBag.Title = "Unidentified Pollen Grains";
@@ -51,9 +51,9 @@ else
                 {
                     <tr>
                         <td>@grain.Bounty</td>
-                        <td><a href="@Url.Action("Identify", new { id = @grain.PollenRecordId } )"><img src="@grain.PhotoUrl" style="max-width:200px;width:100%;height:auto" /></a></td>
+                        <td><a href="@Url.Action("Identify", new { id = @grain.Id } )"><img src="@grain.ImageLocation" style="max-width:200px;width:100%;height:auto" /></a></td>
                         <td>@grain.TimeAdded</td>
-                        <td><a role="button" class="btn btn-primary" href="@Url.Action("Identify", new { id = @grain.PollenRecordId } )">Identify</a></td>
+                        <td><a role="button" class="btn btn-primary" href="@Url.Action("Identify", new { id = @grain.Id } )">Identify</a></td>
                     </tr>
                 }
             </table>

@@ -1,4 +1,4 @@
-﻿@model List<ApplicationUser>
+﻿@model List<AppUser>
 @{
     ViewBag.Title = "Manage Users";
 }
@@ -22,7 +22,7 @@
     {
         <tr>
             <td>@user.Id</td>
-            <td>@user.FullName</td>
+            <td>@user.FullName()</td>
             <td>@user.Organisation</td>
             <td><button type="button" class="btn" href="mailto:@user.Email">Email</button></td>
             <td><button type="button" class="btn btn-danger disabled">Ban User</button></td>

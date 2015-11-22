@@ -8,17 +8,19 @@ namespace OxPollen.Models
 {
     public class Taxon
     {
+        [Key]
         public int TaxonId { get; set; }
-
-        [Display(Name = "Latin Name")]
+        [Required]
         public string LatinName { get; set; }
-        [Display(Name = "Common (English) Name")]
-        public string CommonName { get; set; }
+        [Required]
+        public Taxonomy Rank { get; set; }
 
         public int GbifId { get; set; }
         public int NeotomaId { get; set; }
 
         //Navigation Properties
-        public virtual List<PollenRecord> Records { get; set; }
+        public virtual List<Grain> Records { get; set; }
+        public virtual List<Taxon> ChildTaxa { get; set; }
+        public virtual Taxon ParentTaxa { get; set; }
     }
 }

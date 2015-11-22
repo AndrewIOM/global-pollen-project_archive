@@ -1,8 +1,8 @@
 ﻿@model OxPollen.ViewModels.IdentificationViewModel
 
 @{
-    ViewBag.Title = "Grain Details #" + Model.Grain.PollenRecordId;
-    var timeSinceAdd = DateTime.Now - Model.Grain.TimeAdded;
+    ViewBag.Title = "Grain Details #" + Model.GrainId;
+    var timeSinceAdd = DateTime.Now - Model.TimeAdded;
 }
 
 @* Breadcrumb *@
@@ -11,7 +11,7 @@
     <div class="col-md-12">
         <ol class="breadcrumb">
             <li><a asp-action="Index">Unidentified Grains</a></li>
-            <li class="active">Grain #@Model.Grain.PollenRecordId</li>
+            <li class="active">Grain #@Model.GrainId</li>
         </ol>
     </div>
 </div>
@@ -19,10 +19,15 @@
 @* Header *@
 <div class="row">
     <div class="col-md-12">
-        <h1>Pollen Grain #@Model.Grain.PollenRecordId</h1>
-        @if (Model.Grain.HasConfirmedIdentity)
-        { <h4>Identified as @Model.Grain.Taxon.LatinName</h4>}
-        else
+        <h1>Pollen Grain #@Model.GrainId</h1>
+        @if (!string.IsNullOrEmpty(Model.IdentifiedFamily))
+        { <h4>Family: @Model.IdentifiedFamily</h4> }
+        @if (!string.IsNullOrEmpty(Model.IdentifiedGenus))
+        { <h4>Genus: @Model.IdentifiedGenus</h4> }
+        @if (!string.IsNullOrEmpty(Model.IdentifiedSpecies))
+        { <h4>Species: @Model.IdentifiedSpecies</h4> }
+        @if (string.IsNullOrEmpty(Model.IdentifiedFamily) && string.IsNullOrEmpty(Model.IdentifiedGenus
+                    ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
         {
             <h4>Unidentified</h4>
         }
@@ -32,7 +37,11 @@
 <div class="row">
     @* Left Column: Photos *@
     <div class="col-md-6">
-        <img src="@Model.Grain.PhotoUrl" style="width:100%; height:100%" />
+        @foreach (var image in Model.ImageUrls)
+        {
+            <img src="@image" style="width:100%; height:100%" />
+            <p>Image Scale: @Model.ImageScale micrometres</p>
+        }
     </div>
     @* Right Column: Details and IDs *@
     <div class="col-md-6">
@@ -45,15 +54,15 @@
             <p>Added @timeSinceAdd.Days.ToString() days ago.</p>
         }
         <p>
-            Approximate Age: @Model.Grain.ApproximateAge @if (!Model.Grain.ApproximateAge.HasValue)
+            Approximate Age: @Model.Age @if (!Model.Age.HasValue)
             {
                 <span>Unknown</span>
             }
         </p>
-        <p>Number of IDs: @Model.Grain.Identifications.Count</p>
+        <p>Number of IDs: @Model.Identifications.Count</p>
         <label>Location</label>
         <img style="text-align: left; margin-right: auto; display: block; max-width: 100%" alt="Pollen Location"
-             src="http://maps.google.com/maps/api/staticmap?center=@Model.Grain.Latitude,@Model.Grain.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Grain.Latitude,@Model.Grain.Longitude&amp&amp;amp;sensor=false">
+             src="http://maps.google.com/maps/api/staticmap?center=@Model.Latitude,@Model.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Latitude,@Model.Longitude&amp&amp;amp;sensor=false">
         @if (User.Identity.IsAuthenticated)
         {
             @if (Model.AlreadyIdentifiedByUser)
@@ -62,28 +71,43 @@
             }
             else
             {
+                <hr />
                 <h3>Can you identify this grain?</h3>
-                <div class="row">
-                    @using (Html.BeginForm("Identify", "Grain", FormMethod.Post, new { @class = "form" }))
+                @using (Html.BeginForm("Identify", "Grain", FormMethod.Post, new { @class = "form" }))
                     {
-                        @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
-                        @Html.HiddenFor(m => m.GrainId)
-                        <div class="row">
-                            <div class="col-md-12">
-                                @Html.LabelFor(m => m.TaxonName)
-                            </div>
+                    @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
+                    @Html.HiddenFor(m => m.GrainId)
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>I can identify this grain to the following resolution: </p>
+                            <select asp-for="TaxonomicResolution" class="form-control" id="TaxonomicResolution">
+                                <option value="3">Species</option>
+                                <option value="2">Genus</option>
+                                <option value="1">Family</option>
+                            </select>
                         </div>
-                        <div class="row">
-                            <div class="col-md-10">
-                                <input type="text" asp-for="TaxonName" class="form-control" />
-                                <span asp-validation-for="TaxonName" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-2">
-                                <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <input type="text" asp-for="Family" class="form-control" placeholder="Family" />
+                            <span asp-validation-for="Family" class="text-danger"></span>
                         </div>
-                    }
-                </div>
+                        <div class="col-sm-4">
+                            <input type="text" asp-for="Genus" class="form-control" placeholder="Genus" />
+                            <span asp-validation-for="Genus" class="text-danger"></span>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" asp-for="Species" class="form-control" placeholder="Species" />
+                            <span asp-validation-for="Species" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+                        </div>
+                    </div>
+                }
             }
         }
         else
@@ -97,16 +121,26 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Pollen Taxon</th>
-                            <th>Count</th>
+                            <th>Identification</th>
+                            <th>Time</th>
                         </tr>
                     </thead>
-                    @foreach (var taxa in Model.Grain.Identifications.Select(m => m.TaxonName).Distinct())
+                    @foreach (var id in Model.Identifications)
                     {
-                        int count = Model.Grain.Identifications.Where(m => m.TaxonName == taxa).Count();
                         <tr>
-                            <td>@taxa</td>
-                            <td><span class="badge">@count</span></td>
+                            @if (id.Rank == Taxonomy.Family)
+                            {
+                                <td>Someone suggested this was of the family @id.Family</td>
+                            }
+                            else if (id.Rank == Taxonomy.Genus)
+                            {
+                                <td>Someone suggested this was of the genus @id.Genus</td>
+                            }
+                            else if (id.Rank == Taxonomy.Species)
+                            {
+                                <td>Someone suggested this was of the species @id.Genus @id.Species</td>
+                            }
+                            <td><span class="badge">@((DateTime.Now - id.Time).Days) days ago.</span></td>
                         </tr>
                     }
                 </table>

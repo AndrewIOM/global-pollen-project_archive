@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Net.Http.Headers;
-using Microsoft.Dnx.Runtime;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace OxPollen.Services.Concrete
 {
@@ -33,7 +33,7 @@ namespace OxPollen.Services.Concrete
             var extension = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.TrimStart('"').TrimEnd('"').Split('.').Last();
             if (!IsAcceptedExtension(extension)) return null;
             var guid = Guid.NewGuid();
-            var filePath = "C:\\OxPollen\\wwwroot\\user-image-uploads\\" + guid + "." + extension;
+            var filePath = "C:\\Projects\\OxPollen\\src\\OxPollen\\wwwroot\\user-image-uploads\\" + guid + "." + extension;
             await file.SaveAsAsync(filePath);
             return "\\user-image-uploads\\" + guid + "." + extension;
         }

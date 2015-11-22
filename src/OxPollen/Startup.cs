@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Diagnostics.Entity;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
-using Microsoft.Dnx.Runtime;
-using Microsoft.Framework.Configuration;
-using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using OxPollen.Models;
 using OxPollen.Services;
 using OxPollen.Services.Abstract;
@@ -16,6 +15,8 @@ namespace OxPollen
 {
     public class Startup
     {
+        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             // Setup configuration sources.
@@ -47,7 +48,7 @@ namespace OxPollen
                     options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
 
             // Add Identity services to the services container.
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<Models.OxPollenDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -81,7 +82,10 @@ namespace OxPollen
             {
                 app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage(DatabaseErrorPageOptions.ShowAll);
+                app.UseDatabaseErrorPage(options =>
+                {
+                    options.EnableAll();
+                });
             }
             else
             {

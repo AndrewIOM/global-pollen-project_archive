@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.Mvc;
-using Microsoft.Dnx.Runtime;
 using OxPollen.Models;
 using OxPollen.Services.Abstract;
 using OxPollen.ViewModels;
@@ -22,22 +21,26 @@ namespace OxPollen.Controllers
         public IActionResult Index()
         {
             var users = _userService.GetAll();
-            var topOrgs = users.GroupBy(m => m.Organisation)
-                .OrderByDescending(m => m.Select(n => n.Bounty).Sum()).Take(5);
-            var topUsers = users.OrderByDescending(m => m.Bounty).Take(5);
+            var orgs = _userService.GetOrganisations();
+
+            var topOrgs = orgs.Select(m => new BountyViewModel()
+            {
+                Bounty = m.Members.Select(n => n.BountyScore).Sum(),
+                Name = m.Name
+            });
+
+            var topUsers = users.Select(m => new BountyViewModel()
+            {
+                Bounty = m.BountyScore,
+                Name = m.FullName()
+            });
+
             var model = new BountyChartsViewModel()
             {
-                TopIndividuals = topUsers.Select(m => new BountyViewModel()
-                {
-                    Name = m.FullName,
-                    Bounty = m.Bounty
-                }).ToList(),
-                TopOrgs = topOrgs.Select(m => new BountyViewModel()
-                {
-                    Name = m.Key,
-                    Bounty = m.Select(o => o.Bounty).Sum()
-                }).ToList()
+                TopIndividuals = topUsers.ToList(),
+                TopOrgs = topOrgs.ToList()
             };
+
             return View(model);
         }
     }

@@ -1,22 +1,25 @@
-﻿@model PollenRecord
+﻿@model OxPollen.ViewModels.AddGrainViewModel
 @section scripts{
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript" src="http://cdn.rawgit.com/tapmodo/Jcrop/master/js/jquery.Jcrop.min.js"></script>
+}
+@{
+    ViewBag.Title = "Add a Grain";
 }
 
 <h2>Add Unidentified Pollen</h2>
 <p>Intro blurb about uploading your own unidentified pollen...</p>
 
-@using (Html.BeginForm("AddUnidentifiedPollen", "Grain", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+@using (Html.BeginForm("Add", "Grain", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
 {
-    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+    <div asp-validation-summary="ValidationSummary.All" class="alert alert-danger" role="alert"></div>
 
         <div class="row">
             <div class="col-md-2">
                 <label>Upload a Photo</label>
             </div>
             <div class="col-md-10">
-                <input type="file" name="files" id="files" accept=".jpg,.jpeg,.png,.gif" />
+                <input type="file" name="files" id="files" multiple="multiple" accept=".jpg,.jpeg,.png,.gif" />
 
                 <table border="0" cellpadding="0" cellspacing="5">
                     <tr>
@@ -35,8 +38,11 @@
                 <input type="hidden" name="imgWidth" id="imgWidth" />
                 <input type="hidden" name="imgHeight" id="imgHeight" />
                 <input type="hidden" name="imgCropped" id="imgCropped" />
-
-                <span asp-validation-for="PhotoUrl" class="text-danger"></span>
+                <div class="input-group">
+                    <input type="text" asp-for="ImagesScale" class="form-control" id="ImageScale" placeholder="Scale" />
+                    <span class="input-group-addon">Micrometres</span>
+                </div>
+                <span asp-validation-for="ImagesScale" class="text-danger"></span>
             </div>
         </div>
 
@@ -85,10 +91,10 @@
             </div>
             <div class="col-md-10">
                 <div class="input-group">
-                    <input type="text" class="form-control" asp-for="ApproximateAge" placeholder="Age" />
+                    <input type="text" class="form-control" asp-for="AgeYearsBeforePresent" placeholder="Age" />
                     <div class="input-group-addon">Years Before Present</div>
                 </div>
-                <span asp-validation-for="ApproximateAge" class="text-danger"></span>
+                <span asp-validation-for="AgeYearsBeforePresent" class="text-danger"></span>
             </div>
         </div>
         <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Upload" />

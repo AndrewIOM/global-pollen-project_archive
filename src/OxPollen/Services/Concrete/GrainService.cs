@@ -16,22 +16,28 @@ namespace OxPollen.Services.Concrete
             _context = context;
         }
 
-        public void Add(PollenRecord newRecord)
+        public void Add(Grain newRecord)
         {
             _context.Add(newRecord);
             _context.SaveChanges();
         }
 
-        public PollenRecord GetById(int id)
+        public Grain GetById(int id)
         {
-            //Hack for lack of lazy loading
-            var result = _context.PollenRecords.Include(m => m.Identifications).ToList().FirstOrDefault(m => m.PollenRecordId == id);
+            var result = _context.PollenRecords
+                .Include(m => m.Identifications)            
+                .Include(m => m.Images).ToList()
+                .FirstOrDefault(m => m.GrainId == id);
             return result;
         }
 
-        public IEnumerable<PollenRecord> GetUnidentifiedGrains()
+        public IEnumerable<Grain> GetUnidentifiedGrains() //NB Move to ID Service instead?
         {
-            var result = _context.PollenRecords.Where(m => m.HasConfirmedIdentity == false);
+            var idService = new IdentificationService(_context); //TODO DI this reference
+            var result =  _context.PollenRecords
+                .Include(m => m.Images)
+                .Include(m => m.Identifications)
+                .Where(m => !idService.HasConfirmedIdentity(m));
             return result;
         }
     }
