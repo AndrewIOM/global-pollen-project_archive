@@ -9,5 +9,8 @@ namespace OxPollen.Models
 
         public string FileName { get; set; }
         public double ScaleNanoMetres { get; set; }
+
+        //Navigation
+        public Grain Grain { get; set; }
     }
 }

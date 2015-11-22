@@ -2,10 +2,37 @@
 
 @{
     ViewBag.Title = "Reference Collection";
+    var rank = Context.Request.Query["rank"];
+    string rankFilter;
+    if (rank.Count == 0) { rankFilter = "All"; } else { rankFilter = rank.FirstOrDefault(); };
 }
 
-<h1>Pollen Reference Collection</h1>
-<p>Our reference collection contains pollen taxa for which grains have been submitted and successfully identified.</p>
+@* Header *@
+<div class="row">
+    <div class="col-md-12">
+        <h1>Reference Collection</h1>
+        <p>
+            This collection contains pollen taxa that have been identified by the users of OxPollen. 
+        </p>
+        <div class="filters">
+            <h4><span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters</h4>
+            <span>Taoxnomic Rank: </span>
+            <div class="dropdown" style="display:inline;">
+                <button class="btn btn-default dropdown-toggle" type="button" id="filterMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    @rankFilter
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="filterMenu">
+                    <li><a href="@Url.Action("Index")">All</a></li>
+                    <li><a href="@Url.Action("Index", new { rank = Taxonomy.Species })">Species</a></li>
+                    <li><a href="@Url.Action("Index", new { rank = Taxonomy.Genus })">Genus</a></li>
+                    <li><a href="@Url.Action("Index", new { rank = Taxonomy.Family })">Family</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-md-12">
         @if (Model.Count > 0)
@@ -13,18 +40,16 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th></th>
                         <th>Latin Name</th>
+                        <th>Confirmed IDs</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 @foreach (var taxon in Model)
                 {
                     <tr>
-                        <td>
-                            <img class="media-object" src="@taxon.KeyImageUrl" alt="Pollen Sample Image" height="92">
-                        </td>
                         <td>@taxon.LatinName</td>
+                        <td>@taxon.ConfirmedGrainsCount</td>
                         <td><a role="button" class="btn btn-primary" href="@Url.Action("View", new { id = @taxon.Id } )">View Details</a></td>
                     </tr>
                 }

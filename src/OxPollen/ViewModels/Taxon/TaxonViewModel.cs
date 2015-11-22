@@ -10,7 +10,6 @@ namespace OxPollen.ViewModels
     {
         public int Id { get; set; }
         public string LatinName { get; set; }
-        public string KeyImageUrl { get; set; }
         public int ConfirmedGrainsCount { get; set; }
         public Taxonomy Rank { get; set; }
     }

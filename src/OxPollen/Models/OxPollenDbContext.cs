@@ -8,6 +8,7 @@ namespace OxPollen.Models
         //Records
         public DbSet<Grain> PollenRecords { get; set; }
         public DbSet<Identification> Identifications { get; set; }
+        public DbSet<GrainImage> Images { get; set; }
 
         //Taxonomy
         public DbSet<Taxon> Taxa { get; set; }

@@ -99,7 +99,7 @@ namespace OxPollen.Services.Concrete
                 {
                     speciesTaxon = new Taxon()
                     {
-                        LatinName = confirmedSpeciesName,
+                        LatinName = confirmedGenusName + " " + confirmedSpeciesName,
                         Rank = Taxonomy.Species,
                         Records = new List<Grain>(),
                         ParentTaxa = genusTaxon != null ? genusTaxon : null

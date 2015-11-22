@@ -20,7 +20,7 @@ namespace Test2.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
-        private readonly OxPollen.Models.OxPollenDbContext _applicationDbContext;
+        private readonly OxPollenDbContext _applicationDbContext;
         private static bool _databaseChecked;
 
         public AccountController(
@@ -111,6 +111,8 @@ namespace Test2.Controllers
                         Name = model.Organisation
                     };
                 }
+                _applicationDbContext.Organisations.Add(org);
+                _applicationDbContext.SaveChanges();
 
                 var user = new AppUser {
                     UserName = model.Email,
