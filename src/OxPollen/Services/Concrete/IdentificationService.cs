@@ -51,6 +51,9 @@ namespace OxPollen.Services.Concrete
         {
             //TODO Reinstate user bounties
 
+            newIdentification.Family = FirstCharToUpper(newIdentification.Family);
+            newIdentification.Genus = FirstCharToUpper(newIdentification.Genus);
+            newIdentification.Species = FirstCharToLower(newIdentification.Species);
             _context.Identifications.Add(newIdentification);
 
             //Evaluate identification status
@@ -157,6 +160,18 @@ namespace OxPollen.Services.Concrete
         {
             _context.Identifications.Remove(identification);
             _context.SaveChanges();
+        }
+
+        private string FirstCharToUpper(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+            return input.First().ToString().ToUpper() + input.Substring(1).ToLower();
+        }
+
+        private string FirstCharToLower(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+            return input.First().ToString().ToLower() + input.Substring(1).ToLower();
         }
     }
 }
