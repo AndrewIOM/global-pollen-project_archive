@@ -5,13 +5,12 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using OxPollen.Models;
 using OxPollen.Services;
-using OxPollen.Controllers;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Linq;
 using OxPollen.ViewModels;
 
-namespace Test2.Controllers
+namespace OxPollen.Controllers
 {
     [Authorize]
     public class AccountController : Controller

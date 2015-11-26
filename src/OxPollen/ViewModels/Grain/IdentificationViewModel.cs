@@ -1,6 +1,7 @@
 ﻿using OxPollen.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace OxPollen.ViewModels
 {
@@ -20,9 +21,15 @@ namespace OxPollen.ViewModels
 
         //Identification Form
         public bool AlreadyIdentifiedByUser { get; set; }
+        public Identification UserIdentification { get; set; }
+
+        [Required]
         public Taxonomy TaxonomicResolution { get; set; }
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "The name must be alphabetic only.")]
         public string Family { get; set; }
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "The name must be alphabetic only.")]
         public string Genus { get; set; }
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "The name must be alphabetic only.")]
         public string Species { get; set; }
     }
 }

@@ -69,7 +69,7 @@ namespace OxPollen.Controllers
                 grain.Images.Add(new GrainImage()
                 {
                     FileName = file,
-                    ScaleNanoMetres = 1 //TODO remove hardcoding
+                    ScaleNanoMetres = result.ImagesScale.Value
                 });
             }
             _grainService.Add(grain);
@@ -97,15 +97,16 @@ namespace OxPollen.Controllers
             var record = _grainService.GetById(id);
             if (record == null) return RedirectToAction("Index");
 
-            bool identifiedByMe = false;
+            Identification myIdentification = null;
             if (User.IsSignedIn())
             {
-                identifiedByMe = _idService.IsIdentifiedByUser(id, User.GetUserId());
+                myIdentification = _idService.GetUsersIdentification(record.GrainId, User.GetUserId());
             }
 
             var viewModel = new IdentificationViewModel()
             {
-                AlreadyIdentifiedByUser = identifiedByMe,
+                AlreadyIdentifiedByUser = myIdentification != null,
+                UserIdentification = myIdentification,
                 GrainId = record.GrainId,
                 Age = record.AgeYearsBeforePresent,
                 IdentifiedFamily = _idService.GetFamily(record),
@@ -135,11 +136,11 @@ namespace OxPollen.Controllers
                 ModelState.AddModelError("Species", "You must enter both the genus and species");
 
             var record = _grainService.GetById(result.GrainId);
-            bool alreadyIdentified = false;
+            Identification myIdentification = null;
             if (record != null)
             {
-                alreadyIdentified = _idService.IsIdentifiedByUser(record.GrainId, User.GetUserId());
-                if (alreadyIdentified) ModelState.AddModelError("User", "You have already identified this grain, sorry!");
+                myIdentification = _idService.GetUsersIdentification(record.GrainId, User.GetUserId());
+                if (myIdentification != null) ModelState.AddModelError("User", "You have already identified this grain, sorry!");
             }
 
             if (ModelState.ErrorCount > 0)
@@ -148,7 +149,8 @@ namespace OxPollen.Controllers
                 //TODO Use a partial to avoid this
                 var viewModel = new IdentificationViewModel()
                 {
-                    AlreadyIdentifiedByUser = alreadyIdentified,
+                    AlreadyIdentifiedByUser = myIdentification != null,
+                    UserIdentification = myIdentification,
                     GrainId = record.GrainId,
                     Age = record.AgeYearsBeforePresent,
                     IdentifiedFamily = _idService.GetFamily(record),
@@ -183,6 +185,22 @@ namespace OxPollen.Controllers
 
             ViewData["successMessage"] = "Thank you! Your identification has been registered.";
             return RedirectToAction("Identify", new { id = result.GrainId });
+        }
+
+        [Authorize]
+        public IActionResult RemoveIdentification(int identificationId)
+        {
+            //Check Prerequisites
+            if (identificationId == 0) return HttpBadRequest();
+            var existingId = _idService.GetById(identificationId);
+            if (existingId == null) return HttpBadRequest();
+            if (_idService.HasConfirmedIdentity(existingId.Grain)) return HttpBadRequest();
+            if (existingId.User.Id != User.GetUserId()) return HttpBadRequest();
+
+            //Execute
+            var grainId = existingId.Grain.GrainId;
+            _idService.Remove(existingId);
+            return RedirectToAction("Identify", new { id = grainId });
         }
 
         public IActionResult Help()
