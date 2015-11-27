@@ -67,7 +67,11 @@
         {
             @if (Model.AlreadyIdentifiedByUser)
             {
+                <hr />
+                <h3>Your Identification</h3>
+                <p>You identified this grain as <strong>@Model.UserIdentification.Family @Model.UserIdentification.Genus @Model.UserIdentification.Species</strong> on @Model.UserIdentification.Time</p>
                 <p>Thank you for your identification.</p>
+                <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
             }
             else
             {

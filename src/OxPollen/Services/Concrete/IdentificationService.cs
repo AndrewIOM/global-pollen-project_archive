@@ -28,19 +28,22 @@ namespace OxPollen.Services.Concrete
 
         public string GetFamily(Grain grain)
         {
-            var family = GetConfirmedIdentity(grain.Identifications.Select(m => m.Family).ToList());
+            var family = GetConfirmedIdentity(grain.Identifications
+                .Where(m => m.Family != null).Select(m => m.Family).ToList());
             return family;
         }
 
         public string GetGenus(Grain grain)
         {
-            var genus = GetConfirmedIdentity(grain.Identifications.Select(m => m.Genus).ToList());
+            var genus = GetConfirmedIdentity(grain.Identifications
+                .Where(m => m.Genus != null).Select(m => m.Genus).ToList());
             return genus;
         }
 
         public string GetSpecies(Grain grain)
         {
-            var species = GetConfirmedIdentity(grain.Identifications.Select(m => m.Species).ToList());
+            var species = GetConfirmedIdentity(grain.Identifications
+                .Where(m => m.Species != null).Select(m => m.Species).ToList());
             return species;
         }
 
@@ -48,13 +51,16 @@ namespace OxPollen.Services.Concrete
         {
             //TODO Reinstate user bounties
 
+            newIdentification.Family = FirstCharToUpper(newIdentification.Family);
+            newIdentification.Genus = FirstCharToUpper(newIdentification.Genus);
+            newIdentification.Species = FirstCharToLower(newIdentification.Species);
             _context.Identifications.Add(newIdentification);
 
             //Evaluate identification status
             Taxon familyTaxon = null;
             Taxon genusTaxon = null;
             Taxon speciesTaxon = null;
-            var grain = _context.PollenRecords.FirstOrDefault(m => m.GrainId == newIdentification.Grain.GrainId); //Get tracked object
+            var grain = _context.UserGrains.FirstOrDefault(m => m.GrainId == newIdentification.Grain.GrainId); //Get tracked object
             var confirmedFamilyName = GetFamily(grain);
             if (!string.IsNullOrEmpty(confirmedFamilyName))
             {
@@ -124,10 +130,9 @@ namespace OxPollen.Services.Concrete
         private string GetConfirmedIdentity(List<string> ids)
         {
             if (ids.Count < 3) return null;
-
-            int percentAgreementRequired = 100;
+            int percentAgreementRequired = 70;
             var groups = ids.GroupBy(m => m);
-            var percentAgreement = (groups.Count() / (percentAgreementRequired / 100)) * 100;
+            var percentAgreement = (groups.Count() / (double)(percentAgreementRequired / 100)) * 100;
             if (percentAgreement >= percentAgreementRequired)
             {
                 var agreedName = groups.OrderBy(m => m.Key).First().Key;
@@ -136,11 +141,37 @@ namespace OxPollen.Services.Concrete
             return null;
         }
 
-        public bool IsIdentifiedByUser(int grainId, string userId)
+        public Identification GetUsersIdentification(int grainId, string userId)
         {
-            var grainIds = _context.Identifications.Include(m => m.Grain).Include(m => m.User)
-                .Where(m => m.Grain.GrainId == grainId && m.User.Id == userId);
-            if (grainIds.Count() > 0) return true;
-            return false;        }
+            var result = _context.Identifications.Include(m => m.Grain).Include(m => m.User)
+                .FirstOrDefault(m => m.Grain.GrainId == grainId && m.User.Id == userId);
+            return result;
+        }
+
+        public Identification GetById(int id)
+        {
+            var existing = _context.Identifications.Include(m => m.Grain)
+                .Include(m => m.User)
+                .FirstOrDefault(m => m.IdentificationId == id);
+            return existing;
+        }
+
+        public void Remove(Identification identification)
+        {
+            _context.Identifications.Remove(identification);
+            _context.SaveChanges();
+        }
+
+        private string FirstCharToUpper(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+            return input.First().ToString().ToUpper() + input.Substring(1).ToLower();
+        }
+
+        private string FirstCharToLower(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+            return input.First().ToString().ToLower() + input.Substring(1).ToLower();
+        }
     }
 }
