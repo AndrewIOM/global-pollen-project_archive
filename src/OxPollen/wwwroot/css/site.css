@@ -3,6 +3,32 @@
     padding-bottom: 20px;
 }
 
+/* Corner Ribbon */
+.corner-ribbon {
+    width: 200px;
+    background: #e43;
+    position: absolute;
+    text-align: center;
+    line-height: 50px;
+    letter-spacing: 1px;
+    color: #f0f0f0;
+    top: 25px;
+    right: -50px;
+    left: auto;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    background: #39d;
+    z-index: 9999;
+}
+
+    .corner-ribbon.sticky {
+        position: fixed;
+    }
+
+    .corner-ribbon.shadow {
+        box-shadow: 0 0 3px rgba(0,0,0,.3);
+    }
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
@@ -11,10 +37,10 @@
 }
 
 /* Bootstrap Customisations for OxPollen */
-        #map {
-            height: 500px;
-            border: 1px solid #000;
-        }
+#map {
+    height: 500px;
+    border: 1px solid #000;
+}
 
 body {
     font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -41,7 +67,7 @@ body {
     position: relative;
     padding: 30px 15px;
     height: 15em;
-    font-weight:bold;
+    font-weight: bold;
     color: rgba(255, 255, 255, .8);
     background-color: white;
     background-image: url(../images/pollenbanner.jpg);
@@ -50,19 +76,19 @@ body {
     font-size: 20px;
 }
 
-    h1 {
-           font-size: 3em;
-       }
+h1 {
+    font-size: 3em;
+}
 
-    .home-tri-image {
-        margin: 0 auto;
-        height:12em;
-    }
+.home-tri-image {
+    margin: 0 auto;
+    height: 12em;
+}
 
-    .pollen-grid {
-        width: 100%;
-    }
+.pollen-grid {
+    width: 100%;
+}
 
-    display-panel {
-        background-color: gold;
-    }
+display-panel {
+    background-color: gold;
+}
