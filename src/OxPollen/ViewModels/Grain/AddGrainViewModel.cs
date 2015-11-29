@@ -12,6 +12,7 @@ namespace OxPollen.ViewModels
         public double? Latitude { get; set; }
         [Required(ErrorMessage = "Use the map to enter a longitude")]
         public double? Longitude { get; set; }
+        [RegularExpression(@"^[1-9]+$", ErrorMessage = "Age must be numeric")]
         public int? AgeYearsBeforePresent { get; set; }
         [Required(ErrorMessage = "You must specify a scale for your image")]
         public double? ImagesScale { get; set; }

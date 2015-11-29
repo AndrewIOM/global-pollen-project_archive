@@ -143,3 +143,16 @@ div.img-thumbnail img {
     width:auto;
     text-align: center;
 }
+
+/* Autocomplete (on registration page) */
+.autocomplete {
+    position:absolute;
+    background-color:azure;
+    border: 1px solid black;
+    z-index: 1;
+}
+.autocomplete-option {
+    display: block;
+    margin: 0.5em;
+
+}

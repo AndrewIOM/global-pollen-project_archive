@@ -1,5 +1,6 @@
 ﻿@model OxPollen.ViewModels.AddGrainViewModel
 @section scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script type="text/javascript" src="~/js/grain/GoogleMaps.js"></script>
     <script type="text/javascript" src="~/lib/fabric/dist/fabric.min.js"></script>
     <script type="text/javascript" src="~/lib/darkroomjs/build/darkroom.js"></script>
