@@ -25,6 +25,24 @@ namespace OxPollen.Controllers
             return View(users);
         }
 
+        public IActionResult BanUser(string id)
+        {
+            var user = _context.Users.FirstOrDefault(m => m.Id == id);
+            if (user == null) return HttpBadRequest();
+            user.LockoutEnabled = true;
+            _context.SaveChanges();
+            return RedirectToAction("Users");
+        }
+
+        public IActionResult UnbanUser(string id)
+        {
+            var user = _context.Users.FirstOrDefault(m => m.Id == id);
+            if (user == null) return HttpBadRequest();
+            user.LockoutEnabled = false;
+            _context.SaveChanges();
+            return RedirectToAction("Users");
+        }
+
         public IActionResult Pollen()
         {
             var pollen = _context.Taxa.ToList();

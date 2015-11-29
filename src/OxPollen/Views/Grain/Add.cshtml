@@ -1,185 +1,203 @@
 ﻿@model OxPollen.ViewModels.AddGrainViewModel
 @section scripts{
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript" src="http://cdn.rawgit.com/tapmodo/Jcrop/master/js/jquery.Jcrop.min.js"></script>
+    <script type="text/javascript" src="~/js/grain/GoogleMaps.js"></script>
+    <script type="text/javascript" src="~/lib/fabric/dist/fabric.min.js"></script>
+    <script type="text/javascript" src="~/lib/darkroomjs/build/darkroom.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/grain/ImageManipluation.js"></script>
 }
 @{
     ViewBag.Title = "Add a Grain";
 }
 
-<h2>Add Unidentified Pollen</h2>
-<p>Intro blurb about uploading your own unidentified pollen...</p>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/grain/AjaxUpload.js"></script>
+<link rel="stylesheet" href="~/lib/darkroomjs/build/darkroom.css" />
 
-@using (Html.BeginForm("Add", "Grain", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
-{
-    <div asp-validation-summary="ValidationSummary.All" class="alert alert-danger" role="alert"></div>
+@section nocontainerbody {
 
-        <div class="row">
-            <div class="col-md-2">
-                <label>Upload a Photo</label>
+    <form id="addGrainForm" name="addGrain" method="post" onsubmit="return uploadFile()" action="">
+        <div class="addgrain-section headsection">
+            <div class="container">
+                <h2>Add Unidentified Pollen Grain</h2>
+                <p>Intro blurb about uploading your own unidentified pollen...</p>
+                <div asp-validation-summary="ValidationSummary.All" role="alert"></div>
+                <div id="validation-errors-box" style="display:none;" class="alert alert-danger" role="alert"></div>
             </div>
-            <div class="col-md-10">
-                <input type="file" name="files" id="files" multiple="multiple" accept=".jpg,.jpeg,.png,.gif" />
+        </div>
 
-                <table border="0" cellpadding="0" cellspacing="5">
-                    <tr>
-                        <td>
-                            <img id="Image1" src="" alt="" style="display: none" />
-                        </td>
-                        <td>
-                            <canvas id="canvas" height="5" width="5"></canvas>
-                        </td>
-                    </tr>
-                </table>
-                <br />
-                <input type="button" id="btnCrop" value="Crop" style="display: none" />
-                <input type="hidden" name="imgX1" id="imgX1" />
-                <input type="hidden" name="imgY1" id="imgY1" />
-                <input type="hidden" name="imgWidth" id="imgWidth" />
-                <input type="hidden" name="imgHeight" id="imgHeight" />
-                <input type="hidden" name="imgCropped" id="imgCropped" />
-                <div class="input-group">
-                    <input type="text" asp-for="ImagesScale" class="form-control" id="ImageScale" placeholder="Scale" />
-                    <span class="input-group-addon">Micrometres</span>
+        <div class="addgrain-section imagesection">
+            <div class="container">
+                <div class="row">
+                    <h3><span class="numberCircle">1</span> Add Your Images</h3>
+                    <p>After you select your image, you can crop and rotate it. You can add up to five images of a single grain. Adding more images from different angles may aid with identification.</p>
                 </div>
-                <span asp-validation-for="ImagesScale" class="text-danger"></span>
+                <div class="row">
+                    <div class="fileUpload btn btn-primary">
+                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span><span> Select Your Images</span>
+                        <input type="file" multiple="multiple" class="upload" onchange="handleFiles(this);" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2"><label>Current Uploads: </label></div>
+                    <div class="col-md-10">
+                        <div class="row" id="image-thumbnails">
+                            None
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Image Scale</label>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <input type="text" asp-for="ImagesScale" class="form-control" id="ImageScale" placeholder="Scale" />
+                            <span class="input-group-addon">Micrometres</span>
+                        </div>
+                        <span asp-validation-for="ImagesScale" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-2">
-                <label>Where was the pollen grain collected from?</label>
-            </div>
-            <div class="col-md-10">
-                <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-                <div id="map"></div>
-                <br />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                @Html.LabelFor(m => m.Latitude)
-            </div>
-            <div class="col-md-10">
-                <div class="input-group">
-                    <input type="text" asp-for="Latitude" class="form-control" id="Latitude" placeholder="Latitude" />
-                    <span class="input-group-addon">Decimal Degrees</span>
+        <div class="addgrain-section mapsection">
+            <div class="container">
+                <div class="row">
+                    <h3><span class="numberCircle">2</span> Location</h3>
                 </div>
-                <span asp-validation-for="Latitude" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">
-                @Html.LabelFor(m => m.Longitude)
-            </div>
-            <div class="col-md-10">
-                <div class="input-group">
-                    <input type="text" asp-for="Longitude" class="form-control" id="Longitude" placeholder="Longitude" />
-                    <span class="input-group-addon">Decimal Degrees</span>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Where was the pollen grain collected from?</label>
+                    </div>
+                    <div class="col-md-10">
+                        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+                        <div id="map"></div>
+                        <br />
+                    </div>
                 </div>
-                <span asp-validation-for="Longitude" class="text-danger"></span>
-            </div>
-            <div class="col-md-4">
-            </div>
-            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.Latitude)
+                    </div>
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <input type="text" asp-for="Latitude" class="form-control" id="Latitude" placeholder="Latitude" />
+                            <span class="input-group-addon">Decimal Degrees</span>
+                        </div>
+                        <span asp-validation-for="Latitude" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.LabelFor(m => m.Longitude)
+                    </div>
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <input type="text" asp-for="Longitude" class="form-control" id="Longitude" placeholder="Longitude" />
+                            <span class="input-group-addon">Decimal Degrees</span>
+                        </div>
+                        <span asp-validation-for="Longitude" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-2">
-                <label>Approximate Age of Sample (Optional)</label>
-            </div>
-            <div class="col-md-10">
-                <div class="input-group">
-                    <input type="text" class="form-control" asp-for="AgeYearsBeforePresent" placeholder="Age" />
-                    <div class="input-group-addon">Years Before Present</div>
+        <div class="addgrain-section optionalsection">
+            <div class="container">
+                <div class="row">
+                    <h3><span class="numberCircle">3</span> Optional Information</h3>
+                    <p>Adding information here is optional, but may help others to better identify your grain.</p>
                 </div>
-                <span asp-validation-for="AgeYearsBeforePresent" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Approximate Age of Sample</label>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <input type="text" class="form-control" asp-for="AgeYearsBeforePresent" placeholder="Age" />
+                            <div class="input-group-addon">Years Before Present</div>
+                        </div>
+                        <span asp-validation-for="AgeYearsBeforePresent" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
         </div>
-        <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Upload" />
+
+        <div class="addgrain-section savesection">
+            <div class="container">
+                <div class="row">
+                    <a id="submit" class="btn btn-primary" href="javascript: uploadFile()">Add My Grain!</a>
+                </div>
+            </div>
+        </div>
+    </form>
 }
 
+<script type="text/javascript" src="~/lib/bootstrap/js/modal.js"></script>
 <script type="text/javascript">
-    window.onload = function () {
-        console.log("loading google maps");
-        var latlng = new google.maps.LatLng(51.4975941, -0.0803232);
-        var map = new google.maps.Map(document.getElementById('map'), {
-            center: latlng,
-            zoom: 5,
-            mapTypeId: google.maps.MapTypeId.TERRAIN
-        });
+    function uploadFile() {
+        $('#submit').prop('disabled', true);
+        $('#submit').addClass('disabled');
 
-        var marker;
-        function placeMarker(location) {
-            if (marker) {
-                marker.setPosition(location);
-            } else {
-                marker = new google.maps.Marker({
-                    position: location,
-                    map: map,
-                    title: "Pollen Sample Location",
-                    draggable: true
-                });
-                google.maps.event.addListener(marker, 'dragend', function (event) {
-                    updateLocationFormFields(event.latLng);
-                });
+        //Get form data
+        var form = document.getElementById('addGrainForm');
+        var formData = new FormData(form);
+
+        //Load Images
+        var imagesContainer = document.getElementById('image-thumbnails');
+        var imgs = imagesContainer.getElementsByTagName('img');
+        var imgSrcs = [];
+        for (var i = 0; i < imgs.length; i++) {
+            imgSrcs.push(imgs[i].src);
+        }
+        if (imgs.length >= 1) {
+            formData.append("ImageOne", imgSrcs[0]);
+        }
+        if (imgs.length >= 2) {
+            formData.append("ImageTwo", imgSrcs[1]);
+        }
+        if (imgs.length >= 3) {
+            formData.append("ImageThree", imgSrcs[2]);
+        }
+        if (imgs.length >= 4) {
+            formData.append("ImageFour", imgSrcs[3]);
+        }
+        if (imgs.length >= 5) {
+            formData.append("ImageFive", imgSrcs[4]);
+        }
+        console.log(formData);
+
+        //Ajax Request
+        ajax = new XMLHttpRequest();
+        ajax.onreadystatechange = function () {
+            if (ajax.readyState == 4 || ajax.readyState == "complete") {
+                if (ajax.status == 200) {
+                    location.href = "/Grain/Index";
+                }
+                if (ajax.status == 400 || ajax.status == 500) {
+                    var result = ajax.responseText;
+                    var resultJson = JSON.parse(result);
+                    console.log(resultJson);
+                    var errorBox = document.getElementById('validation-errors-box');
+                    $('#validation-errors-box').css('display', '');
+                    var newContent = "";
+                    $.each(resultJson, function (k, v) {
+                        newContent = newContent + '<p><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> ' + v[0] + '</p>';
+                    });
+                    errorBox.innerHTML = newContent;
+                    $("html, body").animate({ scrollTop: 0 }, "slow");
+                    $('#submit').prop('disabled', false);
+                    $('#submit').removeClass('disabled');
+                }
             }
         }
 
-        google.maps.event.addListener(map, 'click', function (event) {
-            placeMarker(event.latLng);
-            updateLocationFormFields(event.latLng);
-        });
-
-        function updateLocationFormFields(latLng) {
-            var lat = latLng.lat().toFixed(4);
-            var lon = latLng.lng().toFixed(4);
-            document.getElementById('Latitude').value = lat;
-            document.getElementById('Longitude').value = lon;
-        }
-    };
-</script>
-
-<script type="text/javascript">
-    $(function () {
-        $('#FileUpload1').change(function () {
-            $('#Image1').hide();
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('#Image1').show();
-                $('#Image1').attr("src", e.target.result);
-                $('#Image1').Jcrop({
-                    onChange: SetCoordinates,
-                    onSelect: SetCoordinates
-                });
-            }
-            reader.readAsDataURL($(this)[0].files[0]);
-        });
-
-        $('#btnCrop').click(function () {
-            var x1 = $('#imgX1').val();
-            var y1 = $('#imgY1').val();
-            var width = $('#imgWidth').val();
-            var height = $('#imgHeight').val();
-            var canvas = $("#canvas")[0];
-            var context = canvas.getContext('2d');
-            var img = new Image();
-            img.onload = function () {
-                canvas.height = height;
-                canvas.width = width;
-                context.drawImage(img, x1, y1, width, height, 0, 0, width, height);
-                $('#imgCropped').val(canvas.toDataURL());
-                $('[id*=btnUpload]').show();
-            };
-            img.src = $('#Image1').attr("src");
-        });
-    });
-    function SetCoordinates(c) {
-        $('#imgX1').val(c.x);
-        $('#imgY1').val(c.y);
-        $('#imgWidth').val(c.w);
-        $('#imgHeight').val(c.h);
-        $('#btnCrop').show();
-    };
+        ajax.open("POST", "/Grain/Add");
+        ajax.send(formData);
+    }
 </script>

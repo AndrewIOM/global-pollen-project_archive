@@ -92,3 +92,54 @@ h1 {
 display-panel {
     background-color: gold;
 }
+
+/* Add Grain Page */
+.numberCircle {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    border: 2px solid black;
+    color: black;
+    text-align: center;
+    font: 32px Arial, sans-serif;
+    display: inline-block;
+}
+.addgrain-section {
+    padding: 0.5em 1em;
+}
+.headsection {
+    background-color:#4a6084;
+    color:white;
+}
+.imagesection {
+}
+.mapsection {
+    background-color:#9ca2c4;
+}
+.savesection {
+}
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.img-thumbnail {
+    list-style:none;
+    display:inline;
+}
+div.img-thumbnail img {
+        height: 1em;
+    width:auto;
+    text-align: center;
+}

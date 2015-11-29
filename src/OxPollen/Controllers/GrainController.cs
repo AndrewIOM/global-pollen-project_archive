@@ -12,6 +12,7 @@ using OxPollen.Services.Abstract;
 using OxPollen.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.RegularExpressions;
 
 namespace OxPollen.Controllers
 {
@@ -37,24 +38,35 @@ namespace OxPollen.Controllers
             return View(model);
         }
 
+        private bool IsBase64String(string s)
+        {
+            s = s.Trim();
+            return (s.Length % 4 == 0) && Regex.IsMatch(s, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
+        }
+
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Add(AddGrainViewModel result, IList<IFormFile> files)
+        public async Task<IActionResult> Add(AddGrainViewModel result)
         {
             //Validation
-            if (files.Count == 0) ModelState.AddModelError("image", "You must upload an image");
-            foreach (var file in files)
-            {
-                if (!FileUploadUtility.IsImage(file)) ModelState.AddModelError("image", "files must be images");
-            }
+            //if (!string.IsNullOrEmpty(result.ImageOne)) if (!IsBase64String(result.ImageOne)) ModelState.AddModelError("ImageOne", "Image not ecoded in base64");
+            //if (!string.IsNullOrEmpty(result.ImageTwo)) if (!IsBase64String(result.ImageTwo)) ModelState.AddModelError("ImageTwo", "Image not ecoded in base64");
+            //if (!string.IsNullOrEmpty(result.ImageThree)) if (!IsBase64String(result.ImageThree)) ModelState.AddModelError("ImageThree", "Image not ecoded in base64");
+            //if (!string.IsNullOrEmpty(result.ImageFour)) if (!IsBase64String(result.ImageFour)) ModelState.AddModelError("ImageFour", "Image not ecoded in base64");
             if (ModelState.ErrorCount > 0)
             {
-                return View(result);
+                return HttpBadRequest(ModelState);
             }
 
             //Populate new Grain
+            var filesToUpload = new List<string>();
+            filesToUpload.Add(result.ImageOne);
+            if (!string.IsNullOrEmpty(result.ImageTwo)) filesToUpload.Add(result.ImageTwo);
+            if (!string.IsNullOrEmpty(result.ImageThree)) filesToUpload.Add(result.ImageThree);
+            if (!string.IsNullOrEmpty(result.ImageFour)) filesToUpload.Add(result.ImageFour);
+            var uploadedFiles = _uploadService.Upload(filesToUpload);
+
             AppUser currentUser = await UserManager.FindByNameAsync(User.GetUserName());
-            var uploadedFiles = await _uploadService.Upload(files);
             var grain = new Grain()
             {
                 AgeYearsBeforePresent = result.AgeYearsBeforePresent,
@@ -73,7 +85,7 @@ namespace OxPollen.Controllers
                 });
             }
             _grainService.Add(grain);
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         // GET: /<controller>/
@@ -193,9 +205,9 @@ namespace OxPollen.Controllers
             //Check Prerequisites
             if (identificationId == 0) return HttpBadRequest();
             var existingId = _idService.GetById(identificationId);
-            if (existingId == null) return HttpBadRequest();
+            if (existingId == null) return HttpNotFound();
             if (_idService.HasConfirmedIdentity(existingId.Grain)) return HttpBadRequest();
-            if (existingId.User.Id != User.GetUserId()) return HttpBadRequest();
+            if (existingId.User.Id != User.GetUserId()) return HttpUnauthorized();
 
             //Execute
             var grainId = existingId.Grain.GrainId;
