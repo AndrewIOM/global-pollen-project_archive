@@ -34,7 +34,7 @@ namespace OxPollen.Controllers
         [Authorize]
         public IActionResult Add()
         {
-            var model = new AddGrainViewModel();
+            var model = new GrainViewModel();
             return View(model);
         }
 
@@ -46,7 +46,7 @@ namespace OxPollen.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Add(AddGrainViewModel result)
+        public async Task<IActionResult> Add(GrainViewModel result)
         {
             //Validation
             //if (!string.IsNullOrEmpty(result.ImageOne)) if (!IsBase64String(result.ImageOne)) ModelState.AddModelError("ImageOne", "Image not ecoded in base64");
@@ -93,7 +93,7 @@ namespace OxPollen.Controllers
         {
             var grains = _grainService.GetUnidentifiedGrains();
             var model = grains
-                .OrderByDescending(m => BountyUtility.Calculate(m.TimeAdded)).Select(m => new GrainViewModel()
+                .OrderByDescending(m => BountyUtility.Calculate(m.TimeAdded)).Select(m => new ReadOnlyGrainViewModel()
                 {
                     Bounty = BountyUtility.Calculate(m.TimeAdded),
                     Id = m.GrainId,
@@ -200,6 +200,21 @@ namespace OxPollen.Controllers
         }
 
         [Authorize]
+        public IActionResult MyGrains()
+        {
+            var thisUser = User.GetUserId();
+            var grains = _grainService.GetByUser(thisUser).ToList();
+            var model = grains.Select(m => new ReadOnlyGrainViewModel()
+            {
+                Id = m.GrainId,
+                ImageLocation = m.Images.First().FileName,
+                Bounty = BountyUtility.Calculate(m.TimeAdded),
+                TimeAdded = m.TimeAdded
+            }).ToList();
+            return View(model);
+        }
+
+        [Authorize]
         public IActionResult RemoveIdentification(int identificationId)
         {
             //Check Prerequisites
@@ -218,6 +233,16 @@ namespace OxPollen.Controllers
         public IActionResult Help()
         {
             return View();
+        }
+
+        [Authorize]
+        public IActionResult Delete(int id)
+        {
+            var userId = User.GetUserId();
+            var grain = _grainService.GetById(id);
+            if (grain.SubmittedBy.Id != userId) return HttpBadRequest("Can only delete grains that were submitted by you");
+            var deleted = _grainService.MarkDeleted(grain);
+            return View("MyGrains");
         }
     }
 }

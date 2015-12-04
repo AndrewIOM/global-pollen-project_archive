@@ -1,5 +1,6 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="../gulpfile.js" />
+/// <reference path="js/account/organisationautocomplete.js" />
 /// <reference path="js/gbif.js" />
 /// <reference path="js/grain/ajaxupload.js" />
 /// <reference path="js/grain/googlemaps.js" />

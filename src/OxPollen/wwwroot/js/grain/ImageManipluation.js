@@ -15,12 +15,7 @@ function loadDarkroom(imgId) {
 
         plugins: {
             history: false,
-            save: {
-                callback: function () {
-                    this.darkroom.selfDestroy(); // Cleanup
-                    var newImage = dkrm.canvas.toDataURL();
-                }
-            }
+            save: false
         },
         init: function () {
             var cropPlugin = this.getPlugin('crop');
@@ -117,54 +112,16 @@ function handleFiles(input) {
     } else {
         d.innerHTML = "";
         for (var i = 0; i < input.files.length; i++) {
-            //For each image, create a thumbnail
             var div = document.createElement('div');
             div.style.display = 'inline';
-            div.className = "image-thumbnail";
+            div.className = "image-thumbnail col-md-6";
             d.appendChild(div);
             var img = document.createElement("img");
             img.src = window.URL.createObjectURL(input.files[i]);;
             img.id = "image-upload-" + (i + 1);
             img.style.height = '12em';
-            img.onload = function () {
-                window.URL.revokeObjectURL(this.src);
-            }
-            img.addEventListener('click', function (e) {
-                var id = $(this).attr("id");
-                loadDarkroom(id);
-            });
-            var sizeHuman = humanFileSize(input.files[i].size, true);
-            var fileName = input.files[i].name;
-            img.name = fileName + ' (' + sizeHuman + ')';
             div.appendChild(img);
-
-            var btn = document.createElement('a');
-            btn.className = 'btn btn-default btn-xs';
-            btn.id = 'button-image-' + (i + 1);
-            btn.innerHTML = 'Crop and Rotate';
-            btn.addEventListener('click', function (e) {
-                var id = $(this).attr("id").replace('button-image-', '');
-                var destId = 'image-upload-' + id;
-                loadDarkroom(destId);
-                $(this).hide();
-            });
-            div.appendChild(btn);
+            loadDarkroom(img.id);
         }
     }
-}
-
-function humanFileSize(bytes, si) {
-    var thresh = si ? 1000 : 1024;
-    if (Math.abs(bytes) < thresh) {
-        return bytes + ' B';
-    }
-    var units = si
-        ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-        : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-    var u = -1;
-    do {
-        bytes /= thresh;
-        ++u;
-    } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-    return bytes.toFixed(1) + ' ' + units[u];
 }

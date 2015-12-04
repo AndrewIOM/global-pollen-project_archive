@@ -104,55 +104,70 @@ display-panel {
     font: 32px Arial, sans-serif;
     display: inline-block;
 }
+
 .addgrain-section {
     padding: 0.5em 1em;
 }
+
 .headsection {
-    background-color:#4a6084;
-    color:white;
+    background-color: #4a6084;
+    color: white;
 }
+
 .imagesection {
 }
+
 .mapsection {
-    background-color:#9ca2c4;
+    background-color: #9ca2c4;
 }
+
 .savesection {
 }
+
 .fileUpload {
     position: relative;
     overflow: hidden;
     margin: 10px;
 }
-.fileUpload input.upload {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 0;
-    padding: 0;
-    font-size: 20px;
-    cursor: pointer;
-    opacity: 0;
-    filter: alpha(opacity=0);
-}
+
+    .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+
 .img-thumbnail {
-    list-style:none;
-    display:inline;
+    list-style: none;
+    margin-bottom:4em !important;
+    display: inline;
 }
+
 div.img-thumbnail img {
-        height: 1em;
-    width:auto;
+    height: 1em;
+    width: auto;
     text-align: center;
+}
+
+darkroom-container {
+    margin-bottom: 2em;
+    display: inline-block;
 }
 
 /* Autocomplete (on registration page) */
 .autocomplete {
-    position:absolute;
-    background-color:azure;
+    position: absolute;
+    background-color: azure;
     border: 1px solid black;
     z-index: 1;
 }
+
 .autocomplete-option {
     display: block;
     margin: 0.5em;
-
 }

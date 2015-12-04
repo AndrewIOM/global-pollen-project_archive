@@ -1,4 +1,4 @@
-﻿@model OxPollen.ViewModels.AddGrainViewModel
+﻿@model OxPollen.ViewModels.GrainViewModel
 @section scripts{
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script type="text/javascript" src="~/js/grain/GoogleMaps.js"></script>
@@ -34,26 +34,33 @@
                     <p>After you select your image, you can crop and rotate it. You can add up to five images of a single grain. Adding more images from different angles may aid with identification.</p>
                 </div>
                 <div class="row">
-                    <div class="fileUpload btn btn-primary">
+                    <div class="fileUpload btn btn-default">
                         <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span><span> Select Your Images</span>
                         <input type="file" multiple="multiple" class="upload" onchange="handleFiles(this);" />
+                    </div>
+                    <div class="photoUrls" style="display:none">
+                        <input type="text" asp-for="ImageOne" />
+                        <input type="text" asp-for="ImageTwo" />
+                        <input type="text" asp-for="ImageThree" />
+                        <input type="text" asp-for="ImageFour" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-2"><label>Current Uploads: </label></div>
                     <div class="col-md-10">
                         <div class="row" id="image-thumbnails">
-                            None
+                            <div class="col-md-12">None</div>
                         </div>
                     </div>
                 </div>
+                <br />
                 <div class="row">
                     <div class="col-md-2">
-                        <label>Image Scale</label>
+                        <label>Grain Size</label>
                     </div>
                     <div class="col-md-10">
                         <div class="input-group">
-                            <input type="text" asp-for="ImagesScale" class="form-control" id="ImageScale" placeholder="Scale" />
+                            <input type="text" asp-for="ImagesScale" class="form-control" id="ImageScale" placeholder="Maximum Diameter" />
                             <span class="input-group-addon">Micrometres</span>
                         </div>
                         <span asp-validation-for="ImagesScale" class="text-danger"></span>
@@ -83,7 +90,7 @@
                     </div>
                     <div class="col-md-10">
                         <div class="input-group">
-                            <input type="text" asp-for="Latitude" class="form-control" id="Latitude" placeholder="Latitude" />
+                            <input type="text" readonly="readonly" asp-for="Latitude" class="form-control" id="Latitude" placeholder="Latitude" />
                             <span class="input-group-addon">Decimal Degrees</span>
                         </div>
                         <span asp-validation-for="Latitude" class="text-danger"></span>
@@ -95,7 +102,7 @@
                     </div>
                     <div class="col-md-10">
                         <div class="input-group">
-                            <input type="text" asp-for="Longitude" class="form-control" id="Longitude" placeholder="Longitude" />
+                            <input type="text" readonly="readonly" asp-for="Longitude" class="form-control" id="Longitude" placeholder="Longitude" />
                             <span class="input-group-addon">Decimal Degrees</span>
                         </div>
                         <span asp-validation-for="Longitude" class="text-danger"></span>
@@ -145,32 +152,69 @@
         $('#submit').prop('disabled', true);
         $('#submit').addClass('disabled');
 
+        //Reset base64 images before submission
+        var image1 = document.getElementById('ImageOne');
+        var image2 = document.getElementById('ImageTwo');
+        var image3 = document.getElementById('ImageThree');
+        var image4 = document.getElementById('ImageFour');
+        image1.value = '';
+        image2.value = '';
+        image3.value = '';
+        image4.value = '';
+
+        //Save image state to Url from DarkroomJS instances
+        var instances = document.getElementsByClassName('darkroom-source-container');
+        var imgs = [];
+        for (var i = 0; i < instances.length; i++) {
+            imgs.push(instances[i].getElementsByClassName('lower-canvas')[0]);
+        }
+
+        //var imgs = document.getElementsByClassName('darkroom-source-container')
+        //    .getElementsByClassName('lower-canvas');
+        if (imgs.length >= 1) {
+            image1.value = imgs[0].toDataURL();
+        }
+        if (imgs.length >= 2) {
+            image2.value = imgs[1].toDataURL();
+        }
+        if (imgs.length >= 3) {
+            image3.value = imgs[2].toDataURL();
+        }
+        if (imgs.length >= 4) {
+            image4.value = imgs[3].toDataURL();
+        }
+
+        console.log(imgs);
+        console.log(image1.value);
+        console.log(image2.value);
+        console.log(image3.value);
+        console.log(image4.value);
+
+        //var imagesContainer = document.getElementById('image-thumbnails');
+        //var imgs = imagesContainer.getElementsByTagName('img');
+        //var imgSrcs = [];
+        //for (var i = 0; i < imgs.length; i++) {
+        //    imgSrcs.push(imgs[i].src);
+        //}
+        //if (imgs.length >= 1) {
+        //    formData.append("ImageOne", imgSrcs[0]);
+        //}
+        //if (imgs.length >= 2) {
+        //    formData.append("ImageTwo", imgSrcs[1]);
+        //}
+        //if (imgs.length >= 3) {
+        //    formData.append("ImageThree", imgSrcs[2]);
+        //}
+        //if (imgs.length >= 4) {
+        //    formData.append("ImageFour", imgSrcs[3]);
+        //}
+        //if (imgs.length >= 5) {
+        //    formData.append("ImageFive", imgSrcs[4]);
+        //}
+
         //Get form data
         var form = document.getElementById('addGrainForm');
         var formData = new FormData(form);
-
-        //Load Images
-        var imagesContainer = document.getElementById('image-thumbnails');
-        var imgs = imagesContainer.getElementsByTagName('img');
-        var imgSrcs = [];
-        for (var i = 0; i < imgs.length; i++) {
-            imgSrcs.push(imgs[i].src);
-        }
-        if (imgs.length >= 1) {
-            formData.append("ImageOne", imgSrcs[0]);
-        }
-        if (imgs.length >= 2) {
-            formData.append("ImageTwo", imgSrcs[1]);
-        }
-        if (imgs.length >= 3) {
-            formData.append("ImageThree", imgSrcs[2]);
-        }
-        if (imgs.length >= 4) {
-            formData.append("ImageFour", imgSrcs[3]);
-        }
-        if (imgs.length >= 5) {
-            formData.append("ImageFive", imgSrcs[4]);
-        }
         console.log(formData);
 
         //Ajax Request

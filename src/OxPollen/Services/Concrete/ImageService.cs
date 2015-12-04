@@ -26,7 +26,7 @@ namespace OxPollen.Services.Concrete
                 var trimmed = file.Replace(@"data:image/png;base64,", "");
                 byte[] bytes = Convert.FromBase64String(trimmed);
                 var guid = Guid.NewGuid();
-                var filePath = "C:\\OxPollen\\wwwroot\\user-image-uploads\\" + guid + "." + "png";
+                var filePath = "C:\\Projects\\OxPollen\\src\\OxPollen\\wwwroot\\user-image-uploads\\" + guid + "." + "png";
                 using (var imageFile = new FileStream(filePath, FileMode.Create))
                 {
                     imageFile.Write(bytes, 0, bytes.Length);

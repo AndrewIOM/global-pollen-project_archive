@@ -8,9 +8,10 @@ using OxPollen.Models;
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    partial class OxPollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20151203181405_deleteGrain")]
+    partial class deleteGrain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")

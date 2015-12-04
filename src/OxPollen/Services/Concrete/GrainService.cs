@@ -31,6 +31,14 @@ namespace OxPollen.Services.Concrete
             return result;
         }
 
+        public IEnumerable<Grain> GetByUser(string userId)
+        {
+            var result = _context.UserGrains.Include(m => m.SubmittedBy)
+                .Include(m => m.Images)
+                .Where(m => m.SubmittedBy.Id == userId);
+            return result;
+        }
+
         public IEnumerable<Grain> GetUnidentifiedGrains() //NB Move to ID Service instead?
         {
             var idService = new IdentificationService(_context); //TODO DI this reference
@@ -39,6 +47,21 @@ namespace OxPollen.Services.Concrete
                 .Include(m => m.Identifications)
                 .Where(m => !idService.HasConfirmedIdentity(m));
             return result;
+        }
+
+        public Grain MarkDeleted(Grain grain)
+        {
+            var result = _context.UserGrains.FirstOrDefault(m => m.GrainId == grain.GrainId);
+            if (result == null) return null;
+            result.IsDeleted = true;
+            _context.Update(result);
+            _context.SaveChanges();
+            return result;
+        }
+
+        public Grain Update(Grain grain)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Entity;
 using OxPollen.Models;
 using OxPollen.Services.Abstract;
+using OxPollen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,12 +50,13 @@ namespace OxPollen.Services.Concrete
 
         public void SaveIdentification(Identification newIdentification)
         {
-            //TODO Reinstate user bounties
-
             newIdentification.Family = FirstCharToUpper(newIdentification.Family);
             newIdentification.Genus = FirstCharToUpper(newIdentification.Genus);
             newIdentification.Species = FirstCharToLower(newIdentification.Species);
             _context.Identifications.Add(newIdentification);
+
+            //Calculate bounty rewards
+            var currentBounty = BountyUtility.Calculate(newIdentification.Grain.TimeAdded);
 
             //Evaluate identification status
             Taxon familyTaxon = null;
@@ -120,12 +122,12 @@ namespace OxPollen.Services.Concrete
             _context.SaveChanges();
         }
 
-        //private void UpdateUserBounty(string userId, int bountyChange)
-        //{
-        //    var user = _context.Users.FirstOrDefault(m => m.Id == userId);
-        //    if (user == null) throw new Exception("User was null!");
-        //    user.BountyScore += bountyChange;
-        //}
+        private void UpdateUserBounty(string userId, int bountyChange)
+        {
+            var user = _context.Users.FirstOrDefault(m => m.Id == userId);
+            if (user == null) throw new Exception("User was null!");
+            user.BountyScore += bountyChange;
+        }
 
         private string GetConfirmedIdentity(List<string> ids)
         {

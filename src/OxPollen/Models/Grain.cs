@@ -19,6 +19,8 @@ namespace OxPollen.Models
         public double Longitude { get; set; }
         [Required]
         public DateTime TimeAdded { get; set; }
+        [Required]
+        public bool IsDeleted { get; set; }
 
         //Optional
         public int? AgeYearsBeforePresent { get; set; }
@@ -28,5 +30,10 @@ namespace OxPollen.Models
         public string Species { get; set; }
         public string Genus { get; set; }
         public string Family { get; set; }
+
+        public Grain()
+        {
+            IsDeleted = false;
+        }
     }
 }
