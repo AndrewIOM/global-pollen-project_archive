@@ -88,7 +88,7 @@
                             <p>I can identify this grain to the following resolution: </p>
                             <select asp-for="TaxonomicResolution" class="form-control" id="TaxonomicResolution">
                                 <option value="3">Species</option>
-                                <option selected="selected" value="2">Genus</option>
+                                <option value="2">Genus</option>
                                 <option value="1">Family</option>
                             </select>
                         </div>
@@ -189,6 +189,7 @@
             list.innerHTML = "";
             if (!(data.length == 1 && data[0].canonicalName == document.getElementById(rank).value)) {
                 for (var i = 0; i < data.length; i++) {
+                    if (i > 10) continue;
                     var option = document.createElement('a');
                     option.innerHTML = data[i].canonicalName;
                     if (rank == 'Species' || rank == 'Genus') {
@@ -224,9 +225,6 @@
     }
 
     function disable(rank) {
-        var list = document.getElementById(rank + 'List');
-        $('#' + rank + 'List').css('display', 'none');
-        list.innerHTML = '';
     }
 
     //Base Functions

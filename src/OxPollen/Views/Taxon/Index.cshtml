@@ -4,7 +4,7 @@
     ViewBag.Title = "Reference Collection";
     var rank = Context.Request.Query["rank"];
     string rankFilter;
-    if (rank.Count == 0) { rankFilter = "All"; } else { rankFilter = rank.FirstOrDefault(); };
+    if (rank.Count == 0) { rankFilter = "Genus"; } else { rankFilter = rank.FirstOrDefault(); };
 }
 
 @* Header *@
@@ -23,7 +23,6 @@
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="filterMenu">
-                    <li><a href="@Url.Action("Index")">All</a></li>
                     <li><a href="@Url.Action("Index", new { rank = Taxonomy.Species })">Species</a></li>
                     <li><a href="@Url.Action("Index", new { rank = Taxonomy.Genus })">Genus</a></li>
                     <li><a href="@Url.Action("Index", new { rank = Taxonomy.Family })">Family</a></li>

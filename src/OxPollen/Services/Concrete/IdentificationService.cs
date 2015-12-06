@@ -51,91 +51,11 @@ namespace OxPollen.Services.Concrete
         public void SaveIdentification(Identification newIdentification)
         { 
             var grain = _context.UserGrains.FirstOrDefault(m => m.GrainId == newIdentification.Grain.GrainId);
-
-            //1. Standardise casing and add new ID
             newIdentification.Family = FirstCharToUpper(newIdentification.Family);
             newIdentification.Genus = FirstCharToUpper(newIdentification.Genus);
             newIdentification.Species = FirstCharToLower(newIdentification.Species);
             _context.Identifications.Add(newIdentification);
-
-            //2. Evaluate All IDs for status
-            Taxon familyTaxon = null;
-            Taxon genusTaxon = null;
-            Taxon speciesTaxon = null;
-
-            //2a) Family
-            var confirmedFamilyName = GetFamily(grain);
-            if (!string.IsNullOrEmpty(confirmedFamilyName))
-            {
-                familyTaxon = _context.Taxa
-                    .Include(m => m.Records)
-                    .FirstOrDefault(m => m.LatinName == confirmedFamilyName && m.Rank == Taxonomy.Family);
-                if (familyTaxon == null)
-                {
-                    familyTaxon = new Taxon()
-                    {
-                        LatinName = confirmedFamilyName,
-                        Rank = Taxonomy.Family,
-                        Records = new List<Grain>()
-                    };
-                }
-                var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, confirmedFamilyName, null, null);
-                familyTaxon.GbifId = gbifID.Result;
-                familyTaxon.Records.Add(grain);
-                _context.Add(familyTaxon);
-            }
-
-            var confirmedGenusName = GetGenus(grain);
-            if (!string.IsNullOrEmpty(confirmedGenusName))
-            {
-                genusTaxon = _context.Taxa
-                    .Include(m => m.Records)
-                    .FirstOrDefault(m => m.LatinName == confirmedGenusName && m.Rank == Taxonomy.Genus);
-                if (genusTaxon == null)
-                {
-                    genusTaxon = new Taxon()
-                    {
-                        LatinName = confirmedGenusName,
-                        Rank = Taxonomy.Genus,
-                        Records = new List<Grain>(),
-                        ParentTaxa = familyTaxon != null ? familyTaxon : null
-                    };
-                }
-                var gbifID = GbifUtility.GetGbifId(Taxonomy.Genus,
-                    familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, null);
-                genusTaxon.GbifId = gbifID.Result;
-                genusTaxon.Records.Add(grain);
-                _context.Add(genusTaxon);
-            }
-
-            var confirmedSpeciesName = GetSpecies(grain);
-            if (!string.IsNullOrEmpty(confirmedSpeciesName))
-            {
-                speciesTaxon = _context.Taxa
-                    .Include(m => m.Records)
-                    .FirstOrDefault(m => m.LatinName == confirmedSpeciesName && m.Rank == Taxonomy.Species);
-                if (speciesTaxon == null)
-                {
-                    speciesTaxon = new Taxon()
-                    {
-                        LatinName = confirmedGenusName + " " + confirmedSpeciesName,
-                        Rank = Taxonomy.Species,
-                        Records = new List<Grain>(),
-                        ParentTaxa = genusTaxon != null ? genusTaxon : null
-                    };
-                }
-                var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
-                    familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, confirmedSpeciesName);
-                speciesTaxon.GbifId = gbifID.Result;
-                speciesTaxon.Records.Add(grain);
-                _context.Add(speciesTaxon);
-            }
-
-            //Update cached identification on grain DbObject
-            grain.Family = familyTaxon == null ? "" : familyTaxon.LatinName;
-            grain.Genus = genusTaxon == null ? "" : genusTaxon.LatinName;
-            grain.Species = speciesTaxon == null ? "" : speciesTaxon.LatinName;
-
+            EvaluateIdentifications(grain);
             _context.SaveChanges();
         }
 
@@ -178,6 +98,85 @@ namespace OxPollen.Services.Concrete
         public void Remove(Identification identification)
         {
             _context.Identifications.Remove(identification);
+            var grain = _context.UserGrains.FirstOrDefault(m => m.GrainId == identification.Grain.GrainId);
+            EvaluateIdentifications(grain);
+            _context.SaveChanges();
+        }
+
+        private void EvaluateIdentifications(Grain grain)
+        {
+            Taxon familyTaxon = null;
+            Taxon genusTaxon = null;
+            Taxon speciesTaxon = null;
+
+            var confirmedFamilyName = GetFamily(grain);
+            if (!string.IsNullOrEmpty(confirmedFamilyName))
+            {
+                familyTaxon = _context.Taxa
+                    .Include(m => m.Records)
+                    .FirstOrDefault(m => m.LatinName == confirmedFamilyName && m.Rank == Taxonomy.Family);
+                if (familyTaxon == null)
+                {
+                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, confirmedFamilyName, null, null);
+                    familyTaxon = new Taxon()
+                    {
+                        LatinName = confirmedFamilyName,
+                        Rank = Taxonomy.Family,
+                        Records = new List<Grain>(),
+                        GbifId = gbifID.Result
+                    };
+                    _context.Add(familyTaxon);
+                }
+            }
+
+            var confirmedGenusName = GetGenus(grain);
+            if (!string.IsNullOrEmpty(confirmedGenusName))
+            {
+                genusTaxon = _context.Taxa
+                    .Include(m => m.Records)
+                    .FirstOrDefault(m => m.LatinName == confirmedGenusName && m.Rank == Taxonomy.Genus);
+                if (genusTaxon == null)
+                {
+                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Genus,
+                        familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, null);
+                    genusTaxon = new Taxon()
+                    {
+                        LatinName = confirmedGenusName,
+                        Rank = Taxonomy.Genus,
+                        Records = new List<Grain>(),
+                        ParentTaxa = familyTaxon != null ? familyTaxon : null,
+                        GbifId = gbifID.Result
+                    };
+                    _context.Add(genusTaxon);
+                }
+            }
+
+            var confirmedSpeciesName = GetSpecies(grain);
+            if (!string.IsNullOrEmpty(confirmedSpeciesName) && !string.IsNullOrEmpty(confirmedGenusName))
+            {
+                speciesTaxon = _context.Taxa
+                    .Include(m => m.Records)
+                    .FirstOrDefault(m => m.LatinName == confirmedGenusName + " " + confirmedSpeciesName && m.Rank == Taxonomy.Species);
+                if (speciesTaxon == null)
+                {
+                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
+                        familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, confirmedSpeciesName);
+                    speciesTaxon = new Taxon()
+                    {
+                        LatinName = confirmedGenusName + " " + confirmedSpeciesName,
+                        Rank = Taxonomy.Species,
+                        Records = new List<Grain>(),
+                        ParentTaxa = genusTaxon != null ? genusTaxon : null,
+                        GbifId = gbifID.Result
+                    };
+                    _context.Add(speciesTaxon);
+                }
+            }
+
+            //Update cached identification on grain DbObject
+            grain.Family = familyTaxon == null ? "" : familyTaxon.LatinName;
+            grain.Genus = genusTaxon == null ? "" : genusTaxon.LatinName;
+            grain.Species = speciesTaxon == null ? "" : speciesTaxon.LatinName;
             _context.SaveChanges();
         }
 
