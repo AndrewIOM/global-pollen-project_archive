@@ -4,11 +4,19 @@
     ViewBag.Title = "Unidentified Pollen Grains";
 }
 
-@* Header *@
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>Unidentified Grains</h2>
+            <p>These pollen grains remain unidentified. Can you help?</p>
+        </div>
+    </div>
+}
+
+@* Filters and Sorting *@
 <div class="row">
     <div class="col-md-12">
-        <h1>Pollen Grains</h1>
-        <p>These pollen grains remain unidentified. Can you help?</p>
+        <br />
         <div class="filters">
             <span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span> Sorted by
             <div class="dropdown" style="display:inline;">
@@ -25,6 +33,9 @@
         </div>
     </div>
 </div>
+<br />
+
+@* No Unidentified Grains *@
 @if (Model.Count == 0)
 {
     <div class="row">
@@ -34,29 +45,24 @@
         </div>
     </div>
 }
+    @* Grid of Grains *@
 else
 {
     <div class="row">
         <div class="col-md-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Bounty</th>
-                        <th></th>
-                        <th>Date Submitted</th>
-                        <th>Identify</th>
-                    </tr>
-                </thead>
+            <ul class="grain-grid columns-4">
                 @foreach (var grain in Model)
                 {
-                    <tr>
-                        <td>@grain.Bounty</td>
-                        <td><a href="@Url.Action("Identify", new { id = @grain.Id } )"><img src="@grain.ImageLocation" style="max-width:200px;width:100%;height:auto" /></a></td>
-                        <td>@grain.TimeAdded</td>
-                        <td><a role="button" class="btn btn-primary" href="@Url.Action("Identify", new { id = @grain.Id } )">Identify</a></td>
-                    </tr>
+                    <li>
+                        <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
+                            <div class="img-container">
+                                <img src="@grain.ImageLocation" />
+                                <div class="ribbon"><span>@grain.Bounty</span></div>
+                            </div>
+                        </a>
+                    </li>
                 }
-            </table>
+            </ul>
         </div>
     </div>
 }

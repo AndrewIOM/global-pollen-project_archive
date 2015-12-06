@@ -11,5 +11,9 @@ namespace OxPollen.ViewModels
         public double Bounty { get; set; }
         public string ImageLocation { get; set; }
         public DateTime TimeAdded { get; set; }
+
+        public string ConfirmedSpecies { get; set; }
+        public string ConfirmedGenus { get; set; }
+        public string ConfirmedFamily { get; set; }
     }
 }

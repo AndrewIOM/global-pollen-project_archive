@@ -20,7 +20,7 @@ namespace OxPollen.Controllers
 
         public IActionResult Index()
         {
-            var result = _context.UserGrains.Include(m => m.Images).OrderByDescending(m => m.TimeAdded)
+            var result = _context.UserGrains.Where(m => !m.IsDeleted).Include(m => m.Images).OrderByDescending(m => m.TimeAdded)
                 .Take(10).ToList();
             var model = result.Select(m => new ReadOnlyGrainViewModel()
                 {
@@ -28,7 +28,7 @@ namespace OxPollen.Controllers
                     Id = m.GrainId,
                     ImageLocation = m.Images.First().FileName,
                     TimeAdded = m.TimeAdded
-                }).ToList();
+                }).Take(15).ToList();
             return View(model);
         }
 

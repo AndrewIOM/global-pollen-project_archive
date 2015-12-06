@@ -4,6 +4,7 @@
     ViewData["Title"] = "Home";
 }
 
+@* Header *@
 @section homepageHeader {
     <header class="homepage-header">
         <div class="container">
@@ -13,27 +14,27 @@
     </header>
 }
 
-<!-- Do Stuff -->
+@* Marketing *@
 <div class="row">
     <div class="col-sm-4">
-        <img class="img-circle img-responsive home-tri-image" src="~/images/pepperpollen.png" alt="">
+        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen1.png" alt="">
         <h2>Submit Your Pollen</h2>
-        <p>These marketing boxes are a great place to put some information. These can contain summaries of what the company does, promotional information, or anything else that is relevant to the company. These will usually be below-the-fold.</p>
+        <p>If you're having trouble identifying a pollen grain to family, genus or species level, why not submit to OxPollen? Your grain becomes public, where others working with pollen can submit identifications. </p>
     </div>
     <div class="col-sm-4">
-        <img class="img-circle img-responsive home-tri-image" src="~/images/pepperpollen.png" alt="">
+        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen2.jpg" alt="">
         <h2>Add Your Expertise</h2>
-        <p>The images are set to be circular and responsive. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.</p>
+        <p>Specialise in pollen from a certain region or taxon? Help others by identifying pollen familiar to you.</p>
     </div>
     <div class="col-sm-4">
-        <img class="img-circle img-responsive home-tri-image" src="~/images/pepperpollen.png" alt="">
-        <h2>A Collective Reference</h2>
+        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen3.png" alt="">
+        <h2>Collective Reference</h2>
         <p>As more grains become identified, our reference collection will fill with pollen taxa and a range of example images for each. As OxPollen is linked to the Global Biodiversity Information Facility (GBIF) and Neotoma, you can explore the distribution of your species in space and time. </p>
     </div>
 </div>
 <hr />
 
-<!-- About OxPollen -->
+@* About OxPollen *@
 <div class="row">
     <div class="col-sm-8">
         <h2>How It Works</h2>
@@ -43,41 +44,20 @@
         </p>
     </div>
     <div class="col-sm-4">
-        <h2>After More Info?</h2>
-        <address>
-            <strong>OxPollen, Long-Term Ecology Lab</strong>
-            <br>Department of Zoology
-            <br>University of Oxford
-            <br>
-        </address>
-        <address>
-            <abbr title="Phone">P:</abbr>(123) 456-7890
-            <br>
-            <abbr title="Email">E:</abbr> <a href="mailto:#">oxpollen@zoo.ox.ac.uk</a>
-        </address>
-    </div>
-</div>
-<hr />
-
-
-<!-- Most Wanted Grains -->
-<div class="row">
-    <div class="col-md-12">
         <h2>Most Wanted</h2>
         <p>These pollen grains have remained unidentified for the longest time.</p>
-        <div class="pollen-grid">
-            <div class="row">
-
-                @foreach (var grain in Model)
+        <ul class="grain-grid columns-8">
+            @foreach (var grain in Model)
             {
-                    <a class="col-md-2 display-panel" href="@Url.Action("Identify", "Grain", new { id = grain.Id })" >
-                        <img src="@grain.ImageLocation" alt="..." style="height:125px">
-                        <p>Added: @grain.TimeAdded.ToShortDateString()</p>
-                        <p>Bounty: @grain.Bounty</p>
-                        <img style="text-align: left; margin-right: auto; display: block;" alt="Pollen Location" src="http://maps.google.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&amp;zoom=2&amp;size=200x125&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C40.702147,-74.015794&amp&amp;amp;sensor=false">
+                <li>
+                    <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
+                        <div class="img-container">
+                            <img src="@grain.ImageLocation" />
+                            <div class="ribbon"><span>@grain.Bounty</span></div>
+                        </div>
                     </a>
-                }
-            </div>
-        </div>
+                </li>
+            }
+        </ul>
     </div>
 </div>

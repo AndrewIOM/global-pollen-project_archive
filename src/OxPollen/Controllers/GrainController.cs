@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
 using OxPollen.Models;
 using OxPollen.ViewModels;
 using System;
@@ -13,6 +12,7 @@ using OxPollen.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace OxPollen.Controllers
 {
@@ -209,7 +209,10 @@ namespace OxPollen.Controllers
                 Id = m.GrainId,
                 ImageLocation = m.Images.First().FileName,
                 Bounty = BountyUtility.Calculate(m.TimeAdded),
-                TimeAdded = m.TimeAdded
+                TimeAdded = m.TimeAdded,
+                ConfirmedFamily = _idService.GetFamily(m),
+                ConfirmedGenus = _idService.GetGenus(m),
+                ConfirmedSpecies = _idService.GetSpecies(m)
             }).ToList();
             return View(model);
         }
@@ -240,9 +243,10 @@ namespace OxPollen.Controllers
         {
             var userId = User.GetUserId();
             var grain = _grainService.GetById(id);
+            if (_idService.HasConfirmedIdentity(grain)) return HttpBadRequest("Can't delete grains with confirmed identity");
             if (grain.SubmittedBy.Id != userId) return HttpBadRequest("Can only delete grains that were submitted by you");
             var deleted = _grainService.MarkDeleted(grain);
-            return View("MyGrains");
+            return RedirectToAction("MyGrains");
         }
     }
 }

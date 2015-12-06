@@ -109,9 +109,9 @@ namespace OxPollen.Controllers
                     {
                         Name = model.Organisation
                     };
+                    _applicationDbContext.Organisations.Add(org);
+                    _applicationDbContext.SaveChanges();
                 }
-                _applicationDbContext.Organisations.Add(org);
-                _applicationDbContext.SaveChanges();
 
                 var user = new AppUser {
                     UserName = model.Email,

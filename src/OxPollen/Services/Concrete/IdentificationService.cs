@@ -49,24 +49,27 @@ namespace OxPollen.Services.Concrete
         }
 
         public void SaveIdentification(Identification newIdentification)
-        {
+        { 
+            var grain = _context.UserGrains.FirstOrDefault(m => m.GrainId == newIdentification.Grain.GrainId);
+
+            //1. Standardise casing and add new ID
             newIdentification.Family = FirstCharToUpper(newIdentification.Family);
             newIdentification.Genus = FirstCharToUpper(newIdentification.Genus);
             newIdentification.Species = FirstCharToLower(newIdentification.Species);
             _context.Identifications.Add(newIdentification);
 
-            //Calculate bounty rewards
-            var currentBounty = BountyUtility.Calculate(newIdentification.Grain.TimeAdded);
-
-            //Evaluate identification status
+            //2. Evaluate All IDs for status
             Taxon familyTaxon = null;
             Taxon genusTaxon = null;
             Taxon speciesTaxon = null;
-            var grain = _context.UserGrains.FirstOrDefault(m => m.GrainId == newIdentification.Grain.GrainId); //Get tracked object
+
+            //2a) Family
             var confirmedFamilyName = GetFamily(grain);
             if (!string.IsNullOrEmpty(confirmedFamilyName))
             {
-                familyTaxon = _context.Taxa.FirstOrDefault(m => m.LatinName == confirmedFamilyName && m.Rank == Taxonomy.Family);
+                familyTaxon = _context.Taxa
+                    .Include(m => m.Records)
+                    .FirstOrDefault(m => m.LatinName == confirmedFamilyName && m.Rank == Taxonomy.Family);
                 if (familyTaxon == null)
                 {
                     familyTaxon = new Taxon()
@@ -76,15 +79,18 @@ namespace OxPollen.Services.Concrete
                         Records = new List<Grain>()
                     };
                 }
+                var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, confirmedFamilyName, null, null);
+                familyTaxon.GbifId = gbifID.Result;
                 familyTaxon.Records.Add(grain);
                 _context.Add(familyTaxon);
-                grain.Family = confirmedFamilyName;
             }
 
             var confirmedGenusName = GetGenus(grain);
             if (!string.IsNullOrEmpty(confirmedGenusName))
             {
-                genusTaxon = _context.Taxa.FirstOrDefault(m => m.LatinName == confirmedGenusName && m.Rank == Taxonomy.Genus);
+                genusTaxon = _context.Taxa
+                    .Include(m => m.Records)
+                    .FirstOrDefault(m => m.LatinName == confirmedGenusName && m.Rank == Taxonomy.Genus);
                 if (genusTaxon == null)
                 {
                     genusTaxon = new Taxon()
@@ -92,18 +98,22 @@ namespace OxPollen.Services.Concrete
                         LatinName = confirmedGenusName,
                         Rank = Taxonomy.Genus,
                         Records = new List<Grain>(),
-                        ParentTaxa = genusTaxon != null ? genusTaxon : null
+                        ParentTaxa = familyTaxon != null ? familyTaxon : null
                     };
                 }
+                var gbifID = GbifUtility.GetGbifId(Taxonomy.Genus,
+                    familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, null);
+                genusTaxon.GbifId = gbifID.Result;
                 genusTaxon.Records.Add(grain);
                 _context.Add(genusTaxon);
-                grain.Genus = confirmedGenusName;
             }
 
             var confirmedSpeciesName = GetSpecies(grain);
             if (!string.IsNullOrEmpty(confirmedSpeciesName))
             {
-                speciesTaxon = _context.Taxa.FirstOrDefault(m => m.LatinName == confirmedSpeciesName && m.Rank == Taxonomy.Species);
+                speciesTaxon = _context.Taxa
+                    .Include(m => m.Records)
+                    .FirstOrDefault(m => m.LatinName == confirmedSpeciesName && m.Rank == Taxonomy.Species);
                 if (speciesTaxon == null)
                 {
                     speciesTaxon = new Taxon()
@@ -114,10 +124,17 @@ namespace OxPollen.Services.Concrete
                         ParentTaxa = genusTaxon != null ? genusTaxon : null
                     };
                 }
+                var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
+                    familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, confirmedSpeciesName);
+                speciesTaxon.GbifId = gbifID.Result;
                 speciesTaxon.Records.Add(grain);
                 _context.Add(speciesTaxon);
-                grain.Species = confirmedSpeciesName;
             }
+
+            //Update cached identification on grain DbObject
+            grain.Family = familyTaxon == null ? "" : familyTaxon.LatinName;
+            grain.Genus = genusTaxon == null ? "" : genusTaxon.LatinName;
+            grain.Species = speciesTaxon == null ? "" : speciesTaxon.LatinName;
 
             _context.SaveChanges();
         }

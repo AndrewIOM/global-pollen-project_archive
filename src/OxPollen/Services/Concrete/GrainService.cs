@@ -25,7 +25,8 @@ namespace OxPollen.Services.Concrete
         public Grain GetById(int id)
         {
             var result = _context.UserGrains
-                .Include(m => m.Identifications)            
+                .Where(m => !m.IsDeleted)
+                .Include(m => m.Identifications)
                 .Include(m => m.Images).ToList()
                 .FirstOrDefault(m => m.GrainId == id);
             return result;
@@ -33,7 +34,9 @@ namespace OxPollen.Services.Concrete
 
         public IEnumerable<Grain> GetByUser(string userId)
         {
-            var result = _context.UserGrains.Include(m => m.SubmittedBy)
+            var result = _context.UserGrains
+                .Where(m => !m.IsDeleted)
+                .Include(m => m.Identifications).Include(m => m.SubmittedBy)
                 .Include(m => m.Images)
                 .Where(m => m.SubmittedBy.Id == userId);
             return result;
@@ -42,7 +45,8 @@ namespace OxPollen.Services.Concrete
         public IEnumerable<Grain> GetUnidentifiedGrains() //NB Move to ID Service instead?
         {
             var idService = new IdentificationService(_context); //TODO DI this reference
-            var result =  _context.UserGrains
+            var result = _context.UserGrains
+                .Where(m => !m.IsDeleted)
                 .Include(m => m.Images)
                 .Include(m => m.Identifications)
                 .Where(m => !idService.HasConfirmedIdentity(m));
@@ -51,7 +55,9 @@ namespace OxPollen.Services.Concrete
 
         public Grain MarkDeleted(Grain grain)
         {
-            var result = _context.UserGrains.FirstOrDefault(m => m.GrainId == grain.GrainId);
+            var result = _context.UserGrains
+                .Where(m => !m.IsDeleted)
+                .FirstOrDefault(m => m.GrainId == grain.GrainId);
             if (result == null) return null;
             result.IsDeleted = true;
             _context.Update(result);
