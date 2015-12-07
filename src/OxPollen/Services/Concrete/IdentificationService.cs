@@ -30,21 +30,21 @@ namespace OxPollen.Services.Concrete
         public string GetFamily(Grain grain)
         {
             var family = GetConfirmedIdentity(grain.Identifications
-                .Where(m => m.Family != null).Select(m => m.Family).ToList());
+                .Where(m => !string.IsNullOrEmpty(m.Family)).Select(m => m.Family).ToList());
             return family;
         }
 
         public string GetGenus(Grain grain)
         {
             var genus = GetConfirmedIdentity(grain.Identifications
-                .Where(m => m.Genus != null).Select(m => m.Genus).ToList());
+                .Where(m => !string.IsNullOrEmpty(m.Genus)).Select(m => m.Genus).ToList());
             return genus;
         }
 
         public string GetSpecies(Grain grain)
         {
             var species = GetConfirmedIdentity(grain.Identifications
-                .Where(m => m.Species != null).Select(m => m.Species).ToList());
+                .Where(m => !string.IsNullOrEmpty(m.Species)).Select(m => m.Species).ToList());
             return species;
         }
 
@@ -69,13 +69,17 @@ namespace OxPollen.Services.Concrete
         private string GetConfirmedIdentity(List<string> ids)
         {
             if (ids.Count < 3) return null;
-            int percentAgreementRequired = 70;
-            var groups = ids.GroupBy(m => m);
-            var percentAgreement = (groups.Count() / (double)(percentAgreementRequired / 100)) * 100;
+            double percentAgreementRequired = 0.70;
+            var groups = ids.GroupBy(m => m).OrderByDescending(m => m.Count());
+
+            int allIdsCount = ids.Count;
+            int largestCount = groups.First().Count();
+            var largestName = groups.First().Key;
+
+            double percentAgreement = (double)largestCount / (double)allIdsCount;
             if (percentAgreement >= percentAgreementRequired)
             {
-                var agreedName = groups.OrderBy(m => m.Key).First().Key;
-                return agreedName;
+                return largestName;
             }
             return null;
         }
