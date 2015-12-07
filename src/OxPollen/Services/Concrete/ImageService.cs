@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace OxPollen.Services.Concrete
 {
@@ -15,6 +16,25 @@ namespace OxPollen.Services.Concrete
         public ImageService(IApplicationEnvironment env)
         {
             _env = env;
+        }
+
+        public List<string> Upload(List<string> base64Files)
+        {
+            var photoUrls = new List<string>();
+            foreach (var file in base64Files)
+            {
+                var trimmed = file.Replace(@"data:image/png;base64,", "");
+                byte[] bytes = Convert.FromBase64String(trimmed);
+                var guid = Guid.NewGuid();
+                var filePath = "C:\\Projects\\OxPollen\\src\\OxPollen\\wwwroot\\user-image-uploads\\" + guid + "." + "png";
+                using (var imageFile = new FileStream(filePath, FileMode.Create))
+                {
+                    imageFile.Write(bytes, 0, bytes.Length);
+                    imageFile.Flush();
+                    photoUrls.Add("\\user-image-uploads\\" + guid + "." + "png");
+                }
+            }
+            return photoUrls;
         }
 
         public async Task<List<string>> Upload(IList<IFormFile> files)

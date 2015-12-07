@@ -167,6 +167,8 @@ namespace OxPollen.Migrations
 
                     b.Property<string>("Genus");
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<double>("Latitude");
 
                     b.Property<double>("Longitude");

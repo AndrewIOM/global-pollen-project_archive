@@ -10,5 +10,6 @@ namespace OxPollen.Services.Abstract
     {
         Task<string> Upload(IFormFile file);
         Task<List<string>> Upload(IList<IFormFile> files);
+        List<string> Upload(List<string> base64Files);
     }
 }

@@ -3,6 +3,108 @@
     padding-bottom: 20px;
 }
 
+/* Grain Images Grid */
+ul.grain-grid {
+    list-style: none;
+    font-size: 0px;
+    padding: 0;
+    list-style-type: none;
+}
+
+    ul.grain-grid li {
+        display: inline-block;
+        padding: 0.2em;
+        background: #fff;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        font-size: 1rem;
+        vertical-align: top;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+    }
+
+        ul.grain-grid li div img {
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+        }
+
+.img-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+
+ul.grain-grid.columns-2 li {
+    width: 47.5%; /* this value + 2.5 should = 50% */
+}
+
+ul.grain-grid.columns-3 li {
+    width: 30.83%; /* this value + 2.5 should = 33% */
+}
+
+ul.grain-grid.columns-4 li {
+    width: 18em; /* this value + 2.5 should = 25% */
+    height: 18em;
+}
+
+ul.grain-grid.columns-8 li {
+    width: 10em; 
+    height:10em;
+}
+
+
+
+@media (max-width: 480px) {
+    ul.grid-nav li {
+        display: block;
+        margin: 0 0 5px;
+    }
+
+        ul.grid-nav li a {
+            display: block;
+        }
+
+    ul.grain-grid {
+        margin-left: 0;
+    }
+
+        ul.grain-grid li {
+            width: 100% !important; /* over-ride all li styles */
+            margin: 0 0 20px;
+        }
+}
+
+
+/* Ribbons for Corner of Images */
+.ribbon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    overflow: hidden;
+    width: 75px;
+    height: 75px;
+    text-align: right;
+}
+
+    .ribbon span {
+        font-size: 1.5em;
+        border-radius: 15px;
+        color: #fff;
+        text-align: center;
+        font-weight: bold;
+        line-height: 20px;
+        width: 20px;
+        display: block;
+        background: #b294a0;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+
 /* Corner Ribbon */
 .corner-ribbon {
     width: 200px;
@@ -91,4 +193,83 @@ h1 {
 
 display-panel {
     background-color: gold;
+}
+
+/* Add Grain Page */
+.numberCircle {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    border: 2px solid black;
+    color: black;
+    text-align: center;
+    font: 32px Arial, sans-serif;
+    display: inline-block;
+}
+
+.addgrain-section {
+    padding: 0.5em 1em;
+}
+
+.headsection {
+    background-color: #B294A0;
+    color: white;
+}
+
+.imagesection {
+}
+
+.mapsection {
+    background-color: #C5C4C2;
+}
+
+.savesection {
+}
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+
+    .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+
+.img-thumbnail {
+    list-style: none;
+    margin-bottom: 4em !important;
+    display: inline;
+}
+
+div.img-thumbnail img {
+    height: 1em;
+    width: auto;
+    text-align: center;
+}
+
+darkroom-container {
+    margin-bottom: 2em;
+    display: inline-block;
+}
+
+/* Autocomplete (on registration page) */
+.autocomplete {
+    position: absolute;
+    background-color: azure;
+    border: 1px solid black;
+    z-index: 1;
+}
+
+.autocomplete-option {
+    display: block;
+    margin: 0.5em;
 }

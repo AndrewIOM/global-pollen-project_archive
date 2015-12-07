@@ -20,18 +20,15 @@ namespace OxPollen.Controllers
         // GET: /<controller>/
         public IActionResult Index(Taxonomy? rank)
         {
-            var taxa = _context.Taxa.Include(m => m.Records).Include(m => m.ParentTaxa).ToList();
-            if (rank.HasValue)
-            {
-                taxa = taxa.Where(m => m.Rank == rank.Value).ToList();
-            }
-            var model = taxa.Select(m => new TaxonViewModel()
+            var taxa = _context.Taxa.Include(m => m.Records).ToList();
+            var rankFilter = rank.HasValue ? rank.Value : Taxonomy.Genus;
+            var model = taxa.Where(m => m.Rank == rankFilter).Select(m => new TaxonViewModel()
             {
                 Id = m.TaxonId,
                 LatinName = m.LatinName,
                 ConfirmedGrainsCount = m.Records.Count(),
                 Rank = m.Rank
-            }).ToList();
+            }).OrderBy(m => m.LatinName).ToList();
             return View(model);
         }
 
@@ -43,7 +40,7 @@ namespace OxPollen.Controllers
             if (taxon != null)
             {
                 List<Grain> grains = null;
-                if (taxon.Rank == Taxonomy.Species) grains = _context.UserGrains.Include(m => m.Images).Where(m => m.Genus + " " + m.Species == taxon.LatinName).ToList();
+                if (taxon.Rank == Taxonomy.Species) grains = _context.UserGrains.Include(m => m.Images).Where(m => m.Species == taxon.LatinName).ToList();
                 if (taxon.Rank == Taxonomy.Genus) grains = _context.UserGrains.Include(m => m.Images).Where(m => m.Genus == taxon.LatinName).ToList();
                 if (taxon.Rank == Taxonomy.Family) grains = _context.UserGrains.Include(m => m.Images).Where(m => m.Family == taxon.LatinName).ToList();
                 taxon.Records = grains;

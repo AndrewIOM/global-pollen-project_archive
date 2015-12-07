@@ -14,7 +14,7 @@
             <th>User ID</th>
             <th>Name</th>
             <th>Institutional Affiliation</th>
-            <th>Contact</th>
+            <th>Locked Out?</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -24,8 +24,11 @@
             <td>@user.Id</td>
             <td>@user.FullName()</td>
             <td>@user.Organisation</td>
-            <td><button type="button" class="btn" href="mailto:@user.Email">Email</button></td>
-            <td><button type="button" class="btn btn-danger disabled">Ban User</button></td>
+            <td>@user.LockoutEnabled</td>
+            <td>
+                <a type="button" class="btn" href="mailto:@user.Email">Email</a>
+                <a type="button" class="btn btn-danger" href="@Url.Action("BanUser", "Admin", new { id = user.Id })">Ban User</a>
+            </td>
         </tr>
     }
 </table>

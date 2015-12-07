@@ -27,7 +27,7 @@
         @if (!string.IsNullOrEmpty(Model.IdentifiedSpecies))
         { <h4>Species: @Model.IdentifiedSpecies</h4> }
         @if (string.IsNullOrEmpty(Model.IdentifiedFamily) && string.IsNullOrEmpty(Model.IdentifiedGenus
-                    ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
+                                ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
         {
             <h4>Unidentified</h4>
         }
@@ -37,11 +37,13 @@
 <div class="row">
     @* Left Column: Photos *@
     <div class="col-md-6">
-        @foreach (var image in Model.ImageUrls)
-        {
-            <img src="@image" style="width:100%; height:100%" />
-            <p>Image Scale: @Model.ImageScale micrometres</p>
-        }
+        <div class="image-thumbnails" style="height:5em;overflow:hidden;">
+            @foreach (var image in Model.ImageUrls)
+            {
+                <a><img src="@image" onclick="return selectImage(this.src);" style="width:5em; height:5em;display:inline-block" /></a>
+            }
+        </div>
+        <img id="displayimage" src="@Model.ImageUrls.First()" style="width:100%; height:100%" />
     </div>
     @* Right Column: Details and IDs *@
     <div class="col-md-6">
@@ -71,7 +73,7 @@
                 <h3>Your Identification</h3>
                 <p>You identified this grain as <strong>@Model.UserIdentification.Family @Model.UserIdentification.Genus @Model.UserIdentification.Species</strong> on @Model.UserIdentification.Time</p>
                 <p>Thank you for your identification.</p>
-                <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
+                <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
             }
             else
             {
@@ -93,15 +95,18 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
-                            <input type="text" asp-for="Family" class="form-control" placeholder="Family" />
+                            <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="updateList(this, 'Family');" placeholder="Family" />
+                            <div class="autocomplete" id="FamilyList" style="display:none"></div>
                             <span asp-validation-for="Family" class="text-danger"></span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" asp-for="Genus" class="form-control" placeholder="Genus" />
+                            <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="updateList(this, 'Genus');" placeholder="Genus" />
+                            <div class="autocomplete" id="GenusList" style="display:none"></div>
                             <span asp-validation-for="Genus" class="text-danger"></span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" asp-for="Species" class="form-control" placeholder="Species" />
+                            <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="updateList(this, 'Species');" placeholder="Species" />
+                            <div class="autocomplete" id="SpeciesList" style="display:none"></div>
                             <span asp-validation-for="Species" class="text-danger"></span>
                         </div>
                     </div>
@@ -159,3 +164,81 @@
         <a asp-action="Index" asp-controller="Grain" class="btn btn-default" role="button">Back</a>
     </div>
 </div>
+
+<script type="text/javascript">
+    selectImage = function (source) {
+        var mainImage = document.getElementById('displayimage');
+        mainImage.src = source;
+    }
+</script>
+
+@* Autocomplete Suggest for Taxon Names (GBIF) *@
+<script type="text/javascript">
+    function updateList(entryBox, rank) {
+        var query = '';
+        if (rank == 'Species') {
+            //Combine genus and species for canonical name
+            var genus = document.getElementById('Genus').value;
+            query += genus + " ";
+        }
+        query += entryBox.value;
+        var request = "http://api.gbif.org/v1/species/suggest?kingdom=Plantae&rank=" + rank + "&q=" + query;
+        ajaxHelper(request, 'GET', 'jsonp').done(function (data) {
+            var list = document.getElementById(rank + 'List');
+            $('#' + rank + 'List').css('display', '');
+            list.innerHTML = "";
+            if (!(data.length == 1 && data[0].canonicalName == document.getElementById(rank).value)) {
+                for (var i = 0; i < data.length; i++) {
+                    if (i > 10) continue;
+                    var option = document.createElement('a');
+                    option.innerHTML = data[i].canonicalName;
+                    if (rank == 'Species' || rank == 'Genus') {
+                        var familySpan = document.createElement('span');
+                        familySpan.innerHTML = (data[i].family);
+                        familySpan.className = 'family-name';
+                        familySpan.style = 
+                        option.appendChild(familySpan);
+                    }
+                    option.className = 'autocomplete-option';
+                    option.addEventListener('click', function (e) {
+                        var name = this.innerHTML.split('<')[0];
+                        if (rank == 'Species') {
+                            var species = name.split(' ')[1];
+                            $('#' + rank).val(species);
+                        } else {
+                            $('#' + rank).val(name);
+                        }
+
+                        //Handle family name
+                        if (rank == 'Species' || rank == 'Genus') {
+                            var family = this.getElementsByClassName("family-name")[0].innerHTML;
+                            if (family != 'undefined') $('#Family').val(family);
+                        }
+
+                        $('#' + rank + 'List').css('display', 'none');
+                    });
+                    list.appendChild(option);
+                }
+            }
+            $('.family-name').css('display', 'none');
+        });
+    }
+
+    function disable(rank) {
+    }
+
+    //Base Functions
+    function ajaxHelper(uri, method, dataType, data) {
+        //self.error('');
+        return $.ajax({
+            type: method,
+            url: uri,
+            dataType: dataType,
+            contentType: 'application/json',
+            data: data ? JSON.stringify(data) : null
+        }).fail(function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+            //self.error(errorThrown);
+        });
+    }
+</script>
