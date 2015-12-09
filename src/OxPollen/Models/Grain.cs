@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OxPollen.Data.Abstract;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,7 +8,7 @@ namespace OxPollen.Models
     public class Grain
     {
         [Key]
-        public int GrainId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public virtual List<GrainImage> Images { get; set; }

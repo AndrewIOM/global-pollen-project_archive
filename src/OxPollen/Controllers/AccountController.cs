@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Linq;
 using OxPollen.ViewModels;
+using OxPollen.Data.Concrete;
 
 namespace OxPollen.Controllers
 {
@@ -27,7 +28,7 @@ namespace OxPollen.Controllers
             SignInManager<AppUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            OxPollen.Models.OxPollenDbContext applicationDbContext)
+            OxPollenDbContext applicationDbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -454,7 +455,7 @@ namespace OxPollen.Controllers
         // not yet supported in this release.
         // Please see this http://go.microsoft.com/fwlink/?LinkID=615859 for more information on how to do deploy the database
         // when publishing your application.
-        private static void EnsureDatabaseCreated(OxPollen.Models.OxPollenDbContext context)
+        private static void EnsureDatabaseCreated(OxPollenDbContext context)
         {
             if (!_databaseChecked)
             {

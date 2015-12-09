@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNet.Mvc;
-using OxPollen.Models;
 using OxPollen.ViewModels;
 using OxPollen.Utilities;
 using Microsoft.Data.Entity;
+using OxPollen.Data.Concrete;
 
 namespace OxPollen.Controllers
 {
@@ -25,7 +22,7 @@ namespace OxPollen.Controllers
             var model = result.Select(m => new ReadOnlyGrainViewModel()
                 {
                     Bounty = BountyUtility.Calculate(m.TimeAdded),
-                    Id = m.GrainId,
+                    Id = m.Id,
                     ImageLocation = m.Images.First().FileName,
                     TimeAdded = m.TimeAdded
                 }).Take(15).ToList();

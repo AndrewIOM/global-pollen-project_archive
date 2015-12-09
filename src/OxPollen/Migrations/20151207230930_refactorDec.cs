@@ -5,7 +5,7 @@ using Microsoft.Data.Entity.Metadata;
 
 namespace OxPollen.Migrations
 {
-    public partial class initial : Migration
+    public partial class refactorDec : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -178,11 +178,12 @@ namespace OxPollen.Migrations
                 name: "Grain",
                 columns: table => new
                 {
-                    GrainId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AgeYearsBeforePresent = table.Column<int>(nullable: true),
                     Family = table.Column<string>(nullable: true),
                     Genus = table.Column<string>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
                     Latitude = table.Column<double>(nullable: false),
                     Longitude = table.Column<double>(nullable: false),
                     Species = table.Column<string>(nullable: true),
@@ -192,7 +193,7 @@ namespace OxPollen.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Grain", x => x.GrainId);
+                    table.PrimaryKey("PK_Grain", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Grain_AppUser_SubmittedById",
                         column: x => x.SubmittedById,
@@ -207,23 +208,26 @@ namespace OxPollen.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
             migrationBuilder.CreateTable(
-                name: "GrainImage",
+                name: "ReferenceGrain",
                 columns: table => new
                 {
-                    GrainImageId = table.Column<int>(nullable: false)
+                    ReferenceGrainId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    FileName = table.Column<string>(nullable: true),
-                    GrainGrainId = table.Column<int>(nullable: true),
-                    ScaleNanoMetres = table.Column<double>(nullable: false)
+                    Family = table.Column<string>(nullable: true),
+                    Genus = table.Column<string>(nullable: true),
+                    ReferenceCollectionId = table.Column<string>(nullable: true),
+                    Species = table.Column<string>(nullable: true),
+                    SubmittedById = table.Column<string>(nullable: true),
+                    TimeAdded = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GrainImage", x => x.GrainImageId);
+                    table.PrimaryKey("PK_ReferenceGrain", x => x.ReferenceGrainId);
                     table.ForeignKey(
-                        name: "FK_GrainImage_Grain_GrainGrainId",
-                        column: x => x.GrainGrainId,
-                        principalTable: "Grain",
-                        principalColumn: "GrainId",
+                        name: "FK_ReferenceGrain_AppUser_SubmittedById",
+                        column: x => x.SubmittedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
             migrationBuilder.CreateTable(
@@ -234,7 +238,7 @@ namespace OxPollen.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Family = table.Column<string>(nullable: true),
                     Genus = table.Column<string>(nullable: true),
-                    GrainGrainId = table.Column<int>(nullable: true),
+                    GrainId = table.Column<int>(nullable: true),
                     Rank = table.Column<int>(nullable: false),
                     Species = table.Column<string>(nullable: true),
                     Time = table.Column<DateTime>(nullable: false),
@@ -244,16 +248,43 @@ namespace OxPollen.Migrations
                 {
                     table.PrimaryKey("PK_Identification", x => x.IdentificationId);
                     table.ForeignKey(
-                        name: "FK_Identification_Grain_GrainGrainId",
-                        column: x => x.GrainGrainId,
+                        name: "FK_Identification_Grain_GrainId",
+                        column: x => x.GrainId,
                         principalTable: "Grain",
-                        principalColumn: "GrainId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Identification_AppUser_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+            migrationBuilder.CreateTable(
+                name: "GrainImage",
+                columns: table => new
+                {
+                    GrainImageId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    FileName = table.Column<string>(nullable: true),
+                    GrainId = table.Column<int>(nullable: true),
+                    ReferenceGrainReferenceGrainId = table.Column<int>(nullable: true),
+                    ScaleNanoMetres = table.Column<double>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GrainImage", x => x.GrainImageId);
+                    table.ForeignKey(
+                        name: "FK_GrainImage_Grain_GrainId",
+                        column: x => x.GrainId,
+                        principalTable: "Grain",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_GrainImage_ReferenceGrain_ReferenceGrainReferenceGrainId",
+                        column: x => x.ReferenceGrainReferenceGrainId,
+                        principalTable: "ReferenceGrain",
+                        principalColumn: "ReferenceGrainId",
                         onDelete: ReferentialAction.Restrict);
                 });
             migrationBuilder.CreateIndex(
@@ -279,6 +310,7 @@ namespace OxPollen.Migrations
             migrationBuilder.DropTable("GrainImage");
             migrationBuilder.DropTable("Identification");
             migrationBuilder.DropTable("AspNetRoles");
+            migrationBuilder.DropTable("ReferenceGrain");
             migrationBuilder.DropTable("Grain");
             migrationBuilder.DropTable("AspNetUsers");
             migrationBuilder.DropTable("Taxon");

@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
+using OxPollen.Data.Abstract;
+using OxPollen.Data.Concrete;
 using OxPollen.Models;
 using OxPollen.Services;
 using OxPollen.Services.Abstract;
@@ -44,12 +46,12 @@ namespace OxPollen
             // Add Entity Framework services to the services container.
             services.AddEntityFramework()
                 .AddSqlServer()
-                .AddDbContext<Models.OxPollenDbContext>(options =>
+                .AddDbContext<OxPollenDbContext>(options =>
                     options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
 
             // Add Identity services to the services container.
             services.AddIdentity<AppUser, IdentityRole>()
-                .AddEntityFrameworkStores<Models.OxPollenDbContext>()
+                .AddEntityFrameworkStores<OxPollenDbContext>()
                 .AddDefaultTokenProviders();
 
             // Add MVC services to the services container.
@@ -60,6 +62,8 @@ namespace OxPollen
             // services.AddWebApiConventions();
 
             // Register application services.
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddTransient<IUserService, UserService>();

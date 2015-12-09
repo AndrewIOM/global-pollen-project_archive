@@ -9,8 +9,6 @@ namespace OxPollen.Services.Abstract
     public interface ITaxonomyService
     {
         IEnumerable<Taxon> GetAll();
-        IEnumerable<Taxon> GetAllFamilies();
-        IEnumerable<Taxon> GetAllGenus();
-        IEnumerable<Taxon> GetAllSpecies();
+        IEnumerable<Taxon> GetAll(Taxonomy rank);
     }
 }

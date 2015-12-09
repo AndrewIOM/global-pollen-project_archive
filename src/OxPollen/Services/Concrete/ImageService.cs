@@ -5,15 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.Net.Http.Headers;
-using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using Microsoft.AspNet.Hosting;
 
 namespace OxPollen.Services.Concrete
 {
     public class ImageService : IFileStoreService
     {
-        private readonly IApplicationEnvironment _env;
-        public ImageService(IApplicationEnvironment env)
+        private readonly IHostingEnvironment _env;
+        public ImageService(IHostingEnvironment env)
         {
             _env = env;
         }
@@ -26,7 +26,7 @@ namespace OxPollen.Services.Concrete
                 var trimmed = file.Replace(@"data:image/png;base64,", "");
                 byte[] bytes = Convert.FromBase64String(trimmed);
                 var guid = Guid.NewGuid();
-                var filePath = "C:\\Projects\\OxPollen\\src\\OxPollen\\wwwroot\\user-image-uploads\\" + guid + "." + "png";
+                var filePath = _env.WebRootPath + "\\user-image-uploads\\" + guid + "." + "png";
                 using (var imageFile = new FileStream(filePath, FileMode.Create))
                 {
                     imageFile.Write(bytes, 0, bytes.Length);

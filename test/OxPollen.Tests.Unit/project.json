@@ -1,0 +1,27 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "OxPollen Unit Tests Library",
+  "authors": [ "AndrewIOM" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "dependencies": {
+    "System.Linq": "4.0.0-beta-23109",
+    "System.Runtime": "4.0.10-beta-23109",
+    "Microsoft.CSharp": "4.0.0-beta-23109",
+    "xunit.runner.dnx": "2.1.0-*",
+    "xunit": "2.1.0-*",
+    "Moq": "4.2.1510.2205",
+    "OxPollen": "",
+    "EntityFramework.InMemory": "7.0.0-rc1-final"
+  },
+
+  "commands": {
+    "test": "xunit.runner.dnx"
+  },
+
+  "frameworks": {
+    "dnx451": { }
+  }
+}

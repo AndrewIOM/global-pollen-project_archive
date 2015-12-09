@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Entity;
+﻿using OxPollen.Data.Abstract;
 using OxPollen.Models;
 using OxPollen.Services.Abstract;
 using System;
@@ -9,27 +9,28 @@ namespace OxPollen.Services.Concrete
 {
     public class UserService : IUserService
     {
-        private OxPollenDbContext _context;
-
-        public UserService(OxPollenDbContext context)
+        private readonly IUnitOfWork _uow;
+        public UserService(IUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         public IEnumerable<AppUser> GetAll()
         {
-            return _context.Users;
+            var result = _uow.UserRepository.GetAll();
+            return result;
         }
 
         public AppUser GetById(string id)
         {
-            var result = _context.Users.FirstOrDefault(m => string.Equals(id, m.Id));
+            var result = _uow.UserRepository.Find(m => m.Id == id).FirstOrDefault();
             return result;
         }
 
         public IEnumerable<Organisation> GetOrganisations()
         {
-            return _context.Organisations.Include(m => m.Members).ToList();
+            var result = _uow.OrganisationRepository.GetAll();
+            return result;
         }
     }
 }

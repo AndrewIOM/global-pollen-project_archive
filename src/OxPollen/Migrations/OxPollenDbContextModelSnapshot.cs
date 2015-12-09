@@ -3,7 +3,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
-using OxPollen.Models;
+using OxPollen.Data.Concrete;
 
 namespace OxPollen.Migrations
 {
@@ -158,7 +158,7 @@ namespace OxPollen.Migrations
 
             modelBuilder.Entity("OxPollen.Models.Grain", b =>
                 {
-                    b.Property<int>("GrainId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int?>("AgeYearsBeforePresent");
@@ -182,7 +182,7 @@ namespace OxPollen.Migrations
 
                     b.Property<DateTime>("TimeAdded");
 
-                    b.HasKey("GrainId");
+                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("OxPollen.Models.GrainImage", b =>
@@ -192,7 +192,7 @@ namespace OxPollen.Migrations
 
                     b.Property<string>("FileName");
 
-                    b.Property<int?>("GrainGrainId");
+                    b.Property<int?>("GrainId");
 
                     b.Property<int?>("ReferenceGrainReferenceGrainId");
 
@@ -210,7 +210,7 @@ namespace OxPollen.Migrations
 
                     b.Property<string>("Genus");
 
-                    b.Property<int?>("GrainGrainId");
+                    b.Property<int?>("GrainId");
 
                     b.Property<int>("Rank");
 
@@ -329,7 +329,7 @@ namespace OxPollen.Migrations
                 {
                     b.HasOne("OxPollen.Models.Grain")
                         .WithMany()
-                        .HasForeignKey("GrainGrainId");
+                        .HasForeignKey("GrainId");
 
                     b.HasOne("OxPollen.Models.ReferenceGrain")
                         .WithMany()
@@ -340,7 +340,7 @@ namespace OxPollen.Migrations
                 {
                     b.HasOne("OxPollen.Models.Grain")
                         .WithMany()
-                        .HasForeignKey("GrainGrainId");
+                        .HasForeignKey("GrainId");
 
                     b.HasOne("OxPollen.Models.AppUser")
                         .WithMany()

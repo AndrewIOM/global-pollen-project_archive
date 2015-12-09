@@ -5,13 +5,11 @@ namespace OxPollen.Services.Abstract
 {
     public interface IIdentificationService
     {
-        bool HasConfirmedIdentity(Grain grain);
+        void Add(Identification newIdentification);
         void Remove(Identification identification);
+
+        IEnumerable<Identification> GetByGrainId(int grainId);
         Identification GetById(int id);
-        string GetFamily(Grain grain);
-        string GetGenus(Grain grain);
-        string GetSpecies(Grain grain);
-        Identification GetUsersIdentification(int grainId, string userId);
-        void SaveIdentification(Identification newIdentification);
+        IEnumerable<Identification> GetByUser(string userId);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Entity;
+﻿using OxPollen.Data.Abstract;
 using OxPollen.Models;
 using OxPollen.Services.Abstract;
 using OxPollen.Utilities;
@@ -10,65 +10,99 @@ namespace OxPollen.Services.Concrete
 {
     public class IdentificationService : IIdentificationService
     {
-        private readonly OxPollenDbContext _context;
-        public IdentificationService(OxPollenDbContext context)
+        private IUnitOfWork _uow;
+        public IdentificationService(IUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
-        public bool HasConfirmedIdentity(Grain grain)
+        public void Add(Identification newIdentification)
         {
-            var family = GetFamily(grain);
-            var genus = GetGenus(grain);
-            var species = GetSpecies(grain);
-            if (!string.IsNullOrEmpty(family) || !string.IsNullOrEmpty(genus)
-                || !string.IsNullOrEmpty(species))
-                return true;
-            return false;
-        }
-
-        public string GetFamily(Grain grain)
-        {
-            var family = GetConfirmedIdentity(grain.Identifications
-                .Where(m => m.Family != null).Select(m => m.Family).ToList());
-            return family;
-        }
-
-        public string GetGenus(Grain grain)
-        {
-            var genus = GetConfirmedIdentity(grain.Identifications
-                .Where(m => m.Genus != null).Select(m => m.Genus).ToList());
-            return genus;
-        }
-
-        public string GetSpecies(Grain grain)
-        {
-            var species = GetConfirmedIdentity(grain.Identifications
-                .Where(m => m.Species != null).Select(m => m.Species).ToList());
-            return species;
-        }
-
-        public void SaveIdentification(Identification newIdentification)
-        {
-            var grain = _context.UserGrains.FirstOrDefault(m => m.GrainId == newIdentification.Grain.GrainId);
             newIdentification.Family = FirstCharToUpper(newIdentification.Family);
             newIdentification.Genus = FirstCharToUpper(newIdentification.Genus);
             newIdentification.Species = FirstCharToLower(newIdentification.Species);
-            _context.Identifications.Add(newIdentification);
-            EvaluateIdentifications(grain);
-            _context.SaveChanges();
+
+            _uow.IdentificationRepository.Add(newIdentification);
+
+            var grain = _uow.GrainRepository.GetById(newIdentification.Grain.Id);
+            var familyName = GetConfirmedName(Taxonomy.Family, grain.Identifications);
+            var genusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
+            var speciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
+
+            grain.Family = familyName;
+            grain.Genus = genusName;
+            grain.Species = speciesName;
+
+            CreateOrUpdateTaxonomy(familyName, genusName, speciesName);
+
+            _uow.GrainRepository.Update(grain);
+            _uow.SaveChanges();
         }
 
-        private void UpdateUserBounty(string userId, int bountyChange)
+        public IEnumerable<Identification> GetByGrainId(int grainId)
         {
-            var user = _context.Users.FirstOrDefault(m => m.Id == userId);
-            if (user == null) throw new Exception("User was null!");
-            user.BountyScore += bountyChange;
+            var result = _uow.GrainRepository.GetById(grainId);
+            if (result != null) return result.Identifications;
+            return null;
         }
 
-        private string GetConfirmedIdentity(List<string> ids)
+        public Identification GetById(int id)
         {
-            if (ids.Count < 3) return null;
+            var existing = _uow.IdentificationRepository.GetById(id);
+            return existing;
+        }
+
+        public IEnumerable<Identification> GetByUser(string userId)
+        {
+            var result = _uow.IdentificationRepository.Find(m => m.User.Id == userId);
+            return result;
+        }
+
+        public void Remove(Identification identification)
+        {
+            var grainId = identification.Grain.Id;
+            _uow.IdentificationRepository.Delete(identification);
+
+            var grain = _uow.GrainRepository.GetById(grainId);
+            var familyName = GetConfirmedName(Taxonomy.Family, grain.Identifications);
+            var genusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
+            var speciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
+
+            grain.Family = familyName;
+            grain.Genus = genusName;
+            grain.Species = speciesName;
+
+            CreateOrUpdateTaxonomy(familyName, genusName, speciesName);
+
+            _uow.GrainRepository.Update(grain);
+            _uow.SaveChanges();
+        }
+
+        private string GetConfirmedName(Taxonomy rank, List<Identification> identifications)
+        {
+            //1. Determine Correct Name
+            List<string> ids;
+            if (rank == Taxonomy.Family)
+            {
+                ids = identifications.Where(m => !string.IsNullOrEmpty(m.Family))
+                    .Select(m => m.Family).ToList();
+            }
+            else if (rank == Taxonomy.Genus)
+            {
+                ids = identifications.Where(m => !string.IsNullOrEmpty(m.Genus))
+                    .Select(m => m.Genus).ToList();
+            }
+            else if (rank == Taxonomy.Species)
+            {
+                ids = identifications.Where(m => !string.IsNullOrEmpty(m.Species))
+                    .Select(m => m.Species).ToList();
+            }
+            else
+            {
+                throw new Exception("Not a valid taxonomic rank");
+            }
+
+            if (ids.Count < 3) return "";
             int percentAgreementRequired = 70;
             var groups = ids.GroupBy(m => m);
             var percentAgreement = (groups.Count() / (double)(percentAgreementRequired / 100)) * 100;
@@ -77,128 +111,71 @@ namespace OxPollen.Services.Concrete
                 var agreedName = groups.OrderBy(m => m.Key).First().Key;
                 return agreedName;
             }
-            return null;
+            return "";
         }
 
-        public Identification GetUsersIdentification(int grainId, string userId)
-        {
-            var result = _context.Identifications.Include(m => m.Grain).Include(m => m.User)
-                .FirstOrDefault(m => m.Grain.GrainId == grainId && m.User.Id == userId);
-            return result;
-        }
-
-        public Identification GetById(int id)
-        {
-            var existing = _context.Identifications.Include(m => m.Grain)
-                .Include(m => m.User)
-                .FirstOrDefault(m => m.IdentificationId == id);
-            return existing;
-        }
-
-        public void Remove(Identification identification)
-        {
-            _context.Identifications.Remove(identification);
-            var grain = _context.UserGrains.FirstOrDefault(m => m.GrainId == identification.Grain.GrainId);
-            EvaluateIdentifications(grain);
-            _context.SaveChanges();
-        }
-
-        private void EvaluateIdentifications(Grain grain)
+        private void CreateOrUpdateTaxonomy(string family, string genus, string species)
         {
             Taxon familyTaxon = null;
             Taxon genusTaxon = null;
             Taxon speciesTaxon = null;
 
-            var confirmedFamilyName = GetFamily(grain);
-            if (!string.IsNullOrEmpty(confirmedFamilyName))
+            if (!string.IsNullOrEmpty(family))
             {
-                familyTaxon = _context.Taxa
-                    .Include(m => m.Records)
-                    .FirstOrDefault(m => m.LatinName == confirmedFamilyName && m.Rank == Taxonomy.Family);
+                familyTaxon = _uow.TaxonRepository.Find(m => m.LatinName == family && m.Rank == Taxonomy.Family).FirstOrDefault();
                 if (familyTaxon == null)
                 {
-                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, confirmedFamilyName, null, null);
+                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, family, null, null);
                     familyTaxon = new Taxon()
                     {
-                        LatinName = confirmedFamilyName,
+                        LatinName = family,
                         Rank = Taxonomy.Family,
                         Records = new List<Grain>(),
                         GbifId = gbifID.Result
                     };
-                    _context.Add(familyTaxon);
+                    _uow.TaxonRepository.Add(familyTaxon);
                 }
             }
 
-            var confirmedGenusName = GetGenus(grain);
-            if (!string.IsNullOrEmpty(confirmedGenusName))
+            if (!string.IsNullOrEmpty(genus))
             {
-                genusTaxon = _context.Taxa
-                    .Include(m => m.Records)
-                    .FirstOrDefault(m => m.LatinName == confirmedGenusName && m.Rank == Taxonomy.Genus);
+                genusTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus && m.Rank == Taxonomy.Genus).FirstOrDefault();
                 if (genusTaxon == null)
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Genus,
-                        familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, null);
+                        familyTaxon != null ? familyTaxon.LatinName : null, genus, null);
                     genusTaxon = new Taxon()
                     {
-                        LatinName = confirmedGenusName,
+                        LatinName = genus,
                         Rank = Taxonomy.Genus,
                         Records = new List<Grain>(),
                         ParentTaxa = familyTaxon != null ? familyTaxon : null,
                         GbifId = gbifID.Result
                     };
-                    _context.Add(genusTaxon);
+                    if (genusTaxon.ParentTaxa == null) genusTaxon.ParentTaxa = familyTaxon != null ? familyTaxon : null;
+                    _uow.TaxonRepository.Add(genusTaxon);
                 }
             }
 
-            var confirmedSpeciesName = GetSpecies(grain);
-            if (!string.IsNullOrEmpty(confirmedSpeciesName) && !string.IsNullOrEmpty(confirmedGenusName))
+            if (!string.IsNullOrEmpty(species) && !string.IsNullOrEmpty(genus))
             {
-                speciesTaxon = _context.Taxa
-                    .Include(m => m.Records)
-                    .FirstOrDefault(m => m.LatinName == confirmedGenusName + " " + confirmedSpeciesName && m.Rank == Taxonomy.Species);
+                speciesTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus + " " + species && m.Rank == Taxonomy.Species).FirstOrDefault();
                 if (speciesTaxon == null)
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
-                        familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, confirmedSpeciesName);
+                        familyTaxon != null ? familyTaxon.LatinName : null, genus, species);
                     speciesTaxon = new Taxon()
                     {
-                        LatinName = confirmedGenusName + " " + confirmedSpeciesName,
+                        LatinName = genus + " " + species,
                         Rank = Taxonomy.Species,
                         Records = new List<Grain>(),
                         ParentTaxa = genusTaxon != null ? genusTaxon : null,
                         GbifId = gbifID.Result
                     };
-                    _context.Add(speciesTaxon);
+                    if (speciesTaxon.ParentTaxa == null) speciesTaxon.ParentTaxa = genusTaxon != null ? genusTaxon : null;
+                    _uow.TaxonRepository.Add(speciesTaxon);
                 }
             }
-
-            //Update linkages between grain and taxa
-            if (!string.IsNullOrEmpty(grain.Family))
-            {
-                var oldTaxa = _context.Taxa.Include(m => m.Records).FirstOrDefault(m => m.LatinName == grain.Family && m.Rank == Taxonomy.Family);
-                if (oldTaxa != null) oldTaxa.Records.Remove(grain);
-            }
-            if (!string.IsNullOrEmpty(confirmedFamilyName) && familyTaxon != null) familyTaxon.Records.Add(grain);
-            if (!string.IsNullOrEmpty(grain.Genus))
-            {
-                var oldTaxa = _context.Taxa.Include(m => m.Records).FirstOrDefault(m => m.LatinName == grain.Genus && m.Rank == Taxonomy.Genus);
-                if (oldTaxa != null) oldTaxa.Records.Remove(grain);
-            }
-            if (!string.IsNullOrEmpty(confirmedGenusName) && genusTaxon != null) genusTaxon.Records.Add(grain);
-            if (!string.IsNullOrEmpty(grain.Species))
-            {
-                var oldTaxa = _context.Taxa.Include(m => m.Records).FirstOrDefault(m => m.LatinName == grain.Species && m.Rank == Taxonomy.Species);
-                if (oldTaxa != null) oldTaxa.Records.Remove(grain);
-            }
-            if (!string.IsNullOrEmpty(confirmedSpeciesName) && speciesTaxon != null) speciesTaxon.Records.Add(grain);
-
-            //Update cached identification on grain DbObject
-            grain.Family = familyTaxon == null ? "" : familyTaxon.LatinName;
-            grain.Genus = genusTaxon == null ? "" : genusTaxon.LatinName;
-            grain.Species = speciesTaxon == null ? "" : speciesTaxon.LatinName;
-
-            _context.SaveChanges();
         }
 
         private string FirstCharToUpper(string input)

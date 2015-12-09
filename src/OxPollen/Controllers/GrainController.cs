@@ -91,12 +91,12 @@ namespace OxPollen.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-            var grains = _grainService.GetUnidentifiedGrains();
+            var grains = _grainService.GetUnidentifiedGrains(Taxonomy.Species);
             var model = grains
                 .OrderByDescending(m => BountyUtility.Calculate(m.TimeAdded)).Select(m => new ReadOnlyGrainViewModel()
                 {
                     Bounty = BountyUtility.Calculate(m.TimeAdded),
-                    Id = m.GrainId,
+                    Id = m.Id,
                     TimeAdded = m.TimeAdded,
                     ImageLocation = m.Images.Count > 0 ? m.Images.First().FileName : null
                 }).ToList();
@@ -112,18 +112,19 @@ namespace OxPollen.Controllers
             Identification myIdentification = null;
             if (User.IsSignedIn())
             {
-                myIdentification = _idService.GetUsersIdentification(record.GrainId, User.GetUserId());
+                myIdentification = _idService.GetByUser(User.GetUserId())
+                    .FirstOrDefault(m => m.Grain.Id == id);
             }
 
             var viewModel = new IdentificationViewModel()
             {
                 AlreadyIdentifiedByUser = myIdentification != null,
                 UserIdentification = myIdentification,
-                GrainId = record.GrainId,
+                GrainId = record.Id,
                 Age = record.AgeYearsBeforePresent,
-                IdentifiedFamily = _idService.GetFamily(record),
-                IdentifiedGenus = _idService.GetGenus(record),
-                IdentifiedSpecies = _idService.GetSpecies(record),
+                IdentifiedFamily = record.Family,
+                IdentifiedGenus = record.Genus,
+                IdentifiedSpecies = record.Species,
                 ImageUrls = record.Images.Select(m => m.FileName).ToList(),
                 Latitude = record.Latitude,
                 Longitude = record.Longitude,
@@ -151,7 +152,8 @@ namespace OxPollen.Controllers
             Identification myIdentification = null;
             if (record != null)
             {
-                myIdentification = _idService.GetUsersIdentification(record.GrainId, User.GetUserId());
+                myIdentification = _idService.GetByUser(User.GetUserId())
+                    .FirstOrDefault(m => m.Grain.Id == result.GrainId);
                 if (myIdentification != null) ModelState.AddModelError("User", "You have already identified this grain, sorry!");
             }
 
@@ -163,11 +165,11 @@ namespace OxPollen.Controllers
                 {
                     AlreadyIdentifiedByUser = myIdentification != null,
                     UserIdentification = myIdentification,
-                    GrainId = record.GrainId,
+                    GrainId = record.Id,
                     Age = record.AgeYearsBeforePresent,
-                    IdentifiedFamily = _idService.GetFamily(record),
-                    IdentifiedGenus = _idService.GetGenus(record),
-                    IdentifiedSpecies = _idService.GetSpecies(record),
+                    IdentifiedFamily = record.Family,
+                    IdentifiedGenus = record.Genus,
+                    IdentifiedSpecies = record.Species,
                     ImageUrls = record.Images.Select(m => m.FileName).ToList(),
                     Latitude = record.Latitude,
                     Longitude = record.Longitude,
@@ -193,7 +195,7 @@ namespace OxPollen.Controllers
                 User = currentUser,
                 Rank = result.TaxonomicResolution
             };
-            _idService.SaveIdentification(identification);
+            _idService.Add(identification);
 
             ViewData["successMessage"] = "Thank you! Your identification has been registered.";
             return RedirectToAction("Identify", new { id = result.GrainId });
@@ -206,13 +208,13 @@ namespace OxPollen.Controllers
             var grains = _grainService.GetByUser(thisUser).ToList();
             var model = grains.Select(m => new ReadOnlyGrainViewModel()
             {
-                Id = m.GrainId,
+                Id = m.Id,
                 ImageLocation = m.Images.First().FileName,
                 Bounty = BountyUtility.Calculate(m.TimeAdded),
                 TimeAdded = m.TimeAdded,
-                ConfirmedFamily = _idService.GetFamily(m),
-                ConfirmedGenus = _idService.GetGenus(m),
-                ConfirmedSpecies = _idService.GetSpecies(m)
+                ConfirmedFamily = m.Family,
+                ConfirmedGenus = m.Genus,
+                ConfirmedSpecies = m.Species,
             }).ToList();
             return View(model);
         }
@@ -224,11 +226,11 @@ namespace OxPollen.Controllers
             if (identificationId == 0) return HttpBadRequest();
             var existingId = _idService.GetById(identificationId);
             if (existingId == null) return HttpNotFound();
-            if (_idService.HasConfirmedIdentity(existingId.Grain)) return HttpBadRequest();
+            //TODO Stop removal if identity confirmed: if (existingId.Grain.) return HttpBadRequest();
             if (existingId.User.Id != User.GetUserId()) return HttpUnauthorized();
 
             //Execute
-            var grainId = existingId.Grain.GrainId;
+            var grainId = existingId.Grain.Id;
             _idService.Remove(existingId);
             return RedirectToAction("Identify", new { id = grainId });
         }
@@ -243,9 +245,9 @@ namespace OxPollen.Controllers
         {
             var userId = User.GetUserId();
             var grain = _grainService.GetById(id);
-            if (_idService.HasConfirmedIdentity(grain)) return HttpBadRequest("Can't delete grains with confirmed identity");
+           // if (_idService.HasConfirmedIdentity(grain)) return HttpBadRequest("Can't delete grains with confirmed identity");
             if (grain.SubmittedBy.Id != userId) return HttpBadRequest("Can only delete grains that were submitted by you");
-            var deleted = _grainService.MarkDeleted(grain);
+            var deleted = _grainService.MarkDeleted(grain.Id);
             return RedirectToAction("MyGrains");
         }
     }

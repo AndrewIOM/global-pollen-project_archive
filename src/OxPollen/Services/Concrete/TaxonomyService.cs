@@ -1,38 +1,29 @@
 ﻿using OxPollen.Services.Abstract;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using OxPollen.Models;
+using OxPollen.Data.Abstract;
 
 namespace OxPollen.Services.Concrete
 {
     public class TaxonomyService : ITaxonomyService
     {
-        private OxPollenDbContext _context; 
-        public TaxonomyService(OxPollenDbContext context)
+        private IRepository<Taxon> _taxonRepo;
+        public TaxonomyService(IRepository<Taxon> taxonRepo)
         {
-            _context = context;
+            _taxonRepo = taxonRepo;
         }
 
         public IEnumerable<Taxon> GetAll()
         {
-            throw new NotImplementedException();
+            var result = _taxonRepo.GetAll();
+            return result;
         }
 
-        IEnumerable<Taxon> ITaxonomyService.GetAllFamilies()
+        public IEnumerable<Taxon> GetAll(Taxonomy rank)
         {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Taxon> ITaxonomyService.GetAllGenus()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Taxon> ITaxonomyService.GetAllSpecies()
-        {
-            throw new NotImplementedException();
+            var result = _taxonRepo.Find(m => m.Rank == rank);
+            return result;
         }
     }
 }

@@ -9,10 +9,10 @@ namespace OxPollen.Services.Abstract
     public interface IGrainService
     {
         void Add(Grain newRecord);
-        IEnumerable<Grain> GetUnidentifiedGrains();
+        IEnumerable<Grain> GetUnidentifiedGrains(Taxonomy rank);
         Grain GetById(int id);
         IEnumerable<Grain> GetByUser(string userId);
-        Grain MarkDeleted(Grain grain);
-        Grain Update(Grain grain);
+        Grain MarkDeleted(int id);
+        void Update(Grain grain);
     }
 }

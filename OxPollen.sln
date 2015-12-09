@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "OxPollen", "src\OxPollen\OxPollen.xproj", "{659CE3C6-BE1B-406E-A6DB-A37ED4860593}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{FFC783E7-EEB7-4DBD-B077-AA1F25F52771}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "OxPollen.Tests.Unit", "test\OxPollen.Tests.Unit\OxPollen.Tests.Unit.xproj", "{09F16243-0575-40BC-86B9-C7E232D66C06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,11 +26,16 @@ Global
 		{659CE3C6-BE1B-406E-A6DB-A37ED4860593}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{659CE3C6-BE1B-406E-A6DB-A37ED4860593}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{659CE3C6-BE1B-406E-A6DB-A37ED4860593}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09F16243-0575-40BC-86B9-C7E232D66C06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09F16243-0575-40BC-86B9-C7E232D66C06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09F16243-0575-40BC-86B9-C7E232D66C06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09F16243-0575-40BC-86B9-C7E232D66C06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{659CE3C6-BE1B-406E-A6DB-A37ED4860593} = {9E775191-1786-4967-A691-7973728ED536}
+		{09F16243-0575-40BC-86B9-C7E232D66C06} = {FFC783E7-EEB7-4DBD-B077-AA1F25F52771}
 	EndGlobalSection
 EndGlobal

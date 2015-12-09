@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
+using OxPollen.Models;
 
-namespace OxPollen.Models
+namespace OxPollen.Data.Concrete
 {
     public class OxPollenDbContext : IdentityDbContext<AppUser>
     {

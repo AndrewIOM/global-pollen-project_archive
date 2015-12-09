@@ -3,13 +3,13 @@ using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
-using OxPollen.Models;
+using OxPollen.Data.Concrete;
 
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    [Migration("20151122132130_initial")]
-    partial class initial
+    [Migration("20151207230930_refactorDec")]
+    partial class refactorDec
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -159,7 +159,7 @@ namespace OxPollen.Migrations
 
             modelBuilder.Entity("OxPollen.Models.Grain", b =>
                 {
-                    b.Property<int>("GrainId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int?>("AgeYearsBeforePresent");
@@ -167,6 +167,8 @@ namespace OxPollen.Migrations
                     b.Property<string>("Family");
 
                     b.Property<string>("Genus");
+
+                    b.Property<bool>("IsDeleted");
 
                     b.Property<double>("Latitude");
 
@@ -181,7 +183,7 @@ namespace OxPollen.Migrations
 
                     b.Property<DateTime>("TimeAdded");
 
-                    b.HasKey("GrainId");
+                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("OxPollen.Models.GrainImage", b =>
@@ -191,7 +193,9 @@ namespace OxPollen.Migrations
 
                     b.Property<string>("FileName");
 
-                    b.Property<int?>("GrainGrainId");
+                    b.Property<int?>("GrainId");
+
+                    b.Property<int?>("ReferenceGrainReferenceGrainId");
 
                     b.Property<double>("ScaleNanoMetres");
 
@@ -207,7 +211,7 @@ namespace OxPollen.Migrations
 
                     b.Property<string>("Genus");
 
-                    b.Property<int?>("GrainGrainId");
+                    b.Property<int?>("GrainId");
 
                     b.Property<int>("Rank");
 
@@ -231,6 +235,26 @@ namespace OxPollen.Migrations
                         .IsRequired();
 
                     b.HasKey("OrganisationId");
+                });
+
+            modelBuilder.Entity("OxPollen.Models.ReferenceGrain", b =>
+                {
+                    b.Property<int>("ReferenceGrainId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Family");
+
+                    b.Property<string>("Genus");
+
+                    b.Property<string>("ReferenceCollectionId");
+
+                    b.Property<string>("Species");
+
+                    b.Property<string>("SubmittedById");
+
+                    b.Property<DateTime>("TimeAdded");
+
+                    b.HasKey("ReferenceGrainId");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Taxon", b =>
@@ -306,18 +330,29 @@ namespace OxPollen.Migrations
                 {
                     b.HasOne("OxPollen.Models.Grain")
                         .WithMany()
-                        .HasForeignKey("GrainGrainId");
+                        .HasForeignKey("GrainId");
+
+                    b.HasOne("OxPollen.Models.ReferenceGrain")
+                        .WithMany()
+                        .HasForeignKey("ReferenceGrainReferenceGrainId");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Identification", b =>
                 {
                     b.HasOne("OxPollen.Models.Grain")
                         .WithMany()
-                        .HasForeignKey("GrainGrainId");
+                        .HasForeignKey("GrainId");
 
                     b.HasOne("OxPollen.Models.AppUser")
                         .WithMany()
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("OxPollen.Models.ReferenceGrain", b =>
+                {
+                    b.HasOne("OxPollen.Models.AppUser")
+                        .WithMany()
+                        .HasForeignKey("SubmittedById");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Taxon", b =>

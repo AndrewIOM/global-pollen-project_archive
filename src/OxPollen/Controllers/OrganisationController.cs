@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNet.Mvc;
-using OxPollen.Models;
+using OxPollen.Data.Concrete;
 using OxPollen.ViewModels.Organisation;
 using System.Linq;
 
