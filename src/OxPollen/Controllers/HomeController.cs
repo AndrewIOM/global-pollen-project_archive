@@ -20,7 +20,8 @@ namespace OxPollen.Controllers
 
         public IActionResult Index()
         {
-            var result = _context.UserGrains.Where(m => !m.IsDeleted).Include(m => m.Images).OrderByDescending(m => m.TimeAdded)
+            var result = _context.UserGrains.Where(m => !m.IsDeleted).Where(m => string.IsNullOrEmpty(m.Genus) && string.IsNullOrEmpty(m.Species))
+                .Include(m => m.Images).OrderByDescending(m => m.TimeAdded)
                 .Take(10).ToList();
             var model = result.Select(m => new ReadOnlyGrainViewModel()
                 {

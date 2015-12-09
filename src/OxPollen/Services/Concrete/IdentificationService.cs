@@ -122,12 +122,14 @@ namespace OxPollen.Services.Concrete
                 if (familyTaxon == null)
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, confirmedFamilyName, null, null);
+                    var neotomaId = NeotomaUtility.GetTaxonId(confirmedFamilyName);
                     familyTaxon = new Taxon()
                     {
                         LatinName = confirmedFamilyName,
                         Rank = Taxonomy.Family,
                         Records = new List<Grain>(),
-                        GbifId = gbifID.Result
+                        GbifId = gbifID.Result,
+                        NeotomaId = neotomaId.Result
                     };
                     _context.Add(familyTaxon);
                 }
@@ -143,13 +145,15 @@ namespace OxPollen.Services.Concrete
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Genus,
                         familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, null);
+                    var neotomaId = NeotomaUtility.GetTaxonId(confirmedGenusName);
                     genusTaxon = new Taxon()
                     {
                         LatinName = confirmedGenusName,
                         Rank = Taxonomy.Genus,
                         Records = new List<Grain>(),
                         ParentTaxa = familyTaxon != null ? familyTaxon : null,
-                        GbifId = gbifID.Result
+                        GbifId = gbifID.Result,
+                        NeotomaId = neotomaId.Result
                     };
                     _context.Add(genusTaxon);
                 }
@@ -165,13 +169,15 @@ namespace OxPollen.Services.Concrete
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
                         familyTaxon != null ? familyTaxon.LatinName : null, confirmedGenusName, confirmedSpeciesName);
+                    var neotomaId = NeotomaUtility.GetTaxonId(confirmedSpeciesName);
                     speciesTaxon = new Taxon()
                     {
                         LatinName = confirmedGenusName + " " + confirmedSpeciesName,
                         Rank = Taxonomy.Species,
                         Records = new List<Grain>(),
                         ParentTaxa = genusTaxon != null ? genusTaxon : null,
-                        GbifId = gbifID.Result
+                        GbifId = gbifID.Result,
+                        NeotomaId = neotomaId.Result
                     };
                     _context.Add(speciesTaxon);
                 }
