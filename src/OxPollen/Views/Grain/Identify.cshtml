@@ -62,6 +62,7 @@
             }
         </p>
         <p>Number of IDs: @Model.Identifications.Count</p>
+        <p>Grain Size: @Model.ImageScale nanometres</p>
         <label>Location</label>
         <img style="text-align: left; margin-right: auto; display: block; max-width: 100%" alt="Pollen Location"
              src="http://maps.google.com/maps/api/staticmap?center=@Model.Latitude,@Model.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Latitude,@Model.Longitude&amp&amp;amp;sensor=false">

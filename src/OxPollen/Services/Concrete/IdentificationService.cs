@@ -98,9 +98,9 @@ namespace OxPollen.Services.Concrete
                     .Select(m => m.Species).ToList();
             }
             else
-            {
+        {
                 throw new Exception("Not a valid taxonomic rank");
-            }
+        }
 
             if (ids.Count < 3) return "";
             int percentAgreementRequired = 70;
@@ -108,8 +108,7 @@ namespace OxPollen.Services.Concrete
             var percentAgreement = (groups.Count() / (double)(percentAgreementRequired / 100)) * 100;
             if (percentAgreement >= percentAgreementRequired)
             {
-                var agreedName = groups.OrderBy(m => m.Key).First().Key;
-                return agreedName;
+                return largestName;
             }
             return "";
         }
@@ -125,13 +124,15 @@ namespace OxPollen.Services.Concrete
                 familyTaxon = _uow.TaxonRepository.Find(m => m.LatinName == family && m.Rank == Taxonomy.Family).FirstOrDefault();
                 if (familyTaxon == null)
                 {
-                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, family, null, null);
+                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, confirmedFamilyName, null, null);
+                    var neotomaId = NeotomaUtility.GetTaxonId(confirmedFamilyName);
                     familyTaxon = new Taxon()
                     {
                         LatinName = family,
                         Rank = Taxonomy.Family,
                         Records = new List<Grain>(),
-                        GbifId = gbifID.Result
+                        GbifId = gbifID.Result,
+                        NeotomaId = neotomaId.Result
                     };
                     _uow.TaxonRepository.Add(familyTaxon);
                 }
@@ -150,7 +151,8 @@ namespace OxPollen.Services.Concrete
                         Rank = Taxonomy.Genus,
                         Records = new List<Grain>(),
                         ParentTaxa = familyTaxon != null ? familyTaxon : null,
-                        GbifId = gbifID.Result
+                        GbifId = gbifID.Result,
+                        NeotomaId = neotomaId.Result
                     };
                     if (genusTaxon.ParentTaxa == null) genusTaxon.ParentTaxa = familyTaxon != null ? familyTaxon : null;
                     _uow.TaxonRepository.Add(genusTaxon);
@@ -170,11 +172,12 @@ namespace OxPollen.Services.Concrete
                         Rank = Taxonomy.Species,
                         Records = new List<Grain>(),
                         ParentTaxa = genusTaxon != null ? genusTaxon : null,
-                        GbifId = gbifID.Result
+                        GbifId = gbifID.Result,
+                        NeotomaId = neotomaId.Result
                     };
                     if (speciesTaxon.ParentTaxa == null) speciesTaxon.ParentTaxa = genusTaxon != null ? genusTaxon : null;
                     _uow.TaxonRepository.Add(speciesTaxon);
-                }
+            }
             }
         }
 
