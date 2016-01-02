@@ -1,0 +1,55 @@
+﻿@model ReferenceCollection
+@{
+    ViewData["Title"] = "Digitised Collection";
+}
+
+@section scripts {
+    <script type="text/javascript" src="~/js/Reference/AddReferenceSlides.js"></script>
+}
+
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>Digitised Collection - @Model.Name</h2>
+            <p>Location: @Model.Institution, @Model.CountryCode</p>
+        </div>
+    </div>
+    <br />
+}
+
+@if (Model.Grains.Count == 0)
+{
+    <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> This collection is currently empty</div>
+}
+
+<h4>Add Reference Slides</h4>
+<div class="fileUpload btn btn-default">
+    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span><span> Select Your Images</span>
+    <input type="file" multiple="multiple" accept="image/*" class="upload" onchange="handleFiles(this);" />
+</div>
+
+<h4>Pending</h4>
+<div id="pending-uploads">
+
+</div>
+
+<h4>Reference Slides</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Reference Grain ID</th>
+            <th>Taxon</th>
+            <th>First Image</th>
+        </tr>
+    </thead>
+    <tbody id="grain-table-body">
+        @foreach (var grain in Model.Grains)
+        {
+            <tr>
+                <td>@grain.ReferenceGrainId</td>
+                <td>@grain.Family  @grain.Genus  @grain.Species</td>
+                <td><img src="@grain.Images.First().FileName" class="image-small" /></td>
+            </tr>
+        }
+    </tbody>
+</table>

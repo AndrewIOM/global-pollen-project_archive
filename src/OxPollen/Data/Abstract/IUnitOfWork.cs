@@ -11,6 +11,8 @@ namespace OxPollen.Data.Abstract
         IRepository<Taxon> TaxonRepository { get; }
         IRepository<GrainImage> ImageRepository { get; }
         IRepository<Identification> IdentificationRepository { get; }
+        IRepository<ReferenceCollection> RefCollectionRepository { get; }
+        IRepository<ReferenceGrain> RefGrainRepository { get; }
         void SaveChanges();
     }
 }

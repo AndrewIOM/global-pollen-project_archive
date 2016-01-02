@@ -1,0 +1,43 @@
+﻿@model ReferenceCollection
+@{
+    ViewData["Title"] = "Add Reference Collection";
+}
+@section scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+
+<h3>Add Reference Collection</h3>
+<p>To digitise a reference collection, first add the collection here.</p>
+
+@using (Html.BeginForm("AddCollection", "Reference", FormMethod.Post))
+{
+    <div class="row">
+        <div class="col-md-2">
+            <label asp-for="Name"></label>
+        </div>
+        <div class="col-md-10">
+            <input type="text" asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label asp-for="Institution"></label>
+        </div>
+        <div class="col-md-10">
+            <input type="text" asp-for="Institution" class="form-control" />
+            <span asp-validation-for="Institution" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label asp-for="CountryCode"></label>
+        </div>
+        <div class="col-md-10">
+            <input type="text" asp-for="CountryCode" class="form-control" />
+            <span asp-validation-for="CountryCode" class="text-danger"></span>
+        </div>
+    </div>
+
+    <input class="btn btn-primary" type="submit" name="submit" />
+}

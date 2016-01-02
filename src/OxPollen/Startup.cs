@@ -70,6 +70,7 @@ namespace OxPollen
             services.AddTransient<IIdentificationService, IdentificationService>();
             services.AddTransient<IGrainService, GrainService>();
             services.AddTransient<IFileStoreService, ImageService>();
+            services.AddTransient<IReferenceService, ReferenceService>();
         }
 
         // Configure is called after ConfigureServices is called.

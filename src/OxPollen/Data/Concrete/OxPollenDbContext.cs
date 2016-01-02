@@ -6,16 +6,19 @@ namespace OxPollen.Data.Concrete
 {
     public class OxPollenDbContext : IdentityDbContext<AppUser>
     {
-        //Records
+        //User Sumbissions
         public DbSet<Grain> UserGrains { get; set; }
         public DbSet<Identification> Identifications { get; set; }
-        public DbSet<GrainImage> Images { get; set; }
 
         //Taxonomy
         public DbSet<Taxon> Taxa { get; set; }
-        public DbSet<ReferenceGrain> ReferenceGrains { get; set; }
 
-        //Users
+        //Reference Collection
+        public DbSet<ReferenceGrain> ReferenceGrains { get; set; }
+        public DbSet<ReferenceCollection> ReferenceCollections { get; set; }
+
+        //Shared
+        public DbSet<GrainImage> Images { get; set; }
         public DbSet<Organisation> Organisations { get; set; }
     }
 }

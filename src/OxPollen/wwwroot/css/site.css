@@ -3,6 +3,10 @@
     padding-bottom: 20px;
 }
 
+.image-small {
+    max-height: 5em;
+}
+
 /* Grain Images Grid */
 ul.grain-grid {
     list-style: none;

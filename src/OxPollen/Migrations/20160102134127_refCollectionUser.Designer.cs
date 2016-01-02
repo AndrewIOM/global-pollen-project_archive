@@ -8,9 +8,10 @@ using OxPollen.Data.Concrete;
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    partial class OxPollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160102134127_refCollectionUser")]
+    partial class refCollectionUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -270,8 +271,6 @@ namespace OxPollen.Migrations
 
                     b.Property<string>("SubmittedById");
 
-                    b.Property<int?>("TaxonTaxonId");
-
                     b.Property<DateTime>("TimeAdded");
 
                     b.HasKey("ReferenceGrainId");
@@ -384,10 +383,6 @@ namespace OxPollen.Migrations
                     b.HasOne("OxPollen.Models.AppUser")
                         .WithMany()
                         .HasForeignKey("SubmittedById");
-
-                    b.HasOne("OxPollen.Models.Taxon")
-                        .WithMany()
-                        .HasForeignKey("TaxonTaxonId");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Taxon", b =>

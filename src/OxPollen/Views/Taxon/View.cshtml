@@ -20,7 +20,7 @@
     <div class="col-md-12">
         <h1>@Model.LatinName</h1>
         <h4>@Model.Rank</h4>
-        <h4>@Model.Records.Count confirmed grain(s)</h4>
+        <h4>@Model.SubmittedGrains.Count confirmed grain(s)</h4>
     </div>
 </div>
 
@@ -34,17 +34,28 @@
     <div class="col-md-6">
         <h3>Modern Distribution</h3>
         <div id="map" style="height:20em"></div>
+        <ul id="coordinates"></ul>
     </div>
 </div>
 <hr />
 
 @* Photo Tiles *@
-<h3>OxPollen Grains</h3>
+<h3>Grain Submissions</h3>
 <div class="row">
-    @foreach (var record in Model.Records)
+    @foreach (var record in Model.SubmittedGrains)
     {
         <div class="col-sm-2">
-            <a href="@Url.Action("Identify", "Grain", new { id = @record.GrainId } )"><img src="@record.Images.First().FileName" style="width:100%" /></a>
+            <a href="@Url.Action("Identify", "Grain", new { id = @record.Id } )"><img src="@record.Images.First().FileName" style="width:100%" /></a>
+        </div>
+    }
+</div>
+
+<h3>Digitised Reference Slides</h3>
+<div class="row">
+    @foreach (var record in Model.ReferenceGrains)
+    {
+        <div class="col-sm-2">
+            <a href="@Url.Action("Grain", "Reference", new { id = @record.ReferenceGrainId } )"><img src="@record.Images.First().FileName" style="width:100%" /></a>
         </div>
     }
 </div>
@@ -67,16 +78,21 @@
     });
 </script>
 
-@* GBIF Ajax Request *@
+@* GBIF and Neotoma Ajax Requests *@
 <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript">
     //GBIF Search Functions
     //Andrew Martin, University of Oxford
 
     var gbifUri = "http://api.gbif.org/v1/species/@Model.GbifId";
+    var neotomaUri = "http://api.neotomadb.org/v1/data/datasets?taxonids=@Model.NeotomaId&ageof=taxon";
+
+    var upperAge = 10000;
+    var lowerAge = 0;
+    neotomaUri += "&ageold=" + upperAge + "&ageyoung=" + lowerAge;
 
     $(document).ready(function () {
-        ajaxHelper(gbifUri + '/descriptions', 'GET', 'jsonp').done(function(data) {
+        ajaxHelper(gbifUri + '/descriptions', 'GET', 'jsonp').done(function (data) {
             var holder = document.getElementById('gbif-description');
             var sourceHolder = document.getElementById('description-source');
             var description = '';
@@ -89,7 +105,28 @@
             }
             holder.innerHTML = description;
             sourceHolder.innerHTML = 'Source: ' + source;
-        })
+        });
+
+        $.ajax({
+            url: neotomaUri,
+            dataType: 'jsonp',
+            data: { "taxonname": name },
+            cache: true,
+            success: taxaSearchHandler
+        });
+
+
+
+        ajaxHelper(neotomaUri, 'GET', 'jsonp').done(function (data) {
+            console.log(data);
+            var holder = document.getElementById('coordinates');
+            if (data.success == 0) return;
+            for (i = 0; i < data.data.length; i++) {
+                var li = document.createElement('li');
+                li.innerHTML = "lat: " + data.data[i].Site.LongitudeNorth + ", lon: " + data.data[i].Site.LongitudeEast;
+                holder.appendChild(li);
+            }
+        });
     });
 
     //Base Functions

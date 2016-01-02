@@ -18,6 +18,8 @@ namespace OxPollen.Data.Concrete
         private IRepository<Taxon> taxonRepo = null;
         private IRepository<GrainImage> imageRepo = null;
         private IRepository<Identification> idRepo = null;
+        private IRepository<ReferenceCollection> refCollectionRepo = null;
+        private IRepository<ReferenceGrain> refGrainRepo = null;
 
         public IUserRepository UserRepository
         {
@@ -83,6 +85,30 @@ namespace OxPollen.Data.Concrete
                     idRepo = new IdentificationRepository(_context);
                 }
                 return idRepo;
+            }
+        }
+
+        public IRepository<ReferenceCollection> RefCollectionRepository
+        {
+            get
+            {
+                if (refCollectionRepo == null)
+                {
+                    refCollectionRepo = new ReferenceCollectionRepository(_context);
+                }
+                return refCollectionRepo;
+            }
+        }
+
+        public IRepository<ReferenceGrain> RefGrainRepository
+        {
+            get
+            {
+                if (refGrainRepo == null)
+                {
+                    refGrainRepo = new ReferenceGrainRepository(_context);
+                }
+                return refGrainRepo;
             }
         }
 

@@ -80,7 +80,6 @@ namespace OxPollen.Services.Concrete
 
         private string GetConfirmedName(Taxonomy rank, List<Identification> identifications)
         {
-            //1. Determine Correct Name
             List<string> ids;
             if (rank == Taxonomy.Family)
             {
@@ -98,14 +97,19 @@ namespace OxPollen.Services.Concrete
                     .Select(m => m.Species).ToList();
             }
             else
-        {
+            {
                 throw new Exception("Not a valid taxonomic rank");
-        }
+            }
 
-            if (ids.Count < 3) return "";
-            int percentAgreementRequired = 70;
-            var groups = ids.GroupBy(m => m);
-            var percentAgreement = (groups.Count() / (double)(percentAgreementRequired / 100)) * 100;
+            if (ids.Count < 3) return null;
+            double percentAgreementRequired = 0.70;
+            var groups = ids.GroupBy(m => m).OrderByDescending(m => m.Count());
+
+            int allIdsCount = ids.Count;
+            int largestCount = groups.First().Count();
+            var largestName = groups.First().Key;
+
+            double percentAgreement = (double)largestCount / (double)allIdsCount;
             if (percentAgreement >= percentAgreementRequired)
             {
                 return largestName;
@@ -124,13 +128,13 @@ namespace OxPollen.Services.Concrete
                 familyTaxon = _uow.TaxonRepository.Find(m => m.LatinName == family && m.Rank == Taxonomy.Family).FirstOrDefault();
                 if (familyTaxon == null)
                 {
-                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, confirmedFamilyName, null, null);
-                    var neotomaId = NeotomaUtility.GetTaxonId(confirmedFamilyName);
+                    var gbifID = GbifUtility.GetGbifId(Taxonomy.Family, family, null, null);
+                    var neotomaId = NeotomaUtility.GetTaxonId(family);
                     familyTaxon = new Taxon()
                     {
                         LatinName = family,
                         Rank = Taxonomy.Family,
-                        Records = new List<Grain>(),
+                        SubmittedGrains = new List<Grain>(),
                         GbifId = gbifID.Result,
                         NeotomaId = neotomaId.Result
                     };
@@ -145,11 +149,12 @@ namespace OxPollen.Services.Concrete
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Genus,
                         familyTaxon != null ? familyTaxon.LatinName : null, genus, null);
+                    var neotomaId = NeotomaUtility.GetTaxonId(genus);
                     genusTaxon = new Taxon()
                     {
                         LatinName = genus,
                         Rank = Taxonomy.Genus,
-                        Records = new List<Grain>(),
+                        SubmittedGrains = new List<Grain>(),
                         ParentTaxa = familyTaxon != null ? familyTaxon : null,
                         GbifId = gbifID.Result,
                         NeotomaId = neotomaId.Result
@@ -166,18 +171,19 @@ namespace OxPollen.Services.Concrete
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
                         familyTaxon != null ? familyTaxon.LatinName : null, genus, species);
+                    var neotomaId = NeotomaUtility.GetTaxonId(genus + " " + species);
                     speciesTaxon = new Taxon()
                     {
                         LatinName = genus + " " + species,
                         Rank = Taxonomy.Species,
-                        Records = new List<Grain>(),
+                        SubmittedGrains = new List<Grain>(),
                         ParentTaxa = genusTaxon != null ? genusTaxon : null,
                         GbifId = gbifID.Result,
                         NeotomaId = neotomaId.Result
                     };
                     if (speciesTaxon.ParentTaxa == null) speciesTaxon.ParentTaxa = genusTaxon != null ? genusTaxon : null;
                     _uow.TaxonRepository.Add(speciesTaxon);
-            }
+                }
             }
         }
 

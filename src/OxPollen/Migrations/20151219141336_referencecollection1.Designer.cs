@@ -8,9 +8,10 @@ using OxPollen.Data.Concrete;
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    partial class OxPollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20151219141336_referencecollection1")]
+    partial class referencecollection1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -250,8 +251,6 @@ namespace OxPollen.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<string>("UserId");
-
                     b.HasKey("Id");
                 });
 
@@ -269,8 +268,6 @@ namespace OxPollen.Migrations
                     b.Property<string>("Species");
 
                     b.Property<string>("SubmittedById");
-
-                    b.Property<int?>("TaxonTaxonId");
 
                     b.Property<DateTime>("TimeAdded");
 
@@ -368,13 +365,6 @@ namespace OxPollen.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("OxPollen.Models.ReferenceCollection", b =>
-                {
-                    b.HasOne("OxPollen.Models.AppUser")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("OxPollen.Models.ReferenceGrain", b =>
                 {
                     b.HasOne("OxPollen.Models.ReferenceCollection")
@@ -384,10 +374,6 @@ namespace OxPollen.Migrations
                     b.HasOne("OxPollen.Models.AppUser")
                         .WithMany()
                         .HasForeignKey("SubmittedById");
-
-                    b.HasOne("OxPollen.Models.Taxon")
-                        .WithMany()
-                        .HasForeignKey("TaxonTaxonId");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Taxon", b =>

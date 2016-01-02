@@ -13,7 +13,7 @@ namespace OxPollen.Models
 
         public virtual List<GrainImage> Images { get; set; }
         public virtual AppUser SubmittedBy { get; set; }
-        public string ReferenceCollectionId { get; set; }
+        public virtual ReferenceCollection Collection { get; set; }
         public DateTime TimeAdded { get; set; }
 
         public string Family { get; set; }

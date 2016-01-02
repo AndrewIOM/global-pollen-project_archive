@@ -19,7 +19,8 @@ namespace OxPollen.Models
         public int NeotomaId { get; set; }
 
         //Navigation Properties
-        public virtual List<Grain> Records { get; set; }
+        public virtual List<Grain> SubmittedGrains { get; set; }
+        public virtual List<ReferenceGrain> ReferenceGrains { get; set; }
         public virtual List<Taxon> ChildTaxa { get; set; }
         public virtual Taxon ParentTaxa { get; set; }
     }
