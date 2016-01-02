@@ -51,7 +51,7 @@ namespace OxPollen.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(result);
+                return HttpBadRequest(ModelState);
             }
 
             var filesToUpload = new List<string>();
@@ -94,7 +94,18 @@ namespace OxPollen.Controllers
                 return View("Collections", listModel);
             }
             var model = _refService.GetCollectionById(id);
+            if (model.User.Id != User.GetUserId()) return HttpBadRequest();
             return View("CollectionDetail", model);
+        }
+
+        public IActionResult Grain(int id)
+        {
+            if (id == 0)
+            {
+                return HttpBadRequest();
+            }
+            var model = _refService.GetGrainById(id);
+            return View(model);
         }
     }
 }

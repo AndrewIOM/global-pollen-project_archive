@@ -39,7 +39,9 @@ namespace OxPollen.Data.Concrete
 
         public ReferenceGrain GetById(int id)
         {
-            throw new NotImplementedException();
+            return _context.ReferenceGrains.Include(m => m.Images)
+                .Include(m => m.Collection)
+                .FirstOrDefault(m => m.ReferenceGrainId == id);
         }
 
         public void Update(ReferenceGrain entity)

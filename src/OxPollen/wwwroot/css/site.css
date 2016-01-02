@@ -7,6 +7,12 @@
     max-height: 5em;
 }
 
+.form-panel {
+    background-color: #f9f9f9;
+    padding:10px;
+    margin-bottom:1em;
+}
+
 /* Grain Images Grid */
 ul.grain-grid {
     list-style: none;

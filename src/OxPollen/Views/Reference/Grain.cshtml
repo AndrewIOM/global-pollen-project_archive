@@ -1,0 +1,34 @@
+﻿@model OxPollen.Models.ReferenceGrain
+
+@{
+    ViewBag.Title = "Reference Grain Details #" + Model.ReferenceGrainId;
+    var timeSinceAdd = DateTime.Now - Model.TimeAdded;
+}
+
+@* Breadcrumb *@
+<div class="row">
+    <br />
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li>Digitised Reference Grains</li>
+            <li class="active">Grain #@Model.ReferenceGrainId</li>
+        </ol>
+    </div>
+</div>
+
+@* Header *@
+<div class="row">
+    <div class="col-md-12">
+        <h2>
+            @if (!string.IsNullOrEmpty(Model.Family))
+            { <span>@Model.Family > </span> }
+            @if (!string.IsNullOrEmpty(Model.Genus))
+            { <span>@Model.Genus > </span> }
+            @if (!string.IsNullOrEmpty(Model.Species))
+            { <span>@Model.Species</span> }
+        </h2>
+        <p>@Model.Collection.Name, @Model.Collection.Institution @Model.Collection.CountryCode</p>
+    </div>
+</div>
+
+<img src="@Model.Images.First().FileName" />
