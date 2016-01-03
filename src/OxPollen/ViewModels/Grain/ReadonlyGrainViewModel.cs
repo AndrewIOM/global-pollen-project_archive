@@ -10,6 +10,7 @@ namespace OxPollen.ViewModels
         public int Id { get; set; }
         public double Bounty { get; set; }
         public string ImageLocation { get; set; }
+        public string ThumbnailLocation { get; set; }
         public DateTime TimeAdded { get; set; }
 
         public string ConfirmedSpecies { get; set; }

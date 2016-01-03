@@ -13,6 +13,10 @@
     margin-bottom:1em;
 }
 
+.success {
+    background-color:lightgreen;
+}
+
 /* Grain Images Grid */
 ul.grain-grid {
     list-style: none;

@@ -71,6 +71,7 @@ namespace OxPollen
             services.AddTransient<IGrainService, GrainService>();
             services.AddTransient<IFileStoreService, ImageService>();
             services.AddTransient<IReferenceService, ReferenceService>();
+            services.AddTransient<ITaxonomyService, TaxonomyService>();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -121,11 +122,11 @@ namespace OxPollen
             //    options.ClientId = Configuration["Authentication:Google:ClientId"];
             //    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
             //});
-            //app.UseMicrosoftAccountAuthentication(options =>
-            //{
-            //    options.ClientId = Configuration["Authentication:MicrosoftAccount:ClientId"];
-            //    options.ClientSecret = Configuration["Authentication:MicrosoftAccount:ClientSecret"];
-            //});
+            app.UseMicrosoftAccountAuthentication(options =>
+            {
+                options.ClientId = Configuration["Authentication:MicrosoftAccount:ClientId"];
+                options.ClientSecret = Configuration["Authentication:MicrosoftAccount:ClientSecret"];
+            });
             //app.UseTwitterAuthentication(options =>
             //{
             //    options.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];

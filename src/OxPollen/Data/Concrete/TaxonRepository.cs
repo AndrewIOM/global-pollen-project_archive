@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using Microsoft.Data.Entity;
 
 namespace OxPollen.Data.Concrete
 {
@@ -33,17 +34,22 @@ namespace OxPollen.Data.Concrete
 
         public IEnumerable<Taxon> Find(Expression<Func<Taxon, bool>> where)
         {
-            return _context.Taxa.Where(where);
+            return _context.Taxa
+                .Include(m => m.ChildTaxa)
+                .Where(where);
         }
 
         public IEnumerable<Taxon> GetAll()
         {
-            return _context.Taxa;
+            return _context.Taxa
+                .Include(m => m.ChildTaxa);
         }
 
         public Taxon GetById(int id)
         {
-            return _context.Taxa.FirstOrDefault(m => m.TaxonId == id);
+            return _context.Taxa
+                .Include(m => m.ChildTaxa)
+                .FirstOrDefault(m => m.TaxonId == id);
         }
     }
 }

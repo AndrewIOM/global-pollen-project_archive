@@ -8,9 +8,10 @@ using OxPollen.Data.Concrete;
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    partial class OxPollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160103174610_removeNavPropertiesFromTaxa")]
+    partial class removeNavPropertiesFromTaxa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -173,8 +174,6 @@ namespace OxPollen.Migrations
 
                     b.Property<double>("Longitude");
 
-                    b.Property<double>("MaxSizeNanoMetres");
-
                     b.Property<string>("Species");
 
                     b.Property<string>("SubmittedById")
@@ -190,15 +189,13 @@ namespace OxPollen.Migrations
                     b.Property<int>("GrainImageId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("FileName")
-                        .IsRequired();
-
-                    b.Property<string>("FileNameThumbnail")
-                        .IsRequired();
+                    b.Property<string>("FileName");
 
                     b.Property<int?>("GrainId");
 
                     b.Property<int?>("ReferenceGrainReferenceGrainId");
+
+                    b.Property<double>("ScaleNanoMetres");
 
                     b.HasKey("GrainImageId");
                 });
@@ -267,8 +264,6 @@ namespace OxPollen.Migrations
                     b.Property<string>("Family");
 
                     b.Property<string>("Genus");
-
-                    b.Property<double>("MaxSizeNanoMetres");
 
                     b.Property<string>("Species");
 

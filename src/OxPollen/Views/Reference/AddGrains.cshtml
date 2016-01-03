@@ -1,0 +1,42 @@
+﻿@model ReferenceCollection
+@{
+    ViewData["Title"] = "Digitised Collection";
+}
+
+@section scripts {
+    <script type="text/javascript" src="~/js/Reference/AddReferenceSlides.js"></script>
+}
+
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>Digitised Collection - @Model.Name</h2>
+            <p>Location: @Model.Institution, @Model.CountryCode</p>
+        </div>
+    </div>
+    <br />
+}
+
+<h2>Add Reference Slides</h2>
+<p>Using this form, you can upload many digitised reference slides at once.</p>
+<p>
+    By using the below filename format, OxPollen will detect the taxonomy and grain sizes for your reference slides.
+    <ol>
+        <li>Family: 'Scale_Family.extension' (e.g. 04_Petuniaceae.jpg)</li>
+        <li>Genus: 'Scale_Family_Genus.extension' (e.g.23_Petuniaceae_Betula.png)</li>
+        <li>Species: 'Scale_Family_Genus_species.extension' (e.g.23_Petuniaceae_Betula_nana.png)</li>
+    </ol>
+</p>
+<div class="fileUpload btn btn-default">
+    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span><span> Select Your Images</span>
+    <input type="file" multiple="multiple" accept="image/*" class="upload" onchange="handleFiles(this);" />
+</div>
+<div id="pending-uploads">
+
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <a asp-action="Collections" asp-controller="Reference" class="btn btn-default" role="button">Back to Collection</a>
+    </div>
+</div>

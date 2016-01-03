@@ -12,6 +12,9 @@ namespace OxPollen.ViewModels.Taxon
         public string LatinName { get; set; }
         public Taxonomy Rank { get; set; }
 
+        public int GbifId { get; set; }
+        public int NeotomaId { get; set; }
+
         public List<Grain> SubmittedGrains { get; set; }
         public List<ReferenceGrain> ReferenceGrains { get; set; }
     }

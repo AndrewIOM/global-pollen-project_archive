@@ -22,6 +22,8 @@ namespace OxPollen.Models
         public DateTime TimeAdded { get; set; }
         [Required]
         public bool IsDeleted { get; set; }
+        [Required]
+        public double MaxSizeNanoMetres { get; set; }
 
         //Optional
         public int? AgeYearsBeforePresent { get; set; }

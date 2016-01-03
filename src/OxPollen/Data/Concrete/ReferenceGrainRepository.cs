@@ -29,7 +29,7 @@ namespace OxPollen.Data.Concrete
 
         public IEnumerable<ReferenceGrain> Find(Expression<Func<ReferenceGrain, bool>> where)
         {
-            throw new NotImplementedException();
+            return _context.ReferenceGrains.Include(m => m.Images).Where(where);
         }
 
         public IEnumerable<ReferenceGrain> GetAll()

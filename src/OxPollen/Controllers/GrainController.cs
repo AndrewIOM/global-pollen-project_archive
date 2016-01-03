@@ -73,6 +73,7 @@ namespace OxPollen.Controllers
                 Latitude = result.Latitude.Value,
                 Longitude = result.Longitude.Value,
                 SubmittedBy = currentUser,
+                MaxSizeNanoMetres = result.ImagesScale.Value,
                 TimeAdded = DateTime.Now,
                 Images = new List<GrainImage>()
             };
@@ -80,8 +81,8 @@ namespace OxPollen.Controllers
             {
                 grain.Images.Add(new GrainImage()
                 {
-                    FileName = file,
-                    ScaleNanoMetres = result.ImagesScale.Value
+                    FileName = file.Item1,
+                    FileNameThumbnail = file.Item2
                 });
             }
             _grainService.Add(grain);
@@ -98,7 +99,8 @@ namespace OxPollen.Controllers
                     Bounty = BountyUtility.Calculate(m.TimeAdded),
                     Id = m.Id,
                     TimeAdded = m.TimeAdded,
-                    ImageLocation = m.Images.Count > 0 ? m.Images.First().FileName : null
+                    ImageLocation = m.Images.Count > 0 ? m.Images.First().FileName : null,
+                    ThumbnailLocation = m.Images.Count > 0 ? m.Images.First().FileNameThumbnail : null
                 }).ToList();
             return View(model);
         }
@@ -129,7 +131,7 @@ namespace OxPollen.Controllers
                 Latitude = record.Latitude,
                 Longitude = record.Longitude,
                 TimeAdded = record.TimeAdded,
-                ImageScale = record.Images.Select(m => m.ScaleNanoMetres).First(),
+                ImageScale = record.MaxSizeNanoMetres,
                 Identifications = record.Identifications
             };
 
@@ -174,7 +176,7 @@ namespace OxPollen.Controllers
                     Latitude = record.Latitude,
                     Longitude = record.Longitude,
                     TimeAdded = record.TimeAdded,
-                    ImageScale = record.Images.Select(m => m.ScaleNanoMetres).First(),
+                    ImageScale = record.MaxSizeNanoMetres,
                     Identifications = record.Identifications,
                     Family = result.Family,
                     Genus = result.Genus,

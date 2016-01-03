@@ -40,10 +40,10 @@
         <div class="image-thumbnails" style="height:5em;overflow:hidden;">
             @foreach (var image in Model.ImageUrls)
             {
-                <a><img src="@image" onclick="return selectImage(this.src);" style="width:5em; height:5em;display:inline-block" /></a>
+                <a><img src="\user-image-uploads\@image" onclick="return selectImage(this.src);" style="width:5em; height:5em;display:inline-block" /></a>
             }
         </div>
-        <img id="displayimage" src="@Model.ImageUrls.First()" style="width:100%; height:100%" />
+        <img id="displayimage" src="\user-image-uploads\@Model.ImageUrls.First()" style="width:100%; height:100%" />
     </div>
     @* Right Column: Details and IDs *@
     <div class="col-md-6">

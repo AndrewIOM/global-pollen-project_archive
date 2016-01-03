@@ -1,8 +1,4 @@
 ﻿using OxPollen.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OxPollen.ViewModels
 {
@@ -10,7 +6,9 @@ namespace OxPollen.ViewModels
     {
         public int Id { get; set; }
         public string LatinName { get; set; }
-        public int ConfirmedGrainsCount { get; set; }
         public Taxonomy Rank { get; set; }
+
+        public int UserSubmissionsConfirmedCount { get; set; }
+        public int ReferenceGrainsCount { get; set; }
     }
 }

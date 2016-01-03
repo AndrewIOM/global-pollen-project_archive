@@ -6,11 +6,12 @@ namespace OxPollen.Models
     {
         [Key]
         public int GrainImageId { get; set; }
-
+        [Required]
         public string FileName { get; set; }
-        public double ScaleNanoMetres { get; set; }
+        [Required]
+        public string FileNameThumbnail { get; set; }
 
         //Navigation
-        public Grain Grain { get; set; }
+        public virtual Grain Grain { get; set; }
     }
 }

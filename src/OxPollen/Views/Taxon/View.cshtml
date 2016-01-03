@@ -1,4 +1,4 @@
-﻿@model Taxon
+﻿@model OxPollen.ViewModels.Taxon.TaxonDetailViewModel
 
 @{
     ViewBag.Title = Model.LatinName;
@@ -10,7 +10,7 @@
     <div class="col-md-12">
         <ol class="breadcrumb">
             <li><a asp-action="Index">Pollen Reference Collection</a></li>
-            <li class="active">@Model.TaxonId: @Model.LatinName</li>
+            <li class="active">@Model.Id: @Model.LatinName</li>
         </ol>
     </div>
 </div>
@@ -20,7 +20,6 @@
     <div class="col-md-12">
         <h1>@Model.LatinName</h1>
         <h4>@Model.Rank</h4>
-        <h4>@Model.SubmittedGrains.Count confirmed grain(s)</h4>
     </div>
 </div>
 
@@ -30,6 +29,7 @@
         <h3>Description</h3>
         <p id="description-source">Source:</p>
         <p id="gbif-description"><span class="glyphicon glyphicon-refresh"></span></p>
+        <a class="btn btn-default" href="http://gbif.org/species/@Model.GbifId" target="_blank">View at GBIF</a>
     </div>
     <div class="col-md-6">
         <h3>Modern Distribution</h3>
@@ -40,24 +40,41 @@
 <hr />
 
 @* Photo Tiles *@
-<h3>Grain Submissions</h3>
 <div class="row">
-    @foreach (var record in Model.SubmittedGrains)
-    {
-        <div class="col-sm-2">
-            <a href="@Url.Action("Identify", "Grain", new { id = @record.Id } )"><img src="@record.Images.First().FileName" style="width:100%" /></a>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Digitised Reference Slides</div>
+            <div class="panel-body">
+                @foreach (var record in Model.ReferenceGrains)
+                {
+                    <div class="col-sm-2">
+                        <a href="@Url.Action("Grain", "Reference", new { id = @record.ReferenceGrainId } )"><img src="\user-image-uploads\@record.Images.First().FileNameThumbnail" style="width:100%" /></a>
+                    </div>
+                }
+                @if (Model.ReferenceGrains.Count == 0)
+                {
+                    <p>None</p>
+                }
+            </div>
         </div>
-    }
-</div>
-
-<h3>Digitised Reference Slides</h3>
-<div class="row">
-    @foreach (var record in Model.ReferenceGrains)
-    {
-        <div class="col-sm-2">
-            <a href="@Url.Action("Grain", "Reference", new { id = @record.ReferenceGrainId } )"><img src="@record.Images.First().FileName" style="width:100%" /></a>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Confirmed Grains Submitted by OxPollen Users</div>
+            <div class="panel-body">
+                @foreach (var record in Model.SubmittedGrains)
+                {
+                    <div class="col-sm-2">
+                        <a href="@Url.Action("Identify", "Grain", new { id = @record.Id } )"><img src="\user-image-uploads\@record.Images.First().FileNameThumbnail" style="width:100%" /></a>
+                    </div>
+                }
+                @if (Model.SubmittedGrains.Count == 0)
+                {
+                    <p>None</p>
+                }
+            </div>
         </div>
-    }
+    </div>
 </div>
 
 @* Mapping *@

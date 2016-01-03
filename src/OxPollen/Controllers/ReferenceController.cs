@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace OxPollen.Controllers
 {
-    [Authorize]
     public class ReferenceController : Controller
     {
         private IFileStoreService _fileService;
@@ -25,6 +24,7 @@ namespace OxPollen.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult AddCollection()
         {
             var model = new ReferenceCollection();
@@ -32,6 +32,7 @@ namespace OxPollen.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult AddCollection(ReferenceCollection result)
         {
             if (!ModelState.IsValid)
@@ -44,7 +45,23 @@ namespace OxPollen.Controllers
             return RedirectToAction("Collections", new { id = saved.Id });
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult AddGrain(int id)
+        {
+            if (id == 0)
+            {
+                var currentUser = User.GetUserId();
+                var listModel = _refService.GetCollectionsByUser(currentUser);
+                return View("Collections", listModel);
+            }
+            var model = _refService.GetCollectionById(id);
+            if (model.User.Id != User.GetUserId()) return HttpBadRequest();
+            return View("AddGrains", model);
+        }
+
         [HttpPost]
+        [Authorize]
         public IActionResult AddGrain(ReferenceGrainViewModel result)
         {
             //TODO Limit addition to current user's collections only
@@ -76,8 +93,8 @@ namespace OxPollen.Controllers
             {
                 toSave.Images.Add(new GrainImage()
                 {
-                    FileName = file,
-                    ScaleNanoMetres = result.ImagesScale.Value
+                    FileName = file.Item1,
+                    FileNameThumbnail = file.Item2
                 });
             }
 
@@ -85,6 +102,7 @@ namespace OxPollen.Controllers
             return Ok(saved);
         }
 
+        [Authorize]
         public IActionResult Collections(int id)
         {
             if (id == 0)

@@ -8,8 +8,8 @@ namespace OxPollen.Services.Abstract
 {
     public interface IFileStoreService
     {
-        Task<string> Upload(IFormFile file);
-        Task<List<string>> Upload(IList<IFormFile> files);
-        List<string> Upload(List<string> base64Files);
+        Tuple<string, string> Upload(IFormFile file);
+        List<Tuple<string,string>> Upload(IList<IFormFile> files);
+        List<Tuple<string,string>> Upload(List<string> base64Files);
     }
 }

@@ -14,19 +14,21 @@
         <p>
             This collection contains pollen taxa that have been identified by the users of OxPollen. 
         </p>
-        <div class="filters">
-            <h4><span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters</h4>
-            <span>Taoxnomic Rank: </span>
-            <div class="dropdown" style="display:inline;">
-                <button class="btn btn-default dropdown-toggle" type="button" id="filterMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    @rankFilter
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="filterMenu">
-                    <li><a href="@Url.Action("Index", new { rank = Taxonomy.Species })">Species</a></li>
-                    <li><a href="@Url.Action("Index", new { rank = Taxonomy.Genus })">Genus</a></li>
-                    <li><a href="@Url.Action("Index", new { rank = Taxonomy.Family })">Family</a></li>
-                </ul>
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters</div>
+            <div class="panel-body">
+                <span>Taoxnomic Rank: </span>
+                <div class="dropdown" style="display:inline;">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="filterMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        @rankFilter
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="filterMenu">
+                        <li><a href="@Url.Action("Index", new { rank = Taxonomy.Species })">Species</a></li>
+                        <li><a href="@Url.Action("Index", new { rank = Taxonomy.Genus })">Genus</a></li>
+                        <li><a href="@Url.Action("Index", new { rank = Taxonomy.Family })">Family</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -40,7 +42,8 @@
                 <thead>
                     <tr>
                         <th>Latin Name</th>
-                        <th>Confirmed IDs</th>
+                        <th>Confirmed User Submissions</th>
+                        <th>Digitised Reference Slides</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -48,7 +51,8 @@
                 {
                     <tr>
                         <td>@taxon.LatinName</td>
-                        <td>@taxon.ConfirmedGrainsCount</td>
+                        <td>@taxon.UserSubmissionsConfirmedCount</td>
+                        <td>@taxon.ReferenceGrainsCount</td>
                         <td><a role="button" class="btn btn-primary" href="@Url.Action("View", new { id = @taxon.Id } )">View Details</a></td>
                     </tr>
                 }

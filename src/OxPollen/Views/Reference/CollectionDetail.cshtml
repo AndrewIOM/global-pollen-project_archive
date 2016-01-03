@@ -3,10 +3,6 @@
     ViewData["Title"] = "Digitised Collection";
 }
 
-@section scripts {
-    <script type="text/javascript" src="~/js/Reference/AddReferenceSlides.js"></script>
-}
-
 @section homepageHeader {
     <div class="addgrain-section headsection">
         <div class="container">
@@ -22,13 +18,10 @@
     <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> This collection is currently empty</div>
 }
 
-<h4>Add Reference Slides</h4>
-<div class="fileUpload btn btn-default">
-    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span><span> Select Your Images</span>
-    <input type="file" multiple="multiple" accept="image/*" class="upload" onchange="handleFiles(this);" />
-</div>
-<div id="pending-uploads">
-
+<div class="row">
+    <div class="col-md-12">
+        <a role="button" class="btn btn-default" href="@Url.Action("AddGrain", "Reference", new { id = Model.Id })"><span class="glyphicon glyphicon-plus"></span> Batch-Add Reference Slides</a>
+    </div>
 </div>
 
 <h4>Reference Slides</h4>
@@ -46,7 +39,7 @@
             <tr>
                 <td>@grain.ReferenceGrainId</td>
                 <td>@grain.Family  @grain.Genus  @grain.Species</td>
-                <td><img src="@grain.Images.First().FileName" class="image-small" /></td>
+                <td><img src="\user-image-uploads\@grain.Images.First().FileNameThumbnail" class="image-small" /></td>
             </tr>
         }
     </tbody>

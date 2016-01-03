@@ -45,17 +45,36 @@
     var formData = new FormData(form);
     console.log(formData);
 
+    //Progress Bar
+    var progbar = form.getElementsByClassName('progress-bar')[0];
+    var progDiv = form.getElementsByClassName('progress')[0];
+    var submit = document.getElementById('submit');
+    progbar.className = 'progress-bar progress-bar-striped active';
+    submit.className = 'btn btn-primary disabled';
+    progDiv.setAttribute('style', 'display:""');
+
     //Ajax Request
     ajax = new XMLHttpRequest();
+    (ajax.upload || ajax).addEventListener('progress', function (e) {
+        var done = e.position || e.loaded
+        var total = e.totalSize || e.total;
+        var progress = Math.round(done / total * 100) + '%';
+        progbar.setAttribute('style', 'width:' + progress);
+        progbar.innerHTML = progress;
+    });
+
     ajax.onreadystatechange = function () {
         if (ajax.readyState == 4 || ajax.readyState == "complete") {
             if (ajax.status == 200) {
+                progbar.className = 'progress-bar progress-bar-success progress-bar-striped active';
                 location.href = "/Grain/Index";
             }
             if (ajax.status == 400 || ajax.status == 500) {
                 var result = ajax.responseText;
                 var resultJson = JSON.parse(result);
                 console.log(resultJson);
+                progbar.className = 'progress-bar progress-bar-danger progress-bar-striped';
+                submit.className = 'btn btn-primary';
                 var errorBox = document.getElementById('validation-errors-box');
                 $('#validation-errors-box').css('display', '');
                 var newContent = "";
@@ -66,6 +85,7 @@
                 $("html, body").animate({ scrollTop: 0 }, "slow");
                 $('#submit').prop('disabled', false);
                 $('#submit').removeClass('disabled');
+                progDiv.setAttribute('style', 'display:none');
             }
         }
     }
