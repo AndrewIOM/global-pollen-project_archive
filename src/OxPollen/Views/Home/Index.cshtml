@@ -52,7 +52,7 @@
                 <li>
                     <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
                         <div class="img-container">
-                            <img src="@grain.ImageLocation" />
+                            <img src="~/user-image-uploads/@grain.ThumbnailLocation" />
                             <div class="ribbon"><span>@grain.Bounty</span></div>
                         </div>
                     </a>

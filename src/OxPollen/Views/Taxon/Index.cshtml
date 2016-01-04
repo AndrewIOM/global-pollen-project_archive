@@ -7,13 +7,21 @@
     if (rank.Count == 0) { rankFilter = "Genus"; } else { rankFilter = rank.FirstOrDefault(); };
 }
 
-@* Header *@
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>Reference Collection</h2>
+            <p>
+                This collection contains pollen taxa that have been identified by the users of OxPollen.
+            </p>
+        </div>
+    </div>
+    <br />
+}
+
+@* Filters *@
 <div class="row">
     <div class="col-md-12">
-        <h1>Reference Collection</h1>
-        <p>
-            This collection contains pollen taxa that have been identified by the users of OxPollen. 
-        </p>
         <div class="panel panel-default">
             <div class="panel-heading"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters</div>
             <div class="panel-body">

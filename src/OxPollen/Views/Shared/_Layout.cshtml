@@ -41,6 +41,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-controller="Home" asp-action="About">About</a></li>
+                    <li><a asp-controller="Taxon" asp-action="Index">Reference Collection</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pollen Records<span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -50,9 +51,8 @@
                             <li><a asp-action="Help" asp-controller="Taxon">Help</a></li>
                         </ul>
                     </li>
-                    <li><a asp-controller="Taxon" asp-action="Index">Reference Collection</a></li>
-                    <li><a asp-controller="Bounty" asp-action="Index">Bounty</a></li>
                     <li><a asp-controller="Reference" asp-action="Collections">Digitise</a></li>
+                    <li><a asp-controller="Bounty" asp-action="Index">Bounty</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>

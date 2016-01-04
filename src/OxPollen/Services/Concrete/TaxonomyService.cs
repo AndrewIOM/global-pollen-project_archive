@@ -118,7 +118,7 @@ namespace OxPollen.Services.Concrete
         public IEnumerable<ReferenceGrain> GetReferenceGrains(Taxon taxon)
         {
             IEnumerable<ReferenceGrain> result = new List<ReferenceGrain>();
-            if (taxon.Rank == Taxonomy.Species) result = _uow.RefGrainRepository.Find(m => m.Species == taxon.LatinName);
+            if (taxon.Rank == Taxonomy.Species) result = _uow.RefGrainRepository.Find(m => m.Genus + " " + m.Species == taxon.LatinName);
             else if (taxon.Rank == Taxonomy.Genus) result = _uow.RefGrainRepository.Find(m => m.Genus == taxon.LatinName);
             else result = _uow.RefGrainRepository.Find(m => m.Family == taxon.LatinName);
             return result;

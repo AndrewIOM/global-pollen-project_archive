@@ -188,7 +188,7 @@
             var list = document.getElementById(rank + 'List');
             $('#' + rank + 'List').css('display', '');
             list.innerHTML = "";
-            if (!(data.length == 1 && data[0].canonicalName == document.getElementById(rank).value)) {
+            if (!(data.length == 1 && data[0].canonicalName.toLowerCase() == document.getElementById(rank).value.toLowerCase())) {
                 for (var i = 0; i < data.length; i++) {
                     if (i > 10) continue;
                     var option = document.createElement('a');
@@ -213,19 +213,34 @@
                         //Handle family name
                         if (rank == 'Species' || rank == 'Genus') {
                             var family = this.getElementsByClassName("family-name")[0].innerHTML;
-                            if (family != 'undefined') $('#Family').val(family);
+                            //If family is not unique, don't use in autofill
+                            if (family != 'undefined') ajaxHelper("http://api.gbif.org/v1/species/match?rank=Family&name=" + family, 'GET', 'jsonp').done(function (data2) {
+                                if (data2.matchType == 'EXACT') {
+                                    $('#Family').val(family);
+                                }
+                            });
                         }
-
-                        $('#' + rank + 'List').css('display', 'none');
+                        $('#' + rank + 'List').fadeOut();
                     });
                     list.appendChild(option);
                 }
+            } else {
+                $('#' + rank + 'List').fadeOut();
             }
             $('.family-name').css('display', 'none');
         });
     }
 
     function disable(rank) {
+        var element;
+        if (rank == 'Family') element = 'FamilyList';
+        if (rank == 'Genus') element = 'GenusList';
+        if (rank == 'Species') element = 'SpeciesList';
+
+        setTimeout(func, 100);
+        function func() {
+            $('#' + element).fadeOut();
+        }
     }
 
     //Base Functions
