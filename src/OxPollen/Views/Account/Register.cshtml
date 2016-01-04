@@ -34,8 +34,7 @@
             <label asp-for="Organisation" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Organisation" class="form-control" onkeyup="updateOrganisationList(this);" autocomplete="off" />
-                <div class="autocomplete" id="organisationsList" style="display:none"></div>
-                <span class="help-block">Your organisation is used to relate you to other OxPollen users. If you want to contribute to a team score for your identifications (e.g. your lab), make sure to enter the same name here.</span>
+                <div class="dropdown-menu" id="organisationsList" style="display:none"></div>
                 <span asp-validation-for="Organisation" class="text-danger"></span>
              </div>
         </div>

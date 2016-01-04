@@ -97,17 +97,17 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="updateList(this, 'Family');" placeholder="Family" />
-                            <div class="autocomplete" id="FamilyList" style="display:none"></div>
+                            <ul class="dropdown-menu autocomplete" id="FamilyList" style="display:none"></ul>
                             <span asp-validation-for="Family" class="text-danger"></span>
                         </div>
                         <div class="col-sm-4">
                             <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="updateList(this, 'Genus');" placeholder="Genus" />
-                            <div class="autocomplete" id="GenusList" style="display:none"></div>
+                            <ul class="dropdown-menu autocomplete" id="GenusList" style="display:none"></ul>
                             <span asp-validation-for="Genus" class="text-danger"></span>
                         </div>
                         <div class="col-sm-4">
                             <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="updateList(this, 'Species');" placeholder="Species" />
-                            <div class="autocomplete" id="SpeciesList" style="display:none"></div>
+                            <ul class="dropdown-menu autocomplete" id="SpeciesList" style="display:none"></ul>
                             <span asp-validation-for="Species" class="text-danger"></span>
                         </div>
                     </div>
@@ -186,22 +186,23 @@
         var request = "http://api.gbif.org/v1/species/suggest?kingdom=Plantae&rank=" + rank + "&q=" + query;
         ajaxHelper(request, 'GET', 'jsonp').done(function (data) {
             var list = document.getElementById(rank + 'List');
-            $('#' + rank + 'List').css('display', '');
+            $('#' + rank + 'List').css('display', 'block');
             list.innerHTML = "";
             if (!(data.length == 1 && data[0].canonicalName.toLowerCase() == document.getElementById(rank).value.toLowerCase())) {
                 for (var i = 0; i < data.length; i++) {
                     if (i > 10) continue;
-                    var option = document.createElement('a');
-                    option.innerHTML = data[i].canonicalName;
+                    var option = document.createElement('li');
+                    var link = document.createElement('a');
+                    option.appendChild(link);
+                    link.innerHTML = data[i].canonicalName;
                     if (rank == 'Species' || rank == 'Genus') {
                         var familySpan = document.createElement('span');
                         familySpan.innerHTML = (data[i].family);
                         familySpan.className = 'family-name';
                         familySpan.style = 
-                        option.appendChild(familySpan);
+                        link.appendChild(familySpan);
                     }
-                    option.className = 'autocomplete-option';
-                    option.addEventListener('click', function (e) {
+                    link.addEventListener('click', function (e) {
                         var name = this.innerHTML.split('<')[0];
                         if (rank == 'Species') {
                             var species = name.split(' ')[1];

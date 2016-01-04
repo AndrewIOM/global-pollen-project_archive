@@ -6,18 +6,19 @@
                 var result = ajax.responseText;
                 var resultJson = JSON.parse(result);
                 var orgList = document.getElementById('organisationsList');
-                $('#organisationsList').css('display', '');
+                $('#organisationsList').css('display', 'block');
                 orgList.innerHTML = "";
                 if (!(resultJson.length == 1 && resultJson[0].Name == document.getElementById('Organisation').value)) {
                     for (var i = 0; i < resultJson.length; i++) {
-                        var option = document.createElement('a');
-                        option.innerHTML = resultJson[i].Name;
-                        option.className = 'autocomplete-option';
-                        option.addEventListener('click', function (e) {
+                        var option = document.createElement('li');
+                        var link = document.createElement('a');
+                        option.appendChild(link);
+                        link.innerHTML = resultJson[i].Name;
+                        link.addEventListener('click', function (e) {
                             var name = this.innerHTML;
                             console.log(name);
                             $('#Organisation').val(name);
-                            $('#organisationsList').css('display', 'none');
+                            $('#organisationsList').fadeOut();
                         });
                         orgList.appendChild(option);
                     }
