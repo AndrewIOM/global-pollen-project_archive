@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using Microsoft.Data.Entity;
 
 namespace OxPollen.Data.Concrete
 {
@@ -38,7 +39,10 @@ namespace OxPollen.Data.Concrete
 
         public Identification GetById(int id)
         {
-            return _context.Identifications.FirstOrDefault(m => m.IdentificationId == id);
+            return _context.Identifications
+                .Include(m => m.User)
+                .Include(m => m.Grain)
+                .FirstOrDefault(m => m.IdentificationId == id);
         }
 
         public void Update(Identification entity)

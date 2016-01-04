@@ -27,7 +27,7 @@
         @if (!string.IsNullOrEmpty(Model.IdentifiedSpecies))
         { <h4>Species: @Model.IdentifiedSpecies</h4> }
         @if (string.IsNullOrEmpty(Model.IdentifiedFamily) && string.IsNullOrEmpty(Model.IdentifiedGenus
-                                ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
+                                                    ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
         {
             <h4>Unidentified</h4>
         }
@@ -35,6 +35,7 @@
 </div>
 
 <div class="row">
+
     @* Left Column: Photos *@
     <div class="col-md-6">
         <div class="image-thumbnails" style="height:5em;overflow:hidden;">
@@ -45,116 +46,178 @@
         </div>
         <img id="displayimage" src="\user-image-uploads\@Model.ImageUrls.First()" style="width:100%; height:100%" />
     </div>
-    @* Right Column: Details and IDs *@
-    <div class="col-md-6">
-        @if (timeSinceAdd.Days == 0)
-        {
-            <p>Added today.</p>
-        }
-        else
-        {
-            <p>Added @timeSinceAdd.Days.ToString() days ago.</p>
-        }
-        <p>
-            Approximate Age: @Model.Age @if (!Model.Age.HasValue)
-            {
-                <span>Unknown</span>
-            }
-        </p>
-        <p>Number of IDs: @Model.Identifications.Count</p>
-        <p>Grain Size: @Model.ImageScale nanometres</p>
-        <label>Location</label>
-        <img style="text-align: left; margin-right: auto; display: block; max-width: 100%" alt="Pollen Location"
-             src="http://maps.google.com/maps/api/staticmap?center=@Model.Latitude,@Model.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Latitude,@Model.Longitude&amp&amp;amp;sensor=false">
-        @if (User.Identity.IsAuthenticated)
-        {
-            @if (Model.AlreadyIdentifiedByUser)
-            {
-                <hr />
-                <h3>Your Identification</h3>
-                <p>You identified this grain as <strong>@Model.UserIdentification.Family @Model.UserIdentification.Genus @Model.UserIdentification.Species</strong> on @Model.UserIdentification.Time</p>
-                <p>Thank you for your identification.</p>
-                <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
-            }
-            else
-            {
-                <hr />
-                <h3>Can you identify this grain?</h3>
-                @using (Html.BeginForm("Identify", "Grain", FormMethod.Post, new { @class = "form" }))
-                    {
-                    @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
-                    @Html.HiddenFor(m => m.GrainId)
-                    <div class="row">
-                        <div class="col-md-12">
-                            <p>I can identify this grain to the following resolution: </p>
-                            <select asp-for="TaxonomicResolution" class="form-control" id="TaxonomicResolution">
-                                <option value="3">Species</option>
-                                <option value="2">Genus</option>
-                                <option value="1">Family</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="updateList(this, 'Family');" placeholder="Family" />
-                            <ul class="dropdown-menu autocomplete" id="FamilyList" style="display:none"></ul>
-                            <span asp-validation-for="Family" class="text-danger"></span>
-                        </div>
-                        <div class="col-sm-4">
-                            <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="updateList(this, 'Genus');" placeholder="Genus" />
-                            <ul class="dropdown-menu autocomplete" id="GenusList" style="display:none"></ul>
-                            <span asp-validation-for="Genus" class="text-danger"></span>
-                        </div>
-                        <div class="col-sm-4">
-                            <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="updateList(this, 'Species');" placeholder="Species" />
-                            <ul class="dropdown-menu autocomplete" id="SpeciesList" style="display:none"></ul>
-                            <span asp-validation-for="Species" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="row">
-                        <div class="col-md-12">
-                            <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
-                        </div>
-                    </div>
-                }
-            }
-        }
-        else
-        {
-            <p>Log in to identify this grain</p>
-        }
 
-        <div class="row">
-            <div class="col-md-12">
-                <h3>Current Identifications</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Identification</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    @foreach (var id in Model.Identifications)
-                    {
-                        <tr>
-                            @if (id.Rank == Taxonomy.Family)
-                            {
-                                <td>Someone suggested this was of the family @id.Family</td>
-                            }
-                            else if (id.Rank == Taxonomy.Genus)
-                            {
-                                <td>Someone suggested this was of the genus @id.Genus</td>
-                            }
-                            else if (id.Rank == Taxonomy.Species)
-                            {
-                                <td>Someone suggested this was of the species @id.Genus @id.Species</td>
-                            }
-                            <td><span class="badge">@((DateTime.Now - id.Time).Days) days ago.</span></td>
-                        </tr>
-                    }
-                </table>
+    @* Details Pane *@
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-leaf"></span> Details
             </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Maximum Diameter of Grain</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.ImageScale nanometres
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Approximate Age</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Age @if (!Model.Age.HasValue)
+                        {
+                            <span>Unknown</span>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr />
+                        <label>Location</label>
+                        <img style="text-align: left; margin-right: auto; display: block; max-width: 100%" alt="Pollen Location"
+                             src="http://maps.google.com/maps/api/staticmap?center=@Model.Latitude,@Model.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Latitude,@Model.Longitude&amp&amp;amp;sensor=false">
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Date Added</label>
+                    </div>
+                    <div class="col-md-8">
+                        @if (timeSinceAdd.Days == 0)
+                        {
+                            <p>Added today.</p>
+                        }
+                        else
+                        {
+                            <p>Added @timeSinceAdd.Days.ToString() days ago.</p>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Number of IDs</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Identifications.Count
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Identification Panel *@
+        <div class="panel panel-primary">
+            <div class="panel-heading"><span class="glyphicon glyphicon-search"></span> Identify</div>
+            <div class="panel-body">
+                @if (User.Identity.IsAuthenticated)
+            {
+                    @if (Model.AlreadyIdentifiedByUser)
+                {
+                        <p>You identified this grain as <strong>@Model.UserIdentification.Family @Model.UserIdentification.Genus @Model.UserIdentification.Species</strong> on @Model.UserIdentification.Time</p>
+                        <p>Thank you for your identification.</p>
+                        <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
+                    }
+                    else
+                    {
+                        <h4>Can you identify this grain?</h4>
+                        @using (Html.BeginForm("Identify", "Grain", FormMethod.Post, new { @class = "form" }))
+                    {
+                            @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
+                            @Html.HiddenFor(m => m.GrainId)
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>
+                                        I can identify this grain to <select asp-for="TaxonomicResolution" class="form-control input-sm inline-dropdown" id="TaxonomicResolution">
+                                            <option value="3">Species</option>
+                                            <option value="2">Genus</option>
+                                            <option value="1">Family</option>
+                                        </select> level.
+                                    </p>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="updateList(this, 'Family');" placeholder="Family" />
+                                    <ul class="dropdown-menu autocomplete" id="FamilyList" style="display:none"></ul>
+                                    <span asp-validation-for="Family" class="text-danger"></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="updateList(this, 'Genus');" placeholder="Genus" />
+                                    <ul class="dropdown-menu autocomplete" id="GenusList" style="display:none"></ul>
+                                    <span asp-validation-for="Genus" class="text-danger"></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="updateList(this, 'Species');" placeholder="Species" />
+                                    <ul class="dropdown-menu autocomplete" id="SpeciesList" style="display:none"></ul>
+                                    <span asp-validation-for="Species" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+                else
+                {
+                    <p><a asp-controller="Account" asp-action="Login">Log in</a> to identify this grain</p>
+                }
+
+                @* Current IDs *@
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Current Identifications</h4>
+                        @if (Model.Identifications.Count == 0)
+                        {
+                            <p>None</p>
+                        }
+                        else
+                        {
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Identified as</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var id in Model.Identifications)
+                {
+                    var hello = id.User.UserName == User.Identity.Name ? "myid" : "";
+                                        <tr class="@hello">
+                                            <td>@id.Rank</td>
+                                            @if (id.Rank == Taxonomy.Family)
+                                            {
+                                                <td>@id.Family</td>
+                                            }
+                                            else if (id.Rank == Taxonomy.Genus)
+                                            {
+                                                <td>@id.Genus</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@id.Genus @id.Species</td>
+                                            }
+                                            <td>@((DateTime.Now - id.Time).Days) days ago.</td>
+                                        </tr>
+
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -199,7 +262,7 @@
                         var familySpan = document.createElement('span');
                         familySpan.innerHTML = (data[i].family);
                         familySpan.className = 'family-name';
-                        familySpan.style = 
+                        familySpan.style =
                         link.appendChild(familySpan);
                     }
                     link.addEventListener('click', function (e) {

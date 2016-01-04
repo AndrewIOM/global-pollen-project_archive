@@ -158,6 +158,15 @@ ul.grain-grid.columns-8 li {
     border: 1px solid #000;
 }
 
+.panel-primary {
+    border-color: #83296f;
+}
+
+.panel-primary > .panel-heading {
+    background-color: #83296f;
+    border-color: #83296f;
+}
+
 a {
     color: #a8699a;
 }
@@ -315,4 +324,14 @@ darkroom-container {
 .autocomplete {
     position: absolute;
     z-index: 1;
+}
+
+/* Identify Page */
+.myid {
+    background-color: #e6d4e2;
+}
+
+.inline-dropdown {
+    display:inline-block;
+    width:10em;
 }

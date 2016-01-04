@@ -55,6 +55,7 @@ namespace OxPollen.Data.Concrete
             var result = _context.UserGrains
                 .Where(m => !m.IsDeleted)
                 .Include(m => m.Identifications)
+                .Include(m => m.SubmittedBy)
                 .Include(m => m.Images).ToList()
                 .FirstOrDefault(m => m.Id == id);
             return result;
