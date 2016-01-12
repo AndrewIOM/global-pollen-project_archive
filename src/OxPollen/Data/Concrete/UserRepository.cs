@@ -23,7 +23,7 @@ namespace OxPollen.Data.Concrete
 
         public void Update(AppUser entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
         }
 
         public void Delete(AppUser entity)

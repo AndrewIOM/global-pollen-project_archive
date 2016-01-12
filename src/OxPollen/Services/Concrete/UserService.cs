@@ -32,5 +32,11 @@ namespace OxPollen.Services.Concrete
             var result = _uow.OrganisationRepository.GetAll();
             return result;
         }
+
+        public void Update(AppUser user)
+        {
+            _uow.UserRepository.Update(user);
+            _uow.SaveChanges();
+        }
     }
 }

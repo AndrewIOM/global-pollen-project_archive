@@ -1,34 +1,77 @@
 ﻿@model List<AppUser>
+
 @{
-    ViewBag.Title = "Manage Users";
+    ViewBag.Title = "OxPollen Administration";
+    ViewBag.Subtitle = "Users";
 }
+@inject UserManager<AppUser> _userManager
 
-@Html.Partial("_AdminOptions")
-
-<h3>User Accounts</h3>
-<p>The following users have active accounts on OxPollen</p>
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>@ViewBag.Title</h2>
+            <p>@ViewBag.Subtitle</p>
+        </div>
+    </div>
+    <br />
+}
 
 <table class="table">
     <thead>
         <tr>
-            <th>User ID</th>
-            <th>Name</th>
-            <th>Institutional Affiliation</th>
-            <th>Locked Out?</th>
+            <th>Full Name</th>
+            <th>Organisation</th>
+            <th>Admin</th>
+            <th>Digitise</th>
             <th>Actions</th>
         </tr>
     </thead>
     @foreach (var user in Model)
     {
+            bool isAdmin = _userManager.IsInRoleAsync(user, "Admin").Result;
+            bool isBanned = _userManager.IsInRoleAsync(user, "Banned").Result;
+            bool canDigitise = _userManager.IsInRoleAsync(user, "Digitise").Result;
         <tr>
-            <td>@user.Id</td>
             <td>@user.FullName()</td>
-            <td>@user.Organisation</td>
-            <td>@user.LockoutEnabled</td>
+            <td>@user.Organisation.Name</td>
             <td>
-                <a type="button" class="btn" href="mailto:@user.Email">Email</a>
-                <a type="button" class="btn btn-danger" href="@Url.Action("BanUser", "Admin", new { id = user.Id })">Ban User</a>
+                @if (isAdmin)
+                {
+                    <p><span class="glyphicon glyphicon-check"></span> Yes</p>
+                }
+                else
+                {
+                    <a type="button" class="btn btn-default" href="@Url.Action("UserAdmin", "Admin", new { id = user.Id, userIsAdmin = true })">Promote to Admin</a>
+                }
+            </td>
+            <td>
+                @if (canDigitise)
+            {
+                <a type="button" class="btn btn-default" href="@Url.Action("RemoveDigitiseRole", "Admin", new { userId = user.Id })">Disable</a>
+            }
+            else
+            {
+                    @if (user.RequestedDigitisationRights)
+                    {
+                        <p><strong>Requested</strong></p>
+                    }
+                <a type="button" class="btn btn-default" href="@Url.Action("AddDigitiseRole", "Admin", new { userId = user.Id })">Enable</a>
+            }
+            </td>
+            <td>
+                @if (user.UserName != User.Identity.Name)
+                {
+                    <a type="button" class="btn btn-default" href="mailto:@user.Email"><span class="glyphicon glyphicon-send"></span> Email</a>
+                    @if (isBanned)
+                    {
+                        <a type="button" class="btn btn-default" href="@Url.Action("UnbanUser", "Admin", new { id = user.Id })">Remove Ban</a>
+                    }
+                    else
+                    {
+                        <a type="button" class="btn btn-danger" href="@Url.Action("BanUser", "Admin", new { id = user.Id })">Ban User</a>
+                    }
+                }
             </td>
         </tr>
-    }
+                    }
 </table>

@@ -11,6 +11,6 @@ namespace OxPollen.Services.Abstract
         IEnumerable<AppUser> GetAll();
         AppUser GetById(string id);
         IEnumerable<Organisation> GetOrganisations();
-
+        void Update(AppUser user);
     }
 }

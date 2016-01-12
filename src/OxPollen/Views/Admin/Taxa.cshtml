@@ -1,0 +1,39 @@
+﻿@model List<Taxon>
+
+@{
+    ViewBag.Title = "OxPollen Administration";
+    ViewBag.Subtitle = "Taxa";
+}
+@inject UserManager<AppUser> _userManager
+
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>@ViewBag.Title</h2>
+            <p>@ViewBag.Subtitle</p>
+        </div>
+    </div>
+    <br />
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Latin Name</th>
+            <th>Rank</th>
+            <th>Neotoma ID</th>
+            <th>GBIF ID</th>
+        </tr>
+    </thead>
+    @foreach (var taxon in Model)
+    {
+        <tr>
+            <td>@taxon.TaxonId</td>
+            <td>@taxon.LatinName</td>
+            <td>@taxon.Rank</td>
+            <td>@taxon.NeotomaId</td>
+            <td>@taxon.GbifId</td>
+        </tr>
+                    }
+</table>

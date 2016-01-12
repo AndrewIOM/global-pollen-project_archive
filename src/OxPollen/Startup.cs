@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,8 @@ using OxPollen.Models;
 using OxPollen.Services;
 using OxPollen.Services.Abstract;
 using OxPollen.Services.Concrete;
+using System;
+using System.Threading.Tasks;
 
 namespace OxPollen
 {
@@ -75,6 +78,18 @@ namespace OxPollen
             services.AddTransient<IFileStoreService, ImageService>();
             services.AddTransient<IReferenceService, ReferenceService>();
             services.AddTransient<ITaxonomyService, TaxonomyService>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                {
+                    policy.RequireRole("Admin");
+                });
+                options.AddPolicy("ReferenceCollectionHolders", policy =>
+                {
+                    policy.RequireRole("Digitise");
+                });
+            });
         }
 
         // Configure is called after ConfigureServices is called.
@@ -111,6 +126,7 @@ namespace OxPollen
 
             // Add cookie-based authentication to the request pipeline.
             app.UseIdentity();
+            EnsureRoles(app, loggerFactory);
 
             // Add and configure the options for authentication middleware to the request pipeline.
             // You can add options for middleware as shown below.
@@ -146,6 +162,24 @@ namespace OxPollen
                 // Uncomment the following line to add a route for porting Web API 2 controllers.
                 //routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
+        }
+
+        private void EnsureRoles(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        {
+            ILogger logger = loggerFactory.CreateLogger<Startup>();
+            RoleManager<IdentityRole> roleManager = app.ApplicationServices.GetService<RoleManager<IdentityRole>>();
+
+            string[] roleNames = { "Admin", "Digitise", "Banned" };
+            foreach (string roleName in roleNames)
+            {
+                bool roleExists = roleManager.RoleExistsAsync(roleName).Result;
+                if (!roleExists)
+                {
+                    logger.LogInformation(string.Format("!roleExists for roleName {0}", roleName));
+                    IdentityRole identityRole = new IdentityRole(roleName);
+                    IdentityResult identityResult = roleManager.CreateAsync(identityRole).Result;
+                }
+            }
         }
     }
 }

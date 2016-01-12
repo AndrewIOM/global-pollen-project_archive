@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using OxPollen.Models;
+using OxPollen.Services;
 using OxPollen.Services.Abstract;
 using OxPollen.ViewModels.Reference;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace OxPollen.Controllers
 {
@@ -16,15 +16,52 @@ namespace OxPollen.Controllers
         private IFileStoreService _fileService;
         private IReferenceService _refService;
         private IUserService _userService;
-        public ReferenceController(IFileStoreService fileService, IReferenceService refService, IUserService userService)
+        private readonly IEmailSender _emailSender;
+        public ReferenceController(
+            IFileStoreService fileService, 
+            IReferenceService refService, 
+            IUserService userService,
+            IEmailSender emailSender)
         {
             _fileService = fileService;
             _refService = refService;
             _userService = userService;
+            _emailSender = emailSender;
+        }
+
+        public IActionResult Grain(int id)
+        {
+            if (id == 0)
+            {
+                return HttpBadRequest();
+            }
+            var model = _refService.GetGrainById(id);
+            return View(model);
+        }
+
+        public IActionResult Index()
+        {
+            return View(new RequestAccessViewModel());
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult RequestAccess(RequestAccessViewModel result)
+        {
+            if (!ModelState.IsValid) return HttpBadRequest();
+            var user = _userService.GetById(User.GetUserId());
+            user.RequestedDigitisationRights = true;
+            _userService.Update(user);
+
+            //Send email to all admins to let them know
+            var adminEmail = _userService.GetAll().First().Email; //Temporary hack
+            _emailSender.SendEmailAsync(adminEmail, "Request for digitisation rights",
+                user.FullName() + " has requested digitisation rights. They write: " + result.Comments).Wait();
+            return View("Index");
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Digitise")]
         public IActionResult AddCollection()
         {
             var model = new ReferenceCollection();
@@ -32,7 +69,7 @@ namespace OxPollen.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Digitise")]
         public IActionResult AddCollection(ReferenceCollection result)
         {
             if (!ModelState.IsValid)
@@ -46,7 +83,7 @@ namespace OxPollen.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Digitise")]
         public IActionResult AddGrain(int id)
         {
             if (id == 0)
@@ -61,7 +98,7 @@ namespace OxPollen.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Digitise")]
         public IActionResult AddGrain(ReferenceGrainViewModel result)
         {
             //TODO Limit addition to current user's collections only
@@ -102,7 +139,7 @@ namespace OxPollen.Controllers
             return Ok(saved);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Digitise")]
         public IActionResult Collections(int id)
         {
             if (id == 0)
@@ -114,16 +151,6 @@ namespace OxPollen.Controllers
             var model = _refService.GetCollectionById(id);
             if (model.User.Id != User.GetUserId()) return HttpBadRequest();
             return View("CollectionDetail", model);
-        }
-
-        public IActionResult Grain(int id)
-        {
-            if (id == 0)
-            {
-                return HttpBadRequest();
-            }
-            var model = _refService.GetGrainById(id);
-            return View(model);
         }
     }
 }

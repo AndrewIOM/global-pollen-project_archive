@@ -1,4 +1,7 @@
 ﻿@using System.Security.Claims
+@{
+    bool isAdmin = User.IsInRole("Admin");
+}
 
 @if (User.Identity.IsAuthenticated)
 {
@@ -8,9 +11,13 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.GetUserName()<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a asp-controller="Grain" asp-action="MyGrains" title="My Grains">My Grains</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a asp-controller="Manage" asp-action="Index" title="Manage">Manage Your Account</a></li>
-                    <li><a asp-controller="Admin" asp-action="Users" title="Admin Portal">Admin Portal</a></li>
+                    <li><a asp-controller="Manage" asp-action="Index" title="Manage">My Account</a></li>
+                    @if (isAdmin)
+                    {
+                        <li role="separator" class="divider"></li>
+                        <li><a asp-controller="Admin" asp-action="Users" title="Admin Portal">Admin: Manage Users</a></li>
+                        <li><a asp-controller="Admin" asp-action="Taxa" title="Admin Portal">Admin: Manage Taxa</a></li>
+                    }
                     <li role="separator" class="divider"></li>
                     <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
                 </ul>
