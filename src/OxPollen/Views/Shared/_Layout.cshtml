@@ -15,13 +15,17 @@
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment names="Staging,Production">
-        <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/css/bootstrap.min.css"
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-touch-carousel/dist/css/bootstrap-touch-carousel.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+
+        @*<link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
               asp-fallback-test-class="hidden" asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
         <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap-touch-carousel/0.8.0/css/bootstrap-touch-carousel.css"
               asp-fallback-href="~/lib/bootstrap-touch-carousel/css/bootstrap-touch-carousel.css"
               asp-fallback-test-class="carousel-caption" asp-fallback-test-property="display" asp-fallback-test-value="none" />
-        <link rel="stylesheet" href="~/css/site.css" asp-file-version="true" />
+        <link rel="stylesheet" href="~/css/site.css" asp-file-version="true" />*@
     </environment>
 </head>
 <body>
@@ -48,7 +52,7 @@
                             <li><a asp-action="Index" asp-controller="Grain"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Identify Grains</a></li>
                             <li><a asp-action="Add" asp-controller="Grain"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Submit a Grain!</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a asp-action="Help" asp-controller="Taxon">Help</a></li>
+                            <li><a asp-action="Help" asp-controller="Grain">Help</a></li>
                         </ul>
                     </li>
                     <li><a asp-controller="Reference" asp-action="Collections">Digitise</a></li>
@@ -67,7 +71,9 @@
     <div class="container">
         <hr />
         <footer>
-            <p>&copy; 2015 - OxPollen</p>
+            <p>OxPollen &copy; 2015 - Andrew C. Martin and William J. Harvey</p>
+            <p><a asp-action="Terms" asp-controller="Home">Terms and Conditions</a></p>
+            <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Dataset" property="dct:title" rel="dct:type">The OxPollen Reference Dataset</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">OxPollen Contributors</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
         </footer>
     </div>
 

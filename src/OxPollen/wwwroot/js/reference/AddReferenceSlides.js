@@ -173,6 +173,7 @@ function upload(formNumber) {
     ajax.onreadystatechange = function () {
         if (ajax.readyState == 4 || ajax.readyState == "complete") {
             if (ajax.status == 200) {
+                console.log('success: 200');
                 var result = ajax.responseText;
                 var resultJson = JSON.parse(result);
                 progbar.className = 'progress-bar progress-bar-success progress-bar-striped active';
@@ -194,6 +195,7 @@ function upload(formNumber) {
                 }
             }
             if (ajax.status == 400 || ajax.status == 500) {
+                console.log('no success: 400 or 500');
                 var result = ajax.responseText;
                 var resultJson = JSON.parse(result);
                 progbar.className = 'progress-bar progress-bar-danger progress-bar-striped';

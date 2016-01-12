@@ -15,21 +15,22 @@
 }
 
 @* Marketing *@
-<div class="row">
+<div class="row" style="text-align:center">
     <div class="col-sm-4">
         <img class="img-circle img-responsive home-tri-image" src="~/images/pollen1.png" alt="">
-        <h2>Submit Your Pollen</h2>
-        <p>If you're having trouble identifying a pollen grain to family, genus or species level, why not submit to OxPollen? Your grain becomes public, where others working with pollen can submit identifications. </p>
+        <h3>Submit Your Pollen Grains</h3>
+        <p>If you are having trouble identifying a pollen grain to family, genus or species level, submit your grain to OxPollen. Crowd source the identification from others working with pollen across the world.
+</p>
     </div>
     <div class="col-sm-4">
         <img class="img-circle img-responsive home-tri-image" src="~/images/pollen2.jpg" alt="">
-        <h2>Add Your Expertise</h2>
-        <p>Specialise in pollen from a certain region or taxon? Help others by identifying pollen familiar to you.</p>
+        <h3>Add Your Expertise</h3>
+        <p>Are you a specialist in a particular region or taxon? Help others by providing identifications and earn points on the leader board for your lab group or Institution.</p>
     </div>
     <div class="col-sm-4">
         <img class="img-circle img-responsive home-tri-image" src="~/images/pollen3.png" alt="">
-        <h2>Collective Reference</h2>
-        <p>As more grains become identified, our reference collection will fill with pollen taxa and a range of example images for each. As OxPollen is linked to the Global Biodiversity Information Facility (GBIF) and Neotoma, you can explore the distribution of your species in space and time. </p>
+        <h3>Search Our Reference Collection</h3>
+        <p>Browse the dynamic and ever expanding reference collection of OxPollen! Use as a key or as a reference for your own research.</p>
     </div>
 </div>
 <hr />
@@ -38,14 +39,14 @@
 <div class="row">
     <div class="col-sm-8">
         <h2>How It Works</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et molestiae similique eligendi reiciendis sunt distinctio odit? Quia, neque, ipsa, adipisci quisquam ullam deserunt accusantium illo iste exercitationem nemo voluptates asperiores.</p>
+        <p>Whether you are submitting a grain or identifying someone else’s you are contributing to the fastest growing crowd sourced palanological database in the world! Once a grain has been identified by a minimum of 3 individuals at a certainty of at least 75% it will be added into the digital OxPollen Reference Collection. This collection is paired with the Global Biodiversity Information Facility (GBIF) and Neotoma, enabling you to see current and past distributions.</p>
         <p>
             <a asp-action="Index" asp-controller="Grain" class="btn btn-default btn-lg">Get Started »</a>
         </p>
     </div>
     <div class="col-sm-4">
         <h2>Most Wanted</h2>
-        <p>These pollen grains have remained unidentified for the longest time.</p>
+        <p>Can you identify our most wanted pollen grains?</p>
         <ul class="grain-grid columns-8">
             @foreach (var grain in Model)
             {

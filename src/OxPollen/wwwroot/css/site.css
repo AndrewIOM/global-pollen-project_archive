@@ -17,6 +17,10 @@
     background-color: lightgreen;
 }
 
+footer {
+    text-align:center;
+}
+
 /* Grain Images Grid */
 ul.grain-grid {
     list-style: none;

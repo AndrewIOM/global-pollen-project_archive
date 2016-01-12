@@ -15,6 +15,11 @@ namespace OxPollen.Controllers
             _context = context;
         }
 
+        public IActionResult Terms()
+        {
+            return View();
+        }
+
         public IActionResult Index()
         {
             var result = _context.UserGrains.Where(m => !m.IsDeleted).Where(m => string.IsNullOrEmpty(m.Genus) && string.IsNullOrEmpty(m.Species))

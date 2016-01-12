@@ -92,7 +92,7 @@ namespace OxPollen.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-            var grains = _grainService.GetUnidentifiedGrains(Taxonomy.Species);
+            var grains = _grainService.GetUnidentifiedGrains(Taxonomy.Genus);
             var model = grains
                 .OrderByDescending(m => BountyUtility.Calculate(m.TimeAdded)).Select(m => new ReadOnlyGrainViewModel()
                 {
