@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace OxPollen.Services
@@ -12,7 +13,21 @@ namespace OxPollen.Services
     {
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            // Plug in your email service here to send an email.
+            var gmailClient = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                UseDefaultCredentials = false,
+                Credentials = new System.Net.NetworkCredential("oxpollen@gmail.com", "OxPollen123")
+            };
+
+            var from = new MailAddress("oxpollen@gmail.com", "OxPollen");
+            var mail = new MailMessage(from, new MailAddress(email));
+            mail.Subject = subject;
+            mail.Body = message;
+            gmailClient.SendAsync(mail, "Email"); //TODO change userToken
+            Console.WriteLine("Goodbye.");
             return Task.FromResult(0);
         }
 
