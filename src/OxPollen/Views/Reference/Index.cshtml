@@ -1,0 +1,47 @@
+﻿@model OxPollen.ViewModels.Reference.RequestAccessViewModel
+
+@{
+    ViewBag.Title = "Digitise a Reference Collection";
+    ViewBag.Subtitle = "OxPollen enables the digitisation of existing collections";
+}
+
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>@ViewBag.Title</h2>
+            <p>@ViewBag.Subtitle</p>
+        </div>
+    </div>
+    <br />
+}
+
+@if (User.IsInRole("Digitise"))
+{
+    <div class="alert alert-success" role="alert">
+        <p>You're ready to go! We've added you to our digitisation group.</p>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">
+        <p>You're not currently allowed to access the digitisation features. You can sort this out below...</p>
+    </div>
+}
+
+<h3>Thinking of digitising a reference collection from your lab? OxPollen is the perfect home.</h3>
+<p>Blurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb text</p>
+
+@if (User.IsInRole("Digitise"))
+{
+    <a class="btn btn-primary" role="button" asp-action="Collections">Get Started</a>
+}
+else
+{
+    @using (Html.BeginForm("RequestAccess", "Reference", FormMethod.Post, new { @class = "form" }))
+    {
+        <p>Please tell us a little about your collections:</p>
+        <input type="text" asp-for="Comments" class="form-control" />
+        <span asp-validation-for="Comments" class="text-danger"></span>
+        <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+    }
+}
