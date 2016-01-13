@@ -111,7 +111,7 @@ function handleFiles(input) {
         d.innerHTML = "<p>None</p>";
     } else {
         d.innerHTML = "";
-        for (var i = 0; i < input.files.length; i++) {
+        for (var i = 0; i < input.files.length && i < 4; i++) {
             var div = document.createElement('div');
             div.style.display = 'inline';
             div.className = "image-thumbnail col-md-6";
