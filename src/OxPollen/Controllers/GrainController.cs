@@ -199,7 +199,7 @@ namespace OxPollen.Controllers
             };
             _idService.Add(identification);
 
-            ViewData["successMessage"] = "Thank you! Your identification has been registered.";
+            ViewData["Success"] = "Thank you! Your identification has been registered.";
             return RedirectToAction("Identify", new { id = result.GrainId });
         }
 

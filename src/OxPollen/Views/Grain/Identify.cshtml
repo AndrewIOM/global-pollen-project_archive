@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Grain Details #" + Model.GrainId;
     var timeSinceAdd = DateTime.Now - Model.TimeAdded;
+    var success = (string)ViewData["Success"];
 }
 
 @* Breadcrumb *@
@@ -30,6 +31,12 @@
                                                     ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
         {
             <h4>Unidentified</h4>
+        }
+        @if (!string.IsNullOrEmpty(success))
+        {
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-saved"></span> @success</p>
+            </div>
         }
     </div>
 </div>
