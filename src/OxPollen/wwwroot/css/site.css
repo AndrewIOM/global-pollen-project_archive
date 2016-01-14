@@ -40,21 +40,35 @@ ul.grain-grid {
         box-sizing: border-box;
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
+        overflow:hidden;
     }
 
-        ul.grain-grid li div img {
-            width: 100%;
-            height: auto;
-            overflow: hidden;
-        }
-
-.img-container {
+/*.img-container {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
+}*/
+
+.img-container {
+    background-color: lightgrey;
+    height:100%;
+    width:100%;
+    overflow: hidden;
+    position:relative;
+    text-align:center;
+}
+.img-container img {
+    display: block;
+    vertical-align: middle;
 }
 
+.portrait img {
+    width: 100%;
+}
+.landscape img {
+    height: 100%;
+}
 
 ul.grain-grid.columns-2 li {
     width: 47.5%; /* this value + 2.5 should = 50% */
