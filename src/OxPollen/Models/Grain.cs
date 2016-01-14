@@ -27,6 +27,7 @@ namespace OxPollen.Models
 
         //Optional
         public int? AgeYearsBeforePresent { get; set; }
+        public double? LockedBounty { get; set; }
 
         //Identifications
         public virtual List<Identification> Identifications { get; set; }

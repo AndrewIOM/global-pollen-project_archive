@@ -27,13 +27,13 @@ namespace OxPollen.Controllers
             {
                 Bounty = m.Members.Select(n => n.BountyScore).Sum(),
                 Name = m.Name
-            });
+            }).Where(m => m.Bounty > 0).OrderByDescending(m => m.Bounty).Take(10);
 
             var topUsers = users.Select(m => new BountyViewModel()
             {
                 Bounty = m.BountyScore,
                 Name = m.FullName()
-            });
+            }).Where(m => m.Bounty > 0).OrderByDescending(m => m.Bounty).Take(5);
 
             var model = new BountyChartsViewModel()
             {

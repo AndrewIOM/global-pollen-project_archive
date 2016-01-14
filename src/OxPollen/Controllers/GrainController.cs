@@ -94,9 +94,9 @@ namespace OxPollen.Controllers
         {
             var grains = _grainService.GetUnidentifiedGrains(Taxonomy.Genus);
             var model = grains
-                .OrderByDescending(m => BountyUtility.Calculate(m.TimeAdded)).Select(m => new ReadOnlyGrainViewModel()
+                .OrderByDescending(m => BountyUtility.Calculate(m)).Select(m => new ReadOnlyGrainViewModel()
                 {
-                    Bounty = BountyUtility.Calculate(m.TimeAdded),
+                    Bounty = BountyUtility.Calculate(m),
                     Id = m.Id,
                     TimeAdded = m.TimeAdded,
                     ImageLocation = m.Images.Count > 0 ? m.Images.First().FileName : null,
@@ -199,7 +199,7 @@ namespace OxPollen.Controllers
             };
             _idService.Add(identification);
 
-            ViewData["successMessage"] = "Thank you! Your identification has been registered.";
+            ViewData["Success"] = "Thank you! Your identification has been registered.";
             return RedirectToAction("Identify", new { id = result.GrainId });
         }
 
@@ -212,7 +212,7 @@ namespace OxPollen.Controllers
             {
                 Id = m.Id,
                 ImageLocation = m.Images.First().FileName,
-                Bounty = BountyUtility.Calculate(m.TimeAdded),
+                Bounty = BountyUtility.Calculate(m),
                 TimeAdded = m.TimeAdded,
                 ConfirmedFamily = m.Family,
                 ConfirmedGenus = m.Genus,

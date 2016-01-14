@@ -18,23 +18,30 @@ namespace OxPollen.Services.Concrete
 
         public void Add(Identification newIdentification)
         {
+            var grain = _uow.GrainRepository.GetById(newIdentification.Grain.Id);
+            var oldFamilyName = GetConfirmedName(Taxonomy.Family, grain.Identifications);
+            var oldGenusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
+            var oldSpeciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
+
             newIdentification.Family = FirstCharToUpper(newIdentification.Family);
             newIdentification.Genus = FirstCharToUpper(newIdentification.Genus);
             newIdentification.Species = FirstCharToLower(newIdentification.Species);
+            grain.Identifications.Add(newIdentification);
 
-            _uow.IdentificationRepository.Add(newIdentification);
+            var newFamilyName = GetConfirmedName(Taxonomy.Family, grain.Identifications);
+            var newGenusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
+            var newSpeciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
 
-            var grain = _uow.GrainRepository.GetById(newIdentification.Grain.Id);
-            var familyName = GetConfirmedName(Taxonomy.Family, grain.Identifications);
-            var genusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
-            var speciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
-
-            grain.Family = familyName;
-            grain.Genus = genusName;
-            grain.Species = speciesName;
+            grain.Family = newFamilyName;
+            grain.Genus = newGenusName;
+            grain.Species = newSpeciesName;
 
             var taxonService = new TaxonomyService(_uow);
-            taxonService.CreateOrUpdateTaxonomy(familyName, genusName, speciesName);
+            taxonService.CreateOrUpdateTaxonomy(newFamilyName, newGenusName, newSpeciesName);
+
+            UpdateBountyScores(grain, oldFamilyName, newFamilyName, Taxonomy.Family);
+            UpdateBountyScores(grain, oldGenusName, newGenusName, Taxonomy.Genus);
+            UpdateBountyScores(grain, oldSpeciesName, newSpeciesName, Taxonomy.Species);
 
             _uow.GrainRepository.Update(grain);
             _uow.SaveChanges();
@@ -61,22 +68,32 @@ namespace OxPollen.Services.Concrete
 
         public void Remove(Identification identification)
         {
-            var grainId = identification.Grain.Id;
-            _uow.IdentificationRepository.Delete(identification);
+            var grain = _uow.GrainRepository.GetById(identification.Grain.Id);
+            var oldFamilyName = GetConfirmedName(Taxonomy.Family, grain.Identifications);
+            var oldGenusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
+            var oldSpeciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
 
-            var grain = _uow.GrainRepository.GetById(grainId);
-            var familyName = GetConfirmedName(Taxonomy.Family, grain.Identifications);
-            var genusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
-            var speciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
+            identification.Family = FirstCharToUpper(identification.Family);
+            identification.Genus = FirstCharToUpper(identification.Genus);
+            identification.Species = FirstCharToLower(identification.Species);
+            grain.Identifications.Remove(identification);
 
-            grain.Family = familyName;
-            grain.Genus = genusName;
-            grain.Species = speciesName;
+            var newFamilyName = GetConfirmedName(Taxonomy.Family, grain.Identifications);
+            var newGenusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
+            var newSpeciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
+
+            grain.Family = newFamilyName;
+            grain.Genus = newGenusName;
+            grain.Species = newSpeciesName;
 
             var taxonService = new TaxonomyService(_uow);
-            taxonService.CreateOrUpdateTaxonomy(familyName, genusName, speciesName);
+            taxonService.CreateOrUpdateTaxonomy(newFamilyName, newGenusName, newSpeciesName);
 
-            _uow.GrainRepository.Update(grain);
+            UpdateBountyScores(grain, oldFamilyName, newFamilyName, Taxonomy.Family, identification);
+            UpdateBountyScores(grain, oldGenusName, newGenusName, Taxonomy.Genus, identification);
+            UpdateBountyScores(grain, oldSpeciesName, newSpeciesName, Taxonomy.Species, identification);
+
+            _uow.IdentificationRepository.Delete(identification);
             _uow.SaveChanges();
         }
 
@@ -129,6 +146,48 @@ namespace OxPollen.Services.Concrete
         {
             if (string.IsNullOrEmpty(input)) return input;
             return input.First().ToString().ToLower() + input.Substring(1).ToLower();
+        }
+
+        private void UpdateBountyScores(Grain grain, string oldName, string newName, Taxonomy rank, Identification removedId = null)
+        {
+            double bounty = BountyUtility.Calculate(grain);
+
+            if (string.IsNullOrEmpty(oldName) && !string.IsNullOrEmpty(newName))
+            {
+                grain.LockedBounty = bounty;
+                _uow.GrainRepository.Update(grain);
+            }
+
+            if (!string.IsNullOrEmpty(oldName))
+            {
+                var oldValidIds = new List<Identification>();
+                if (removedId != null) oldValidIds.Add(removedId);
+                if (rank == Taxonomy.Family) oldValidIds.AddRange(grain.Identifications.Where(m => m.Family == oldName));
+                if (rank == Taxonomy.Genus) oldValidIds.AddRange(grain.Identifications.Where(m => m.Genus == oldName));
+                if (rank == Taxonomy.Species) oldValidIds.AddRange(grain.Identifications.Where(m => m.Species == oldName));
+                foreach (var id in oldValidIds)
+                {
+                    var userId = id.User.Id;
+                    var user = _uow.UserRepository.GetById(userId);
+                    user.BountyScore -= bounty;
+                    _uow.UserRepository.Update(user);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(newName))
+            {
+                var newValidIds = new List<Identification>();
+                if (rank == Taxonomy.Family) newValidIds = grain.Identifications.Where(m => m.Family == newName).ToList();
+                if (rank == Taxonomy.Genus) newValidIds = grain.Identifications.Where(m => m.Genus == newName).ToList();
+                if (rank == Taxonomy.Species) newValidIds = grain.Identifications.Where(m => m.Species == newName).ToList();
+                foreach (var id in newValidIds)
+                {
+                    var userId = id.User.Id;
+                    var user = _uow.UserRepository.GetById(userId);
+                    user.BountyScore += bounty;
+                    _uow.UserRepository.Update(user);
+                }
+            }
         }
     }
 }
