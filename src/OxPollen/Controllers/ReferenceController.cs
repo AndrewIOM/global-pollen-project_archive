@@ -41,7 +41,15 @@ namespace OxPollen.Controllers
 
         public IActionResult Index()
         {
-            return View(new RequestAccessViewModel());
+            var model = new RequestAccessViewModel();
+
+            var user = _userService.GetById(User.GetUserId());
+            if (user != null)
+            {
+                model.HasRequestedAccess = user.RequestedDigitisationRights;
+            }
+
+            return View(model);
         }
 
         [Authorize]
@@ -54,10 +62,10 @@ namespace OxPollen.Controllers
             _userService.Update(user);
 
             //Send email to all admins to let them know
-            var adminEmail = _userService.GetAll().First().Email; //Temporary hack
+            var adminEmail = "oxpollen@gmail.com"; //temporary hack
             _emailSender.SendEmailAsync(adminEmail, "Request for digitisation rights",
                 user.FullName() + " has requested digitisation rights. They write: " + result.Comments).Wait();
-            return View("Index");
+            return RedirectToAction("Index");
         }
 
         [HttpGet]

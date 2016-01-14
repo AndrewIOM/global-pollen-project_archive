@@ -5,6 +5,8 @@
     ViewBag.Subtitle = "OxPollen enables the digitisation of existing collections";
 }
 
+
+
 @section homepageHeader {
     <div class="addgrain-section headsection">
         <div class="container">
@@ -15,33 +17,55 @@
     <br />
 }
 
-@if (User.IsInRole("Digitise"))
+@if (User.Identity.IsAuthenticated)
 {
-    <div class="alert alert-success" role="alert">
-        <p>You're ready to go! We've added you to our digitisation group.</p>
-    </div>
-}
-else
-{
-    <div class="alert alert-danger" role="alert">
-        <p>You're not currently allowed to access the digitisation features. You can sort this out below...</p>
-    </div>
+    @if (User.IsInRole("Digitise"))
+    {
+        <div class="alert alert-success" role="alert">
+            <p>You're ready to go! We've added you to our digitisation group.</p>
+        </div>
+    }
+    else if (Model.HasRequestedAccess)
+    {
+        <div class="alert alert-info" role="alert">
+            <p>You have requested access to digitise collections, and your request will be reviewed as soon as possible.</p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            <p>You're not currently allowed to access the digitisation features. You can sort this out below...</p>
+        </div>
+    }
 }
 
 <h3>Thinking of digitising a reference collection from your lab? OxPollen is the perfect home.</h3>
 <p>Blurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb text</p>
 
-@if (User.IsInRole("Digitise"))
+@if (User.Identity.IsAuthenticated)
 {
-    <a class="btn btn-primary" role="button" asp-action="Collections">Get Started</a>
-}
-else
-{
-    @using (Html.BeginForm("RequestAccess", "Reference", FormMethod.Post, new { @class = "form" }))
+    @if (User.IsInRole("Digitise"))
     {
-        <p>Please tell us a little about your collections:</p>
-        <input type="text" asp-for="Comments" class="form-control" />
-        <span asp-validation-for="Comments" class="text-danger"></span>
-        <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+        <a class="btn btn-primary" role="button" asp-action="Collections">Get Started</a>
     }
+    else
+    {
+        if (Model.HasRequestedAccess)
+        {
+            <p>Thank you for requesting access. </p>
+
+        }
+        else
+        {
+            @using (Html.BeginForm("RequestAccess", "Reference", FormMethod.Post, new { @class = "form" }))
+            {
+                <p>Please tell us a little about your collections:</p>
+                <input type="text" asp-for="Comments" class="form-control" />
+                <span asp-validation-for="Comments" class="text-danger"></span>
+                <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+            }
+        }
+    }
+} else {
+    <p>Log in to access digitisation features.</p>
 }

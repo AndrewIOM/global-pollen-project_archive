@@ -10,5 +10,7 @@ namespace OxPollen.ViewModels.Reference
     {
         [Required]
         public string Comments { get; set; }
+
+        public bool HasRequestedAccess { get; set; }
     }
 }

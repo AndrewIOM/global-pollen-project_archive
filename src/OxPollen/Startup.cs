@@ -126,7 +126,6 @@ namespace OxPollen
 
             // Add cookie-based authentication to the request pipeline.
             app.UseIdentity();
-            EnsureRoles(app, loggerFactory);
 
             // Add and configure the options for authentication middleware to the request pipeline.
             // You can add options for middleware as shown below.
@@ -162,6 +161,10 @@ namespace OxPollen
                 // Uncomment the following line to add a route for porting Web API 2 controllers.
                 //routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
+
+            //Custom
+            EnsureRoles(app, loggerFactory);
+            EnsureAdminUser(app);
         }
 
         private void EnsureRoles(IApplicationBuilder app, ILoggerFactory loggerFactory)
@@ -179,6 +182,41 @@ namespace OxPollen
                     IdentityRole identityRole = new IdentityRole(roleName);
                     IdentityResult identityResult = roleManager.CreateAsync(identityRole).Result;
                 }
+            }
+        }
+
+        private void EnsureAdminUser(IApplicationBuilder app)
+        {
+            UserManager<AppUser> userManager = app.ApplicationServices.GetService<UserManager<AppUser>>();
+            var context = app.ApplicationServices.GetService<OxPollenDbContext>();
+
+            var organisation = context.Organisations.FirstOrDefaultAsync(m => m.Name == "OxPollen Admin").Result;
+            if (organisation == null)
+            {
+                organisation = new Organisation()
+                {
+                    CountryCode = "GB",
+                    Name = "OxPollen Admin"
+                };
+                context.Organisations.Add(organisation);
+                context.SaveChanges();
+            }
+
+            var user = userManager.FindByNameAsync(Configuration["Account:Admin:DefaultAdminUserName"]).Result;
+            if (user == null)
+            {
+                user = new AppUser()
+                {
+                    UserName = Configuration["Account:Admin:DefaultAdminUserName"],
+                    FirstName = "OxPollen",
+                    LastName = "Admin",
+                    Title = "Mx",
+                    Organisation = organisation,
+                    EmailConfirmed = true,
+                    Email = Configuration["Account:Admin:DefaultAdminUserName"]
+                };
+                userManager.CreateAsync(user, Configuration["Account:Admin:DefaultAdminPassword"]).Wait();
+                userManager.AddToRoleAsync(user, "Admin");
             }
         }
     }
