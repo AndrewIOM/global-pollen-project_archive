@@ -5,6 +5,7 @@
 /// <reference path="js/grain/AjaxUpload.js" />
 /// <reference path="js/grain/GoogleMaps.js" />
 /// <reference path="js/grain/ImageManipluation.js" />
+/// <reference path="js/grain/imagezoomer.js" />
 /// <reference path="js/reference/addreferenceslides.js" />
 /// <reference path="js/site.js" />
 /// <reference path="lib/bootstrap/dist/js/bootstrap.js" />
