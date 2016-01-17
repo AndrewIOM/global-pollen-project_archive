@@ -1,0 +1,64 @@
+﻿@model GrainSearchFilter
+
+@using (Html.BeginForm("Index", "Grain", FormMethod.Get, new { @class = "form" }))
+{
+    <div class="panel panel-default">
+        <div class="panel-heading"><span class="glyphicon glyphicon-sort"></span> Sort</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <p><span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span> Sort by:</p>
+                    <select asp-for="Sort" class="form-control">
+                        <option value="Bounty">Bounty</option>
+                        <option value="Date Added">Date Added</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p><span class="glyphicon glyphicon-sort-by-order" aria-hidden="true"></span> Order by:</p>
+                    <select asp-for="Descending" class="form-control">
+                        <option value="true">Descending</option>
+                        <option value="false">Ascending</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-filter"></span> Filter</div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="map" style="height:18em"></div>
+                    </div>
+                </div>
+<hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label><input asp-for="UnknownFamily" type="checkbox">Family Unknown</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input asp-for="UnknownGenus" type="checkbox">Genus Unknown</label>
+                        </div>
+                        <div class="checkbox">
+                            <label><input asp-for="UnknownSpecies" type="checkbox">Species Unknown</label>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        @Html.HiddenFor(m => m.LatitudeHigh)
+                        @Html.HiddenFor(m => m.LatitudeLow)
+                        @Html.HiddenFor(m => m.LongitudeHigh)
+                        @Html.HiddenFor(m => m.LongitudeLow)
+                        <input class="btn btn-primary" type="submit" value="Apply" />
+                        <a class="btn btn-default" href="@Url.Action("Index", "Grain")">Reset Filters</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+}

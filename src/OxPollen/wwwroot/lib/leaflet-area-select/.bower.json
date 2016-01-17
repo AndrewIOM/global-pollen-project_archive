@@ -1,0 +1,39 @@
+{
+  "name": "leaflet-area-select",
+  "main": "dist/Map.SelectArea.min.js",
+  "version": "0.2.5",
+  "homepage": "https://github.com/w8r/leaflet-area-select",
+  "authors": [
+    "w8r <info@w8r.name>"
+  ],
+  "description": "leaflet area selection plugin",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "leaflet",
+    "map",
+    "area",
+    "select",
+    "handler"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.2.5",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.2.5",
+    "commit": "3ee236c125fed6fb13b4c36e66d2625acc1320bf"
+  },
+  "_source": "git://github.com/w8r/leaflet-area-select.git",
+  "_target": "0.2.5",
+  "_originalSource": "leaflet-area-select"
+}

@@ -13,6 +13,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using OxPollen.ViewModels.Grain;
 
 namespace OxPollen.Controllers
 {
@@ -87,22 +88,6 @@ namespace OxPollen.Controllers
             }
             _grainService.Add(grain);
             return Ok();
-        }
-
-        // GET: /<controller>/
-        public IActionResult Index()
-        {
-            var grains = _grainService.GetUnidentifiedGrains(Taxonomy.Genus);
-            var model = grains
-                .OrderByDescending(m => BountyUtility.Calculate(m)).Select(m => new ReadOnlyGrainViewModel()
-                {
-                    Bounty = BountyUtility.Calculate(m),
-                    Id = m.Id,
-                    TimeAdded = m.TimeAdded,
-                    ImageLocation = m.Images.Count > 0 ? m.Images.First().FileName : null,
-                    ThumbnailLocation = m.Images.Count > 0 ? m.Images.First().FileNameThumbnail : null
-                }).ToList();
-            return View(model);
         }
 
         [HttpGet]
@@ -203,12 +188,37 @@ namespace OxPollen.Controllers
             return RedirectToAction("Identify", new { id = result.GrainId });
         }
 
+        // GET: /<controller>/
+        public IActionResult Index(GrainSearchFilter filter = null)
+        {
+            if (filter == null) filter = new GrainSearchFilter();
+            var grains = _grainService.Search(filter);
+            var simpleGrains = grains.Select(m => new SimpleGrainViewModel()
+            {
+                Bounty = BountyUtility.Calculate(m),
+                Id = m.Id,
+                TimeAdded = m.TimeAdded,
+                ImageLocation = m.Images.Count > 0 ? m.Images.First().FileName : null,
+                ThumbnailLocation = m.Images.Count > 0 ? m.Images.First().FileNameThumbnail : null,
+                Latitude = m.Latitude,
+                Longitude = m.Longitude
+            }).ToList();
+
+            var model = new FilteredGrainsViewModel()
+            {
+                Filters = filter,
+                Grains = simpleGrains
+            };
+
+            return View(model);
+        }
+
         [Authorize]
         public IActionResult MyGrains()
         {
             var thisUser = User.GetUserId();
             var grains = _grainService.GetByUser(thisUser).ToList();
-            var model = grains.Select(m => new ReadOnlyGrainViewModel()
+            var model = grains.Select(m => new SimpleGrainViewModel()
             {
                 Id = m.Id,
                 ImageLocation = m.Images.First().FileName,

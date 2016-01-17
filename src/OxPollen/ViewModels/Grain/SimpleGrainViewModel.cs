@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace OxPollen.ViewModels
 {
-    public class ReadOnlyGrainViewModel
+    public class SimpleGrainViewModel
     {
         public int Id { get; set; }
         public double Bounty { get; set; }
@@ -16,5 +16,8 @@ namespace OxPollen.ViewModels
         public string ConfirmedSpecies { get; set; }
         public string ConfirmedGenus { get; set; }
         public string ConfirmedFamily { get; set; }
+
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

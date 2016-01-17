@@ -25,7 +25,7 @@ namespace OxPollen.Controllers
             var result = _grainService.GetUnidentifiedGrains(Taxonomy.Genus)
                 .OrderByDescending(m => BountyUtility.Calculate(m)).Take(10).ToList();
             
-            var model = result.Select(m => new ReadOnlyGrainViewModel()
+            var model = result.Select(m => new SimpleGrainViewModel()
                 {
                     Bounty = BountyUtility.Calculate(m),
                     Id = m.Id,

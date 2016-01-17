@@ -82,17 +82,15 @@
 <script type="text/javascript" src="~/lib/leaflet/dist/leaflet.js"></script>
 <script type="text/javascript">
     var baseUrl = 'http://api.gbif.org/v1/map/density/tile?x={x}&y={y}&z={z}&type=TAXON&key=@Model.GbifId&layer=OBS_1900_1910&layer=SP_1900_1910&layer=OBS_1910_1920&layer=SP_1910_1920&layer=OBS_1920_1930&layer=SP_1920_1930&layer=OBS_1930_1940&layer=SP_1930_1940&layer=OBS_1940_1950&layer=SP_1940_1950&layer=OBS_1950_1960&layer=SP_1950_1960&layer=OBS_1960_1970&layer=SP_1960_1970&layer=OBS_1970_1980&layer=SP_1970_1980&layer=OBS_1980_1990&layer=SP_1980_1990&layer=OBS_1990_2000&layer=SP_1990_2000&layer=OBS_2000_2010&layer=SP_2000_2010&layer=OBS_2010_2020&layer=SP_2010_2020&layer=LIVING&palette=yellows_reds';
+    var map = L.map('map').setView([30, 0], 1);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mareep2000.onj49m55',
+        accessToken: 'pk.eyJ1IjoibWFyZWVwMjAwMCIsImEiOiJjaWppeGUxdm8wMDQ3dmVtNHNhcHh0cHA1In0.OrAULrL8pJaL9N5WerUUDQ'
+    }).addTo(map);
     var gbifAttrib = 'GBIF contributors';
-    var gbif = new L.TileLayer(baseUrl, { minZoom: 0, maxZoom: 14, attribution: gbifAttrib });
-    var cmAttr = 'Nokia',
-        cmUrl = 'http://2.maps.nlp.nokia.com/maptile/2.1/maptile/newest/normal.day.grey/{z}/{x}/{y}/256/png8?app_id=_peU-uCkp-j8ovkzFGNU&app_code=gBoUkAMoxoqIWfxWA5DuMQ';
-    var minimal = L.tileLayer(cmUrl, { styleId: 22677, attribution: cmAttr });
-    var map = L.map('map', {
-        center: [0, 0],
-        zoom: 1,
-        maxZoom: 14,
-        layers: [minimal, gbif]
-    });
+    var gbif = new L.TileLayer(baseUrl, { minZoom: 0, maxZoom: 14, attribution: gbifAttrib }).addTo(map);
 </script>
 
 @* GBIF and Neotoma Ajax Requests *@

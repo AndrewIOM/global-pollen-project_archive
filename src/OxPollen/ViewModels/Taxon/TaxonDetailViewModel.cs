@@ -15,7 +15,7 @@ namespace OxPollen.ViewModels.Taxon
         public int GbifId { get; set; }
         public int NeotomaId { get; set; }
 
-        public List<Grain> SubmittedGrains { get; set; }
+        public List<Models.Grain> SubmittedGrains { get; set; }
         public List<ReferenceGrain> ReferenceGrains { get; set; }
     }
 }
