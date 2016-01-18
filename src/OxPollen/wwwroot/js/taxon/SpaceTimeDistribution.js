@@ -92,15 +92,18 @@ var populateGbifDescription = function (gbifId) {
     var gbifWarning = document.getElementById('gbif-warning');
     var gbifDescWarning = document.getElementById('gbif-warning-desc');
     var warningsContainer = document.getElementById('warnings-container');
+    var holder = document.getElementById('gbif-description');
+    var sourceHolder = document.getElementById('description-source');
 
     if (gbifId == 0) {
+        holder.innerHTML = 'Not Available';
+        sourceHolder.innerHTML = 'Source: None Available';
         warningsContainer.style.display = '';
+        gbifDescWarning.style.display = '';
         gbifWarning.style.display = '';
     } else {
         var gbifUri = "http://api.gbif.org/v1/species/" + gbifId;
         ajaxHelper(gbifUri + '/descriptions', 'GET', 'jsonp').done(function (data) {
-            var holder = document.getElementById('gbif-description');
-            var sourceHolder = document.getElementById('description-source');
             var description = '';
             var source = '';
             for (i = 0; i < data.results.length; i++) {
