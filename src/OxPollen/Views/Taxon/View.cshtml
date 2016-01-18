@@ -4,159 +4,121 @@
     ViewBag.Title = Model.LatinName;
 }
 
+<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.css"> @* TODO Move this *@
+<link rel="stylesheet" href="~/lib/bootstrap-slider/slider.css"> @* TODO Move this *@
+
+@* Header *@
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>@ViewBag.Title</h2>
+            <p><strong>@Model.Rank</strong> in the OxPollen Reference Collection</p>
+        </div>
+    </div>
+    <br />
+}
+
 @* Breadcrumb *@
 <div class="row">
-    <br />
     <div class="col-md-12">
         <ol class="breadcrumb">
+            <li><a asp-action="Index" asp-controller="Home">Home</a></li>
             <li><a asp-action="Index">Pollen Reference Collection</a></li>
             <li class="active">@Model.Id: @Model.LatinName</li>
         </ol>
     </div>
 </div>
 
-@* Header *@
-<div class="row">
+<div class="row" id="warnings-container" style="display:none">
     <div class="col-md-12">
-        <h1>@Model.LatinName</h1>
-        <h4>@Model.Rank</h4>
+        <div class="alert alert-warning" role="alert">
+                <ul style="list-style:none">
+                    <li style="display:none" id="neotoma-warning"><span class="glyphicon glyphicon-warning-sign"></span> Past distributions from NeotomaDB not available at present.</li>
+                    <li style="display:none" id="gbif-warning"><span class="glyphicon glyphicon-warning-sign"></span> The present distribution is not available from GBIF right now.</li>
+                    <li style="display:none" id="gbif-warning-desc"><span class="glyphicon glyphicon-warning-sign"></span> Could not fetch a description from GBIF right now</li>
+                </ul>
+        </div>
     </div>
 </div>
 
-@* GBIF *@
-<div class="row">
-    <div class="col-md-6">
-        <h3>Description</h3>
-        <p id="description-source">Source:</p>
-        <p id="gbif-description"><span class="glyphicon glyphicon-refresh"></span></p>
-        <a class="btn btn-default" href="http://gbif.org/species/@Model.GbifId" target="_blank">View at GBIF</a>
-    </div>
-    <div class="col-md-6">
-        <h3>Modern Distribution</h3>
-        <div id="map" style="height:20em"></div>
-        <ul id="coordinates"></ul>
-    </div>
-</div>
-<hr />
-
-@* Photo Tiles *@
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Digitised Reference Slides</div>
+            <div class="panel-heading"><span class="glyphicon glyphicon-film"></span> Grains</div>
             <div class="panel-body">
-                @foreach (var record in Model.ReferenceGrains)
-                {
-                    <div class="col-sm-2">
-                        <a href="@Url.Action("Grain", "Reference", new { id = @record.ReferenceGrainId } )"><img src="\user-image-uploads\@record.Images.First().FileNameThumbnail" style="width:100%" /></a>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Digitised Reference Slides</label>
+                        <ul class="grain-grid columns-8">
+                            @foreach (var grain in Model.ReferenceGrains)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Grain", "Reference", new { id = @grain.ReferenceGrainId } )">
+                                        <div class="img-container">
+                                            <img src="\user-image-uploads\@grain.Images.First().FileNameThumbnail" />
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                        <hr />
+                        <label>User Submissions</label>
+                        <ul class="grain-grid columns-8">
+                            @foreach (var grain in Model.SubmittedGrains)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Grain", "Reference", new { id = @grain.Id } )">
+                                        <div class="img-container">
+                                            <img src="\user-image-uploads\@grain.Images.First().FileNameThumbnail" />
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
-                }
-                @if (Model.ReferenceGrains.Count == 0)
-                {
-                    <p>None</p>
-                }
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Confirmed Grains Submitted by OxPollen Users</div>
+            <div class="panel-heading"><span class="glyphicon glyphicon-book"></span> Definition</div>
             <div class="panel-body">
-                @foreach (var record in Model.SubmittedGrains)
-                {
-                    <div class="col-sm-2">
-                        <a href="@Url.Action("Identify", "Grain", new { id = @record.Id } )"><img src="\user-image-uploads\@record.Images.First().FileNameThumbnail" style="width:100%" /></a>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Distribution through Time</label>
+                        <div id="map" style="height:20em"></div>
+                        <ul id="coordinates"></ul>
+                        <p>
+                            <span id="time-slicer-a" class="hidden">Example low value</span>
+                            <span id="time-slicer-b" class="hidden">Example high value</span>
+                            <input id="time-slicer" type="text" data-slider-enabled="true" />
+                            <span>years before present</span>
+                        </p>
                     </div>
-                }
-                @if (Model.SubmittedGrains.Count == 0)
-                {
-                    <p>None</p>
-                }
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr />
+                        <label>Description (GBIF)</label>
+                        <p id="gbif-description"><span class="glyphicon glyphicon-refresh"></span></p>
+                        <p id="description-source"><em>Source:</em></p>
+                        <a class="btn btn-default" href="http://gbif.org/species/@Model.GbifId" target="_blank">View at GBIF</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-@* Mapping *@
-<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.css">
-<script type="text/javascript" src="~/lib/leaflet/dist/leaflet.js"></script>
-<script type="text/javascript">
-    var baseUrl = 'http://api.gbif.org/v1/map/density/tile?x={x}&y={y}&z={z}&type=TAXON&key=@Model.GbifId&layer=OBS_1900_1910&layer=SP_1900_1910&layer=OBS_1910_1920&layer=SP_1910_1920&layer=OBS_1920_1930&layer=SP_1920_1930&layer=OBS_1930_1940&layer=SP_1930_1940&layer=OBS_1940_1950&layer=SP_1940_1950&layer=OBS_1950_1960&layer=SP_1950_1960&layer=OBS_1960_1970&layer=SP_1960_1970&layer=OBS_1970_1980&layer=SP_1970_1980&layer=OBS_1980_1990&layer=SP_1980_1990&layer=OBS_1990_2000&layer=SP_1990_2000&layer=OBS_2000_2010&layer=SP_2000_2010&layer=OBS_2010_2020&layer=SP_2010_2020&layer=LIVING&palette=yellows_reds';
-    var map = L.map('map').setView([30, 0], 1);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        attribution: 'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mareep2000.onj49m55',
-        accessToken: 'pk.eyJ1IjoibWFyZWVwMjAwMCIsImEiOiJjaWppeGUxdm8wMDQ3dmVtNHNhcHh0cHA1In0.OrAULrL8pJaL9N5WerUUDQ'
-    }).addTo(map);
-    var gbifAttrib = 'GBIF contributors';
-    var gbif = new L.TileLayer(baseUrl, { minZoom: 0, maxZoom: 14, attribution: gbifAttrib }).addTo(map);
-</script>
-
-@* GBIF and Neotoma Ajax Requests *@
-<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript">
-    //GBIF Search Functions
-    //Andrew Martin, University of Oxford
-
-    var gbifUri = "http://api.gbif.org/v1/species/@Model.GbifId";
-    var neotomaUri = "http://api.neotomadb.org/v1/data/datasets?taxonids=@Model.NeotomaId&ageof=taxon";
-
-    var upperAge = 10000;
-    var lowerAge = 0;
-    neotomaUri += "&ageold=" + upperAge + "&ageyoung=" + lowerAge;
-
-    $(document).ready(function () {
-        ajaxHelper(gbifUri + '/descriptions', 'GET', 'jsonp').done(function (data) {
-            var holder = document.getElementById('gbif-description');
-            var sourceHolder = document.getElementById('description-source');
-            var description = '';
-            var source = '';
-            for (i = 0; i < data.results.length; i++) {
-                if (data.results[i].description.length > 0 && data.results[i].language == 'eng' && description == '') {
-                    description = data.results[i].description.substring(0, 1000) + '...'; //Take first description
-                    source = data.results[i].source;
-                }
-            }
-            holder.innerHTML = description;
-            sourceHolder.innerHTML = 'Source: ' + source;
+@section scripts {
+    @* Dependencies *@
+    <script type="text/javascript" src="~/lib/leaflet/dist/leaflet.js"></script>
+    <script type="text/javascript" src="~/js/taxon/SpaceTimeDistribution.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            populateGbifDescription(@Model.GbifId)
+            populateSpaceTimeMap(@Model.GbifId, @Model.NeotomaId)
         });
-
-        $.ajax({
-            url: neotomaUri,
-            dataType: 'jsonp',
-            data: { "taxonname": name },
-            cache: true,
-            success: taxaSearchHandler
-        });
-
-
-
-        ajaxHelper(neotomaUri, 'GET', 'jsonp').done(function (data) {
-            console.log(data);
-            var holder = document.getElementById('coordinates');
-            if (data.success == 0) return;
-            for (i = 0; i < data.data.length; i++) {
-                var li = document.createElement('li');
-                li.innerHTML = "lat: " + data.data[i].Site.LongitudeNorth + ", lon: " + data.data[i].Site.LongitudeEast;
-                holder.appendChild(li);
-            }
-        });
-    });
-
-    //Base Functions
-    function ajaxHelper(uri, method, dataType, data) {
-        console.log(uri);
-        //self.error('');
-        return $.ajax({
-            type: method,
-            url: uri,
-            dataType: dataType,
-            contentType: 'application/json',
-            data: data ? JSON.stringify(data) : null
-        }).fail(function (jqXhr, textStatus, errorThrown) {
-            console.log(errorThrown);
-            //self.error(errorThrown);
-        });
-    }
-</script>
+    </script>
+}

@@ -389,3 +389,13 @@ darkroom-container {
     height: 14px;
     cursor: move;
 }
+
+/* Reference Collection Taxon Page */
+#time-slicer {
+    width:100%;
+}
+
+.slider-handle {
+    background-color: #83296f;
+    border-radius:0.3em;
+}
