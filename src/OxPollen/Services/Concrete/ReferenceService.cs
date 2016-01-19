@@ -41,8 +41,13 @@ namespace OxPollen.Services.Concrete
             var existing = _uow.RefCollectionRepository.GetById(collectionId);
             if (existing != null)
             {
+                foreach (var grain in existing.Grains)
+                {
+                    _uow.RefGrainRepository.Delete(grain);
+                }
                 _uow.RefCollectionRepository.Delete(existing);
             }
+            _uow.SaveChanges();
         }
 
         public void DeleteGrain(int grainId)
@@ -52,6 +57,7 @@ namespace OxPollen.Services.Concrete
             {
                 _uow.RefGrainRepository.Delete(existing);
             }
+            _uow.SaveChanges();
         }
 
         public ReferenceCollection GetCollectionById(int id)
@@ -93,6 +99,11 @@ namespace OxPollen.Services.Concrete
         {
             if (string.IsNullOrEmpty(input)) return input;
             return input.First().ToString().ToLower() + input.Substring(1).ToLower();
+        }
+
+        public List<ReferenceCollection> ListCollections()
+        {
+            return _uow.RefCollectionRepository.GetAll().ToList();
         }
     }
 }

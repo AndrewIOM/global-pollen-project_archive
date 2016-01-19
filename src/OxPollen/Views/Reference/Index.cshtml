@@ -1,11 +1,9 @@
-﻿@model OxPollen.ViewModels.Reference.RequestAccessViewModel
+﻿@model List<ReferenceCollection>
 
 @{
-    ViewBag.Title = "Digitise a Reference Collection";
-    ViewBag.Subtitle = "OxPollen enables the digitisation of existing collections";
+    ViewBag.Title = "Physical Reference Collections";
+    ViewBag.Subtitle = "These collections have been digitised into OxPollen by organisations around the world";
 }
-
-
 
 @section homepageHeader {
     <div class="addgrain-section headsection">
@@ -17,55 +15,71 @@
     <br />
 }
 
-@if (User.Identity.IsAuthenticated)
-{
-    @if (User.IsInRole("Digitise"))
-    {
-        <div class="alert alert-success" role="alert">
-            <p>You're ready to go! We've added you to our digitisation group.</p>
-        </div>
-    }
-    else if (Model.HasRequestedAccess)
-    {
-        <div class="alert alert-info" role="alert">
-            <p>You have requested access to digitise collections, and your request will be reviewed as soon as possible.</p>
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-danger" role="alert">
-            <p>You're not currently allowed to access the digitisation features. You can sort this out below...</p>
-        </div>
-    }
-}
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+            <li class="active">Physical Collections</li>
+        </ol>
+    </div>
+</div>
 
-<h3>Thinking of digitising a reference collection from your lab? OxPollen is the perfect home.</h3>
-<p>Blurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb text</p>
-
-@if (User.Identity.IsAuthenticated)
-{
-    @if (User.IsInRole("Digitise"))
-    {
-        <a class="btn btn-primary" role="button" asp-action="Collections">Get Started</a>
-    }
-    else
-    {
-        if (Model.HasRequestedAccess)
+@* Digitisation Features *@
+<div class="row">
+    <div class="col-md-12">
+        @if (User.IsInRole("Digitise"))
         {
-            <p>Thank you for requesting access. </p>
+            <div class="panel panel-primary">
+                <div class="panel-heading"><span class="glyphicon glyphicon-edit"></span> Digitisation Features</div>
+                <div class="panel-body">
+                    <p>To digitise a reference collection: </p>
+                    <ol>
+                        <li>Create a new reference collection in OxPollen to hold your local collection. </li>
+                        <li>Take images of each slide in your reference collection. You can take images of either an area of the slide (multiple grains), a single grain, or both!</li>
+                        <li>Save the images into a folder, with the file name in the format FAMILY_GENUS_SPECIES.jpg</li>
+                        <li>Use the batch-upload form to add all images at once.</li>
+                    </ol>
+                    <a class="btn btn-default" role="button" href="@Url.Action("AddCollection")"><span class="glyphicon glyphicon-plus"></span> Add a New Collection</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.Count == 0)
+        {
+            <p>It's a bit empty in here...</p>
+            <p>Digitise your reference collection today!</p>
         }
         else
         {
-            @using (Html.BeginForm("RequestAccess", "Reference", FormMethod.Post, new { @class = "form" }))
-            {
-                <p>Please tell us a little about your collections:</p>
-                <input type="text" asp-for="Comments" class="form-control" />
-                <span asp-validation-for="Comments" class="text-danger"></span>
-                <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
-            }
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Collection</th>
+                        <th>Organisation</th>
+                        <th>Country</th>
+                        <th>Digitised Taxa</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                @foreach (var collection in Model)
+                {
+                    <tr>
+                        <td>@collection.Name</td>
+                        <td>@collection.Institution</td>
+                        <td>@collection.CountryCode</td>
+                        <td>@collection.Grains.Count</td>
+                        <td><a role="button" class="btn btn-primary" href="@Url.Action("Collection", new { id = @collection.Id } )">View Details</a></td>
+                        @if (User.IsInRole("Digitise") && collection.User.UserName == User.Identity.Name)
+                        {
+                            <td><a role="button" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this collection? This CANNOT be undone.')" href="@Url.Action("DeleteCollection", new { id = @collection.Id } )"><span class="glyphicon glyphicon-trash"></span> Delete Collection</a></td>
+                        }
+                    </tr>
+                }
+            </table>
         }
-    }
-} else {
-    <p>Log in to access digitisation features.</p>
-}
+    </div>
+</div>

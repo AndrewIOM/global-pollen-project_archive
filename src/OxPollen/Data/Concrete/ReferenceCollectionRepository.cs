@@ -34,7 +34,7 @@ namespace OxPollen.Data.Concrete
 
         public IEnumerable<ReferenceCollection> GetAll()
         {
-            return _context.ReferenceCollections.Include(m => m.User);
+            return _context.ReferenceCollections.Include(m => m.User).Include(m => m.Grains);
         }
 
         public ReferenceCollection GetById(int id)

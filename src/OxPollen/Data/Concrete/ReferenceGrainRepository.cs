@@ -24,7 +24,7 @@ namespace OxPollen.Data.Concrete
 
         public void Delete(ReferenceGrain entity)
         {
-            throw new NotImplementedException();
+            _context.ReferenceGrains.Remove(entity);
         }
 
         public IEnumerable<ReferenceGrain> Find(Expression<Func<ReferenceGrain, bool>> where)
@@ -41,12 +41,13 @@ namespace OxPollen.Data.Concrete
         {
             return _context.ReferenceGrains.Include(m => m.Images)
                 .Include(m => m.Collection)
+                .ThenInclude(n => n.User)
                 .FirstOrDefault(m => m.ReferenceGrainId == id);
         }
 
         public void Update(ReferenceGrain entity)
         {
-            throw new NotImplementedException();
+            _context.ReferenceGrains.Update(entity);
         }
     }
 }

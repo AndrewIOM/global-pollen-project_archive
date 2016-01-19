@@ -1,34 +1,93 @@
 ﻿@model OxPollen.Models.ReferenceGrain
 
 @{
-    ViewBag.Title = "Reference Grain Details #" + Model.ReferenceGrainId;
+    ViewBag.Title = Model.Collection.Name;
+    ViewBag.Subtitle = Model.ReferenceGrainId + ": " + Model.Family;
     var timeSinceAdd = DateTime.Now - Model.TimeAdded;
+}
+
+@section scripts {
+    <script type="text/javascript" src="~/js/Grain/ImageZoomer.js"></script>
+}
+
+@* Header *@
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>@ViewData["Title"]</h2>
+            <p>@ViewData["Subtitle"]</p>
+        </div>
+    </div>
+    <br />
 }
 
 @* Breadcrumb *@
 <div class="row">
-    <br />
     <div class="col-md-12">
         <ol class="breadcrumb">
-            <li>Digitised Reference Grains</li>
+            <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+            <li><a asp-action="Index" asp-controller="Reference">Physical Collections</a></li>
+            <li><a href="@Url.Action("Collection", "Reference", new { id = Model.Collection.Id })">@Model.Collection.Name</a></li>
             <li class="active">Grain #@Model.ReferenceGrainId</li>
         </ol>
     </div>
 </div>
 
-@* Header *@
 <div class="row">
-    <div class="col-md-12">
-        <h2>
-            @if (!string.IsNullOrEmpty(Model.Family))
-            { <span>@Model.Family > </span> }
-            @if (!string.IsNullOrEmpty(Model.Genus))
-            { <span>@Model.Genus > </span> }
-            @if (!string.IsNullOrEmpty(Model.Species))
-            { <span>@Model.Species</span> }
-        </h2>
-        <p>@Model.Collection.Name, @Model.Collection.Institution @Model.Collection.CountryCode</p>
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-book"></span> Details</div>
+            <div class="panel-body">
+                <h4>Taxonomy</h4>
+                <label>Family</label>
+                @if (string.IsNullOrEmpty(Model.Family))
+                {
+                    <p>Unknown</p>
+                }
+                else
+                {
+                    <p>@Model.Family</p>
+                }
+                <label>Genus</label>
+                @if (string.IsNullOrEmpty(Model.Genus))
+                {
+                    <p>Unknown</p>
+                }
+                else
+                {
+                    <p>@Model.Genus</p>
+                }
+                <label>Species</label>
+                @if (string.IsNullOrEmpty(Model.Species))
+                {
+                    <p>Unknown</p>
+                }
+                else
+                {
+                    <p>@Model.Species</p>
+                }
+                <hr />
+                <h4>Additional Details</h4>
+                <p>None</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-picture"></span> Images</div>
+            <div class="panel-body">
+                <div class="zoom-canvas-container">
+                    <canvas id="displayCanvas" class="zoom-canvas"></canvas>
+                </div>
+                <hr />
+                <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
+                    @foreach (var image in Model.Images)
+                    {
+                        <a><img src="\user-image-uploads\@image.FileName" onclick="return changeImage(this.src);" style="width:auto; height:5em;display:inline-block" /></a>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<img src="\user-image-uploads\@Model.Images.First().FileName" />

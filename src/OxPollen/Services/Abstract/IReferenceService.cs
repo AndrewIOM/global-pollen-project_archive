@@ -9,6 +9,7 @@ namespace OxPollen.Services.Abstract
     public interface IReferenceService
     {
         //Collection
+        List<ReferenceCollection> ListCollections();
         ReferenceCollection AddCollection(ReferenceCollection collection);
         ReferenceCollection UpdateCollection(ReferenceCollection collection);
         void DeleteCollection(int collectionId);

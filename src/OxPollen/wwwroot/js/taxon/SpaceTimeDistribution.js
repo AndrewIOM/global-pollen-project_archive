@@ -37,7 +37,7 @@ var populateSpaceTimeMap = function (gbifId, neotomaId) {
 
     if (gbifId != 0) {
         console.log('Adding GBIF to Map');
-        var baseUrl = 'http://api.gbif.org/v1/map/density/tile?x={x}&y={y}&z={z}&type=TAXON&key=' + gbifId + '&layer=OBS_1900_1910&layer=SP_1900_1910&layer=OBS_1910_1920&layer=SP_1910_1920&layer=OBS_1920_1930&layer=SP_1920_1930&layer=OBS_1930_1940&layer=SP_1930_1940&layer=OBS_1940_1950&layer=SP_1940_1950&layer=OBS_1950_1960&layer=SP_1950_1960&layer=OBS_1960_1970&layer=SP_1960_1970&layer=OBS_1970_1980&layer=SP_1970_1980&layer=OBS_1980_1990&layer=SP_1980_1990&layer=OBS_1990_2000&layer=SP_1990_2000&layer=OBS_2000_2010&layer=SP_2000_2010&layer=OBS_2010_2020&layer=SP_2010_2020&layer=LIVING&palette=yellows_reds';
+        var baseUrl = 'http://api.gbif.org/v1/map/density/tile?x={x}&y={y}&z={z}&type=TAXON&key=' + gbifId + '&layer=OBS_2000_2010&layer=SP_2000_2010&layer=OBS_2010_2020&layer=SP_2010_2020&layer=LIVING&palette=yellows_reds';
         var gbifAttrib = 'GBIF contributors';
         var gbif = new L.TileLayer(baseUrl, { minZoom: 0, maxZoom: 14, attribution: gbifAttrib }).addTo(map);
     }
