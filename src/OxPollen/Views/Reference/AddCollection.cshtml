@@ -5,6 +5,11 @@
 
 @section scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    
+    @* Continent Picker *@
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="~/js/geography/ContinentPicker.js"></script>
 }
 
 @section homepageHeader {
@@ -25,8 +30,8 @@
                 <div class="panel-heading"><span class="glyphicon glyphicon-edit"></span> Digitisation Features</div>
                 <div class="panel-body">
                     <p>To digitise a reference collection, first add the collection here.</p>
-                    @using (Html.BeginForm("AddCollection", "Reference", FormMethod.Post))
-                    {
+                    @using (Html.BeginForm("AddCollection", "Reference", FormMethod.Post, new { @class = "form" }))
+                        {
                         <div class="row">
                             <div class="col-md-2">
                                 <label asp-for="Name"></label>
@@ -41,19 +46,39 @@
                                 <label asp-for="Institution"></label>
                             </div>
                             <div class="col-md-10">
-                                <input type="text" asp-for="Institution" class="form-control" />
+                                <input type="text" asp-for="Institution" class="form-control"/>
                                 <span asp-validation-for="Institution" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-2">
-                                <label asp-for="CountryCode"></label>
+                                <label asp-for="Description"></label>
+                            </div>
+                            <div class="col-md-10">
+                                <textarea asp-for="Description" class="form-control"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="CountryCode">Country</label>
                             </div>
                             <div class="col-md-10">
                                 <input type="text" asp-for="CountryCode" class="form-control" />
                                 <span asp-validation-for="CountryCode" class="text-danger"></span>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="FocusRegion">Focus Region</label>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="text" asp-for="FocusRegion" class="form-control" readonly="readonly"/>
+                                <span asp-validation-for="FocusRegion" class="text-danger"></span>
+                                <div id="continent-picker"></div>
+                            </div>
+                        </div>
+
 
                         <input class="btn btn-primary" type="submit" name="submit" value="Add" />
                         <a asp-action="Index" class="btn btn-default">Cancel</a>
