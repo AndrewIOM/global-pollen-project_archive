@@ -1,1 +1,10 @@
-﻿<h1>Collections</h1>
+﻿@model ReferenceCollection
+
+<h1>Collections</h1>
+
+@foreach (var grain in Model.Grains)
+{
+    @grain.ReferenceGrainId
+    @grain.Family
+
+}
