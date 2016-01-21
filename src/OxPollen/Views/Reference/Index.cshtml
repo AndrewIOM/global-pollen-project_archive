@@ -60,7 +60,7 @@
                     <tr>
                         <th>Collection</th>
                         <th>Organisation</th>
-                        <th>Country</th>
+                        <th>Description</th>
                         <th>Digitised Taxa</th>
                         <th>Actions</th>
                     </tr>
@@ -69,8 +69,8 @@
                 {
                     <tr>
                         <td>@collection.Name</td>
-                        <td>@collection.Institution</td>
-                        <td>@collection.CountryCode</td>
+                        <td>@collection.Institution, @collection.CountryCode</td>
+                        <td>@collection.Description</td>
                         <td>@collection.Grains.Count</td>
                         <td><a role="button" class="btn btn-primary" href="@Url.Action("Collection", new { id = @collection.Id } )">View Details</a></td>
                         @if (User.IsInRole("Digitise") && collection.User.UserName == User.Identity.Name)

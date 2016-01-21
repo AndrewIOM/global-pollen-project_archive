@@ -404,3 +404,7 @@ darkroom-container {
     background-color: #83296f;
     border-radius:0.3em;
 }
+
+#country-picker {
+    text-align: center;
+}

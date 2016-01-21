@@ -2,6 +2,7 @@
 /// <reference path="../gulpfile.js" />
 /// <reference path="js/account/organisationautocomplete.js" />
 /// <reference path="js/gbif.js" />
+/// <reference path="js/geography/continentpicker.js" />
 /// <reference path="js/grain/AjaxUpload.js" />
 /// <reference path="js/grain/GoogleMaps.js" />
 /// <reference path="js/grain/ImageManipluation.js" />
