@@ -14,5 +14,6 @@ namespace OxPollen.Services.Abstract
         Taxon GetById(int id);
         IEnumerable<ReferenceGrain> GetReferenceGrains(Taxon taxon);
         IEnumerable<Grain> GetUserGrains(Taxon taxon);
+        void RemoveTaxon(int id);
     }
 }

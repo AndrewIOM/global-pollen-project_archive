@@ -132,5 +132,13 @@ namespace OxPollen.Services.Concrete
             else result = _uow.GrainRepository.Find(m => m.Family == taxon.LatinName);
             return result;
         }
+
+        public void RemoveTaxon(int id)
+        {
+            var taxon = _uow.TaxonRepository.GetById(id);
+            if (taxon == null) return;
+            _uow.TaxonRepository.Delete(taxon);
+            _uow.SaveChanges();
+        }
     }
 }
