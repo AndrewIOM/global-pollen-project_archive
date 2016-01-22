@@ -24,31 +24,32 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         var imgObj = new Image();
+        imgObj.onload = function () {
+            var renderHeight = imgObj.naturalHeight;
+            var renderWidth = imgObj.naturalWidth;
+
+            var ratio = imgObj.naturalWidth / imgObj.naturalHeight;
+            if (ratio < 1) { //Portrait
+                var scaling = 1;
+                if (renderHeight > canvas.height) {
+                    scaling = canvas.height / renderHeight;
+                    renderHeight = canvas.height;
+                }
+                renderWidth = renderWidth * scaling;
+            } else { //Landscape
+                var scaling = 1;
+                if (renderWidth > canvas.width) {
+                    scaling = canvas.width / renderWidth;
+                    renderWidth = canvas.width;
+                }
+                renderHeight = renderHeight * scaling;
+            }
+
+            var widthOffset = (canvas.width - renderWidth) / 2;
+            var heightOffset = (canvas.height - renderHeight) / 2;
+            ctx.drawImage(image, widthOffset, heightOffset, renderWidth, renderHeight);
+        };
         imgObj.src = image.src;
-
-        var renderHeight = imgObj.naturalHeight;
-        var renderWidth = imgObj.naturalWidth;
-
-        var ratio = imgObj.naturalWidth / imgObj.naturalHeight;
-        if (ratio < 1) { //Portrait
-            var scaling = 1;
-            if (renderHeight > canvas.height) {
-                scaling = canvas.height / renderHeight;
-                renderHeight = canvas.height;
-            }
-            renderWidth = renderWidth * scaling;
-        } else { //Landscape
-            var scaling = 1;
-            if (renderWidth > canvas.width) {
-                scaling = canvas.width / renderWidth;
-                renderWidth = canvas.width;
-            }
-            renderHeight = renderHeight * scaling;
-        }
-
-        var widthOffset = (canvas.width - renderWidth) / 2;
-        var heightOffset = (canvas.height - renderHeight) / 2;
-        ctx.drawImage(image, widthOffset, heightOffset, renderWidth, renderHeight);
     }
 
     changeImage = function(src) {
