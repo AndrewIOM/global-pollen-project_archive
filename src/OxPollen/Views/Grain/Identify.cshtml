@@ -63,7 +63,7 @@
                 <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
                     @foreach (var image in Model.ImageUrls)
                     {
-                        <a><img src="\user-image-uploads\@image" onclick="return changeImage(this.src);" style="width:5em; height:5em;display:inline-block" /></a>
+                        <a><img src="\user-image-uploads\@image" onclick="return changeImage(this.src);" style="width:auto; height:5em;display:inline-block" /></a>
                     }
                 </div>
             </div>
