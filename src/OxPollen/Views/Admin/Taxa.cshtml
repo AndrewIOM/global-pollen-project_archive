@@ -16,6 +16,8 @@
     <br />
 }
 
+<a role="button" class="btn btn-danger" onclick="return confirm('Are you sure? This CANNOT be undone.')" href="@Url.Action("Purge", "Taxon")"><span class="glyphicon glyphicon-trash"></span> Purge Empty Taxa</a>
+
 <table class="table">
     <thead>
         <tr>
@@ -24,6 +26,7 @@
             <th>Rank</th>
             <th>Neotoma ID</th>
             <th>GBIF ID</th>
+            <th>Actions</th>
         </tr>
     </thead>
     @foreach (var taxon in Model)
@@ -34,6 +37,9 @@
             <td>@taxon.Rank</td>
             <td>@taxon.NeotomaId</td>
             <td>@taxon.GbifId</td>
+            <td>
+                <a role="button" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this taxon? This CANNOT be undone.')" href="@Url.Action("Delete", "Taxon", new { id = taxon.TaxonId } )"><span class="glyphicon glyphicon-trash"></span> Delete Taxon</a>
+            </td>
         </tr>
-                    }
+    }
 </table>

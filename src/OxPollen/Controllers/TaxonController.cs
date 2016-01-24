@@ -4,6 +4,7 @@ using OxPollen.Models;
 using OxPollen.ViewModels;
 using OxPollen.Services.Abstract;
 using OxPollen.ViewModels.Taxon;
+using Microsoft.AspNet.Authorization;
 
 namespace OxPollen.Controllers
 {
@@ -48,6 +49,42 @@ namespace OxPollen.Controllers
                 SubmittedGrains = _taxonService.GetUserGrains(taxon).ToList()
             };
             return View("View", model);
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        public IActionResult Purge()
+        {
+            var taxa = _taxonService.GetAll().ToList();
+            foreach (var taxon in taxa)
+            {
+                if (taxon.ChildTaxa.Count == 0)
+                {
+                    var refCount = _taxonService.GetReferenceGrains(taxon).ToList().Count();
+                    var grainCount = _taxonService.GetUserGrains(taxon).ToList().Count();
+                    if (grainCount == 0 && refCount == 0)
+                    {
+                        _taxonService.RemoveTaxon(taxon.TaxonId);
+                    }
+                }
+            }
+
+            return Ok();
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        public IActionResult Delete(int id)
+        {
+            var taxon = _taxonService.GetById(id);
+            if (taxon == null) return HttpBadRequest();
+
+            var refCount = _taxonService.GetReferenceGrains(taxon).Count();
+            var grainCount = _taxonService.GetUserGrains(taxon).Count();
+            if (grainCount == 0 && refCount == 0)
+            {
+                _taxonService.RemoveTaxon(taxon.TaxonId);
+                return RedirectToAction("Taxa", "Admin");
+            }
+            return HttpBadRequest();
         }
     }
 }

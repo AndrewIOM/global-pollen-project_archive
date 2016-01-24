@@ -258,9 +258,13 @@ namespace OxPollen.Controllers
             var userId = User.GetUserId();
             var grain = _grainService.GetById(id);
            // if (_idService.HasConfirmedIdentity(grain)) return HttpBadRequest("Can't delete grains with confirmed identity");
-            if (grain.SubmittedBy.Id != userId) return HttpBadRequest("Can only delete grains that were submitted by you");
-            var deleted = _grainService.MarkDeleted(grain.Id);
-            return RedirectToAction("MyGrains");
+
+            if (User.IsInRole("Admin") || grain.SubmittedBy.Id != userId)
+            {
+                var deleted = _grainService.MarkDeleted(grain.Id);
+                return RedirectToAction("MyGrains");
+            }
+            return HttpBadRequest("Can only delete grains that were submitted by you");
         }
     }
 }

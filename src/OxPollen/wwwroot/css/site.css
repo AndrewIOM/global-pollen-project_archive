@@ -175,6 +175,11 @@ ul.grain-grid.columns-8 li {
 }
 
 /* Bootstrap Customisations for OxPollen */
+.col-centered{
+float: none;
+margin: 0 auto;
+}
+
 #map {
     height: 500px;
     border: 1px solid #000;

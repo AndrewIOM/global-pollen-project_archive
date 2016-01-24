@@ -1,11 +1,13 @@
 ﻿@model OxPollen.ViewModels.Reference.RequestAccessViewModel
 
 @{
-    ViewBag.Title = "Request Access to Digitisation Features";
+    ViewBag.Title = "Getting Started with Digitisation";
     ViewBag.Subtitle = "OxPollen enables the digitisation of existing collections";
 }
 
-
+@section scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
 
 @section homepageHeader {
     <div class="addgrain-section headsection">
@@ -39,35 +41,62 @@
     }
 }
 
-<h3>Thinking of digitising a reference collection from your lab? OxPollen is the perfect home.</h3>
-<p>Blurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb textBlurb text</p>
+<p>Thinking of digitising a reference collection from your lab? OxPollen is the perfect home.</p>
 
-@if (User.Identity.IsAuthenticated)
-{
-    @if (User.IsInRole("Digitise"))
-    {
-        <a class="btn btn-primary" role="button" asp-action="Collections">Get Started</a>
-    }
-    else
-    {
-        if (Model.HasRequestedAccess)
-        {
-            <p>Thank you for requesting access. </p>
+<h3>What Can I Digitise?</h3>
+<p>Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! </p>
 
-        }
-        else
-        {
-            @using (Html.BeginForm("RequestAccess", "Reference", FormMethod.Post, new { @class = "form" }))
-            {
-                <p>Please tell us a little about your collections:</p>
-                <input type="text" asp-for="Comments" class="form-control" />
-                <span asp-validation-for="Comments" class="text-danger"></span>
-                <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
-            }
-        }
-    }
-}
-else
-{
-    <p>Log in to access digitisation features.</p>
-}
+<h3>How Does It Work?</h3>
+<p>Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! Will should write some text! </p>
+
+<h3>Getting Started</h3>
+<p>Blurb about access requirements...</p>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-pencil"></span> Request Access to Digitisation</div>
+            <div class="panel-body">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @if (User.IsInRole("Digitise"))
+                    {
+                        <a class="btn btn-primary" role="button" asp-action="Collections">Get Started</a>
+                    }
+                    else
+                    {
+                        if (Model.HasRequestedAccess)
+                        {
+                            <p>You have requested access to digitisation features.</p>
+                            <p>You request will be dealt with as soon as possible.</p>
+
+                        }
+                        else
+                        {
+                            @using (Html.BeginForm("RequestAccess", "Reference", FormMethod.Post, new { @class = "form" }))
+                            {
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p>Please tell us a little about your collections:</p>
+                                        <textarea type="text" asp-for="Comments" class="form-control"></textarea>
+                                        <span asp-validation-for="Comments" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    <p>You must create an account and log in before requesting access to digitisation.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
