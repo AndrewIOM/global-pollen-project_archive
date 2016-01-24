@@ -67,7 +67,7 @@
                             @foreach (var grain in Model.SubmittedGrains)
                             {
                                 <li>
-                                    <a href="@Url.Action("Grain", "Reference", new { id = @grain.Id } )">
+                                    <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
                                         <div class="img-container">
                                             <img src="\user-image-uploads\@grain.Images.First().FileNameThumbnail" />
                                         </div>
