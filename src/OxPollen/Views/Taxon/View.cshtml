@@ -4,8 +4,8 @@
     ViewBag.Title = Model.LatinName;
 }
 
+<link rel="stylesheet" href="~/lib/nouislider/distribute/nouislider.min.css"> @* TODO Move this *@
 <link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.css"> @* TODO Move this *@
-<link rel="stylesheet" href="~/lib/bootstrap-slider/slider.css"> @* TODO Move this *@
 
 @* Header *@
 @section homepageHeader {
@@ -32,11 +32,9 @@
 <div class="row" id="warnings-container" style="display:none">
     <div class="col-md-12">
         <div class="alert alert-warning" role="alert">
-                <ul style="list-style:none">
-                    <li style="display:none" id="neotoma-warning"><span class="glyphicon glyphicon-warning-sign"></span> Past distributions from NeotomaDB not available at present.</li>
-                    <li style="display:none" id="gbif-warning"><span class="glyphicon glyphicon-warning-sign"></span> The present distribution is not available from GBIF right now.</li>
-                    <li style="display:none" id="gbif-warning-desc"><span class="glyphicon glyphicon-warning-sign"></span> Could not fetch a description from GBIF right now</li>
-                </ul>
+                <p style="display:none" id="neotoma-warning"><span class="glyphicon glyphicon-warning-sign"></span> Neotoma Link: Past distribution currently unavailable for this taxon.</p>
+                <p style="display:none" id="gbif-warning"><span class="glyphicon glyphicon-warning-sign"></span> GBIF Link: Present distribution currently unavailable for this taxon.</p>
+                <p style="display:none" id="gbif-warning-desc"><span class="glyphicon glyphicon-warning-sign"></span> GBIF Link: No English descriptions can be retrieved for this taxon.</p>
         </div>
     </div>
 </div>
@@ -86,15 +84,27 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <label>Distribution through Time</label>
-                        <div id="map" style="height:20em"></div>
-                        <ul id="coordinates"></ul>
-                        <p>
-                            <span id="time-slicer-a" class="hidden">Example low value</span>
-                            <span id="time-slicer-b" class="hidden">Example high value</span>
-                            <input id="time-slicer" type="text" data-slider-enabled="true" />
-                            <span>years before present</span>
-                        </p>
+                        <label>Distribution</label>
+                        <input hidden="hidden" id="NeotomaId" value="@Model.NeotomaId" />
+                        <input hidden="hidden" id="GbifId" value="@Model.GbifId" />
+                        <div>
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#modern" aria-controls="modern" role="tab" data-toggle="tab">Present</a></li>
+                                <li role="presentation"><a href="#paleo" aria-controls="paleo" role="tab" data-toggle="tab">Past</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="modern">
+                                    <div id="map" style="height:300px"></div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="paleo">
+                                    <div id="neotoma-map-unavailable" class="alert alert-danger" role="alert" style="display:none">Past distributions unavailable from Neotoma.</div>
+                                    <div id="neotoma-map"></div>
+                                    <div id="range"></div>
+                                    <br />
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -112,13 +122,14 @@
 </div>
 
 @section scripts {
-    @* Dependencies *@
+    @* Present Distribution Map *@
     <script type="text/javascript" src="~/lib/leaflet/dist/leaflet.js"></script>
-    <script type="text/javascript" src="~/js/taxon/SpaceTimeDistribution.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            populateGbifDescription(@Model.GbifId)
-            populateSpaceTimeMap(@Model.GbifId, @Model.NeotomaId)
-        });
-    </script>
+    <script src="~/lib/nouislider/distribute/nouislider.min.js"></script>
+    <script src="~/js/taxon/PresentDistribution.js"></script>
+
+    @* Past Distribution Map *@
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/topojson.v0.min.js"></script>
+    <script src="~/lib/wnumb/wNumb.js"></script>
+    <script src="~/js/taxon/PastDistribution.js"></script>
 }

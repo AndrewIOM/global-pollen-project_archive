@@ -104,14 +104,9 @@ ul.grain-grid.columns-8 li {
 
     ul.grain-grid {
         margin-left: 0;
+        text-align: center;
     }
-
-        ul.grain-grid li {
-            width: 100% !important; /* over-ride all li styles */
-            margin: 0 0 20px;
-        }
 }
-
 
 /* Ribbons for Corner of Images */
 .ribbon {
@@ -165,6 +160,13 @@ ul.grain-grid.columns-8 li {
         box-shadow: 0 0 3px rgba(0,0,0,.3);
     }
 
+@media (max-width: 480px) {
+    .corner-ribbon {
+        right:-40px;
+        line-height:30px;
+    }
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
@@ -181,6 +183,10 @@ margin: 0 auto;
 #map {
     height: 500px;
     border: 1px solid #000;
+}
+
+.icon-bar {
+    background-color:#999999 !important;
 }
 
 .panel-primary {
@@ -383,6 +389,7 @@ darkroom-container {
     position: absolute;
     background: rgba(0,0,0, 0.4);
 }
+
 .leaflet-areaselect-handle {
     position: absolute;
     background: #fff;
@@ -397,14 +404,24 @@ darkroom-container {
 
 /* Reference Collection Taxon Page */
 #time-slicer {
-    width:100%;
+    width: 100%;
 }
 
 .slider-handle {
     background-color: #83296f;
-    border-radius:0.3em;
+    border-radius: 0.3em;
 }
 
 #country-picker {
     text-align: center;
+}
+
+.noUi-connect {
+    background: linear-gradient(to right, yellow, #83296F) !important;
+    background-attachment: fixed !important;
+}
+
+.noUi-target {
+        width: 90%;
+    margin: 0 5% 2em;
 }

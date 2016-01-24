@@ -1,13 +1,18 @@
-﻿//Image Fill
+﻿//Image Fade and Fill
 $(document).ready(function () {
     $(".img-container").each(function () {
-        var refRatio = 300 / 300;
-        var imgH = $(this).children("img").height();
-        var imgW = $(this).children("img").width();
-        if ((imgW / imgH) < refRatio) {
-            $(this).addClass("portrait");
-        } else {
-            $(this).addClass("landscape");
-        }
+        $(this).children('img').on("load", function () {
+            var refRatio = 300 / 300;
+            var imgH = $(this).height();
+            var imgW = $(this).width();
+            if ((imgW / imgH) < refRatio) {
+                $(this).closest('.img-container').addClass("portrait");
+            } else {
+                $(this).closest('.img-container').addClass("landscape");
+            }
+        }).each(function () {
+            if (this.complete) $(this).load();
+        });
+
     })
 });
