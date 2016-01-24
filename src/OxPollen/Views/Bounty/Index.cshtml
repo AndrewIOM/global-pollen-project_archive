@@ -15,45 +15,60 @@
     <br />
 }
 
-<div class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-<span class="sr-only">Info:</span> For information on scoring, <a asp-action="Help" asp-controller="Grain">head to the Q&A</a>.</div>
+
+<p>
+    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    <span class="sr-only">Info:</span> For information on scoring, <a asp-action="Help" asp-controller="Grain">head to the Q&A</a>.
+</p>
 
 @* Leaderboards *@
 <div class="row">
     <div class="col-md-8">
-        <h4>Top Groups</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Bounty</th>
-                </tr>
-            </thead>
-            @foreach (var org in Model.TopOrgs)
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-leaf"></span> Top organisations
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Bounty</th>
+                        </tr>
+                    </thead>
+                    @foreach (var org in Model.TopOrgs)
             {
-                <tr>
-                    <td>@org.Name</td>
-                    <td>@org.Bounty</td>
-                </tr>
-            }
-        </table>
+                        <tr>
+                            <td>@org.Name</td>
+                            <td>@org.Bounty</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
     </div>
     <div class="col-md-4">
-        <h4>Top Users</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Bounty</th>
-                </tr>
-            </thead>
-            @foreach (var user in Model.TopIndividuals)
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-leaf"></span> Top Users
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Bounty</th>
+                        </tr>
+                    </thead>
+                    @foreach (var user in Model.TopIndividuals)
             {
-                <tr>
-                    <td>@user.Name</td>
-                    <td>@user.Bounty</td>
-                </tr>
-            }
-        </table>
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@user.Bounty</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
     </div>
 </div>

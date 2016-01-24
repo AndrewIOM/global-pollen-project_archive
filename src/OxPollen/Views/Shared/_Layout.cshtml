@@ -11,25 +11,25 @@
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/lib/bootstrap-touch-carousel/dist/css/bootstrap-touch-carousel.css" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/lib/bootstrap-touch-carousel/dist/css/bootstrap-touch-carousel.css" />
         <link rel="stylesheet" href="~/css/site.css" />
 
         @*<link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
-              asp-fallback-test-class="hidden" asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
-        <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap-touch-carousel/0.8.0/css/bootstrap-touch-carousel.css"
-              asp-fallback-href="~/lib/bootstrap-touch-carousel/css/bootstrap-touch-carousel.css"
-              asp-fallback-test-class="carousel-caption" asp-fallback-test-property="display" asp-fallback-test-value="none" />
-        <link rel="stylesheet" href="~/css/site.css" asp-file-version="true" />*@
+                  asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
+                  asp-fallback-test-class="hidden" asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+            <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap-touch-carousel/0.8.0/css/bootstrap-touch-carousel.css"
+                  asp-fallback-href="~/lib/bootstrap-touch-carousel/css/bootstrap-touch-carousel.css"
+                  asp-fallback-test-class="carousel-caption" asp-fallback-test-property="display" asp-fallback-test-value="none" />
+            <link rel="stylesheet" href="~/css/site.css" asp-file-version="true" />*@
     </environment>
 </head>
 <body>
+    @* Preview Ribbon *@
     <div class="corner-ribbon top-right sticky blue">Preview</div>
+    @* Fixed Navbar *@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -62,7 +62,7 @@
                             @if (User.IsInRole("Digitise"))
                             {
                                 <li><a asp-action="Index" asp-controller="Reference">My Digitised Collections</a></li>
-                                <li><a asp-action="AddCollection" asp-controller="Reference">Add New Collection</a></li>
+                                    <li><a asp-action="AddCollection" asp-controller="Reference">Add New Collection</a></li>
                             }
                             else
                             {
@@ -79,19 +79,47 @@
         </div>
     </div>
 
-    @RenderSection("homepageHeader", required: false)
-    <div class="container body-content">
-        @RenderBody()
+    @* Main Content *@
+    <div class="page-content">
+        @RenderSection("homepageHeader", required: false)
+        <div class="container body-content">
+            @RenderBody()
+        </div>
+        @RenderSection("nocontainerbody", required: false)
     </div>
-    @RenderSection("nocontainerbody", required: false)
-    <div class="container">
-        <hr />
-        <footer>
-            <p>OxPollen &copy; 2015 - Andrew C. Martin and William J. Harvey</p>
-            <p><a asp-action="Terms" asp-controller="Home">Terms and Conditions</a></p>
-            <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Dataset" property="dct:title" rel="dct:type">The OxPollen Reference Dataset</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">OxPollen Contributors</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
-        </footer>
-    </div>
+
+    @* Footer *@
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h4>Information</h4>
+                    <ul>
+                        <li><a asp-action="About">About the Project</a></li>
+                        <li><a asp-action="Terms" asp-controller="Home">Terms and Conditions</a></li>
+                        <li><a asp-action="About">Licensing</a></li>
+                        <li><a asp-action="About">How to Cite</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-5">
+                    <h4>Contact</h4>
+                    <p>OxPollen, Long-Term Ecology Lab, Department of Zoology, University of Oxford</p>
+                    <h4>Share</h4>
+                    <a><span class="glyphicon glyphicon-envelope"></span> Email</a>
+                </div>
+                <div class="col-md-4 footer-images">
+                    <h4>Our Partners</h4>
+                    <img src="~/images/oxford-logo.png" />
+                </div>
+            </div>
+            <div class="row">
+                <hr />
+                <div class="col-md-12">
+                    <p>OxPollen &copy; 2016 - Andrew C. Martin and William J. Harvey</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <environment names="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -106,21 +134,21 @@
         <script src="~/lib/hammer.js/hammer.js"></script>
         <script type="text/javascript" src="~/lib/bootstrap-slider/bootstrap-slider.js"></script>
         @*<script src="//ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-        <script src="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
-        </script>
-        <script src="//ajax.aspnetcdn.com/ajax/hammer.js/2.0.4/hammer.min.js"
-                asp-fallback-src="~/lib/hammer.js/hammer.js"
-                asp-fallback-test="window.Hammer">
-        </script>
-        <script src="//ajax.aspnetcdn.com/ajax/bootstrap-touch-carousel/0.8.0/js/bootstrap-touch-carousel.js"
-                asp-fallback-src="~/lib/bootstrap-touch-carousel/dist/js/bootstrap-touch-carousel.js"
-                asp-fallback-test="window.Hammer && window.Hammer.Instance">
-        </script>*@
+                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                    asp-fallback-test="window.jQuery">
+            </script>
+            <script src="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/bootstrap.min.js"
+                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+            </script>
+            <script src="//ajax.aspnetcdn.com/ajax/hammer.js/2.0.4/hammer.min.js"
+                    asp-fallback-src="~/lib/hammer.js/hammer.js"
+                    asp-fallback-test="window.Hammer">
+            </script>
+            <script src="//ajax.aspnetcdn.com/ajax/bootstrap-touch-carousel/0.8.0/js/bootstrap-touch-carousel.js"
+                    asp-fallback-src="~/lib/bootstrap-touch-carousel/dist/js/bootstrap-touch-carousel.js"
+                    asp-fallback-test="window.Hammer && window.Hammer.Instance">
+            </script>*@
         <script src="~/js/site.js" asp-file-version="true"></script>
     </environment>
 
