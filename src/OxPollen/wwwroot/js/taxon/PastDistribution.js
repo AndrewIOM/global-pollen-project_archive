@@ -76,8 +76,6 @@ $('document').ready(function () {
             var value = slider.noUiSlider.get();
             yearOldest = value[1] * 1000;
             yearYoungest = value[0] * 1000;
-            console.log(yearOldest);
-            console.log(yearYoungest);
             redrawPoints();
         });
     }
@@ -89,7 +87,7 @@ function redrawPoints() {
 }
 
 var getNeotomaPoints = function () {
-    var neotomaUri = "http://api.neotomadb.org/v1/data/datasets?callback=neotomaCallback&taxonids=" + neotomaId + "&ageof=taxon&ageold=" + yearOldest + "&ageyoung=" + yearYoungest;
+    var neotomaUri = "http://api.neotomadb.org/v1/data/datasets?callback=neotomaCallback&taxonids=" + neotomaId + "&ageof=taxon&ageold=" + 50000 + "&ageyoung=" + 1000;
     console.log('Updating Neotoma Points... ' + neotomaUri);
     $.ajax({
         url: neotomaUri,

@@ -1,47 +1,57 @@
 ﻿/* Sticky Footer */
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
+
 body {
-  margin-bottom: 20em; 
+    margin-bottom: 20em;
 }
+
 footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 20em;
-  background-color: #f5f5f5;
-  border-top: 0.5em solid #83296F;
-  margin-top:5em;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 20em;
+    background-color: #f5f5f5;
+    border-top: 0.5em solid #83296F;
+    margin-top: 5em;
 }
 
 .page-content {
-    min-height:40em;
-    padding-bottom:5em;
+    padding-bottom: 5em;
 }
 
 footer .container {
-    padding:30px 0 0;
+    padding: 30px 0 0;
 }
 
 footer ul {
-    list-style:none;
-    line-height:2em;
-    padding-left:0;
+    list-style: none;
+    line-height: 2em;
+    padding-left: 0;
 }
 
 .footer-images img {
     height: 5em;
-    width:auto;
+    width: auto;
 }
 
-@media only screen 
-  and (max-device-width: 480px) {
-    footer {
-        background-color:red !important;
+@media(max-width:992px){
+        footer {
+        position: relative;
+        height: auto;
+    }
+
+    footer .container {
+    padding: 30px 10% 0;
+}
+
+    body {
+        margin-bottom: 0;
     }
 }
+
 /* Misc */
 body {
     padding-top: 50px;
@@ -202,8 +212,8 @@ ul.grain-grid.columns-8 li {
 
 @media (max-width: 480px) {
     .corner-ribbon {
-        right:-40px;
-        line-height:30px;
+        right: -40px;
+        line-height: 30px;
     }
 }
 
@@ -215,9 +225,9 @@ ul.grain-grid.columns-8 li {
 }
 
 /* Bootstrap Customisations for OxPollen */
-.col-centered{
-float: none;
-margin: 0 auto;
+.col-centered {
+    float: none;
+    margin: 0 auto;
 }
 
 #map {
@@ -226,7 +236,7 @@ margin: 0 auto;
 }
 
 .icon-bar {
-    background-color:#999999 !important;
+    background-color: #999999 !important;
 }
 
 .panel-primary {
@@ -252,7 +262,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-        font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .btn-primary {
@@ -466,6 +476,6 @@ darkroom-container {
 }
 
 .noUi-target {
-        width: 90%;
+    width: 90%;
     margin: 0 5% 2em;
 }
