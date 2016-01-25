@@ -492,7 +492,8 @@ darkroom-container {
 #unidentified-count {
     display: block;
     font-size:3em;
-    line-height:2em;
+    line-height:1.2em;
+    margin-top:1em;
 }
 
 @media(max-width:768px) {
@@ -500,4 +501,7 @@ darkroom-container {
     margin: 0 0;
     text-align:center;
 }
+    #unidentified-count {
+        margin-top:initial;
+    }
 }

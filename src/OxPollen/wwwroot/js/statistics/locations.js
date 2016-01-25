@@ -52,16 +52,16 @@
              .transition()
              .attr('r', 4);
        })
-            .transition()  // Transition from old to new
-            .duration(500)  // Length of animation
-            .each("start", function () {  // Start animation
+            .transition()
+            .duration(500) 
+            .each("start", function () { 
                 unidentifiedCounter++;
                 unidentifiedNumber.innerHTML = unidentifiedCounter;
             })
             .delay(function (d, i) {
-                return i / data.length * 1500;  // Dynamic delay (i.e. each item delays a little longer)
+                return 4000 + (i / data.length * 1500);
             })
-            .ease("variable")  // Transition easing - default 'variable' (i.e. has acceleration), also: 'circle', 'elastic', 'bounce', 'linear'
+            .ease("variable")
             .attr('opacity', '1');
     });
 });
