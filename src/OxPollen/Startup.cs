@@ -67,17 +67,19 @@ namespace OxPollen
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            // Register application services.
+            // Database Services
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IIdentificationService, IdentificationService>();
             services.AddTransient<IGrainService, GrainService>();
             services.AddTransient<IFileStoreService, ImageService>();
             services.AddTransient<IReferenceService, ReferenceService>();
             services.AddTransient<ITaxonomyService, TaxonomyService>();
+
+            //Configurable Services
+            services.AddTransient<ITaxonomyBackbone, GbifTaxonomyBackbone>();
+            services.AddTransient<IEmailSender, AuthMessageSender>();
+            services.AddTransient<ISmsSender, AuthMessageSender>();
 
             services.AddAuthorization(options =>
             {

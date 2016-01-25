@@ -16,16 +16,19 @@ namespace OxPollen.Controllers
         private IReferenceService _refService;
         private IUserService _userService;
         private readonly IEmailSender _emailSender;
+        private readonly ITaxonomyBackbone _backbone;
         public ReferenceController(
             IFileStoreService fileService,
             IReferenceService refService,
             IUserService userService,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ITaxonomyBackbone backbone)
         {
             _fileService = fileService;
             _refService = refService;
             _userService = userService;
             _emailSender = emailSender;
+            _backbone = backbone;
         }
 
         public IActionResult Index()
@@ -125,6 +128,15 @@ namespace OxPollen.Controllers
         {
             //TODO Limit addition to current user's collections only
 
+            Taxonomy rank;
+            if (result.Species != null) { rank = Taxonomy.Species; }
+            else if (result.Genus != null) { rank = Taxonomy.Genus; }
+            else rank = Taxonomy.Family;
+            if (!_backbone.IsValidTaxon(rank, result.Family, result.Genus, result.Species))
+            {
+                ModelState.AddModelError("TaxonomicBackbone", "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again");
+            }
+
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
@@ -158,7 +170,13 @@ namespace OxPollen.Controllers
             }
 
             var saved = _refService.AddGrain(toSave);
-            return Ok(saved);
+            var model = new ReferenceGrainViewModel()
+            {
+                Family = saved.Family,
+                Genus = saved.Genus,
+                Species = saved.Species
+            };
+            return Ok(model);
         }
 
         [Authorize(Roles = "Digitise")]

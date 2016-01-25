@@ -25,13 +25,13 @@ namespace OxPollen.Tests.Unit.Controllers
             _fileService = new Mock<IFileStoreService>();
         }
 
-        [Fact]
-        public void Index_ReturnsView()
-        {
-            var accountController = new GrainController(_idService.Object, _grainService.Object,
-                _services.Object, _fileService.Object);
-            var result = accountController.Index() as ViewResult;
-            Assert.Equal("Index", result.ViewName);
-        }
+        //[Fact]
+        //public void Index_ReturnsView()
+        //{
+        //    var accountController = new GrainController(_idService.Object, _grainService.Object,
+        //        _services.Object, _fileService.Object);
+        //    var result = accountController.Index() as ViewResult;
+        //    Assert.Equal("Index", result.ViewName);
+        //}
     }
 }

@@ -22,14 +22,16 @@ namespace OxPollen.Controllers
         private IGrainService _grainService;
         private IIdentificationService _idService;
         private IFileStoreService _uploadService;
+        private readonly ITaxonomyBackbone _taxonomy;
         public UserManager<AppUser> UserManager { get; set; }
         public GrainController(IIdentificationService id, IGrainService grain,
-            IServiceProvider services, IFileStoreService fileService)
+            IServiceProvider services, IFileStoreService fileService, ITaxonomyBackbone backbone)
         {
             _idService = id;
             _grainService = grain;
             _uploadService = fileService;
             UserManager = services.GetRequiredService<UserManager<AppUser>>();
+            _taxonomy = backbone;
         }
 
         [Authorize]
@@ -134,6 +136,10 @@ namespace OxPollen.Controllers
                 ModelState.AddModelError("Genus", "You must specify a genus name");
             if (result.TaxonomicResolution == Taxonomy.Species && (string.IsNullOrEmpty(result.Species) || string.IsNullOrEmpty(result.Genus)))
                 ModelState.AddModelError("Species", "You must enter both the genus and species");
+            if (!_taxonomy.IsValidTaxon(result.TaxonomicResolution, result.Family, result.Genus, result.Species))
+            {
+                ModelState.AddModelError("Family", "The taxon specified is not present in the taxonomic backbone. Check your spellings and try again.");
+            }
 
             var record = _grainService.GetById(result.GrainId);
             Identification myIdentification = null;
