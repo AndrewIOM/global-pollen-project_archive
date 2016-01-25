@@ -17,5 +17,8 @@ namespace OxPollen.ViewModels.Taxon
 
         public List<Models.Grain> SubmittedGrains { get; set; }
         public List<ReferenceGrain> ReferenceGrains { get; set; }
+
+        public List<Models.Taxon> SubTaxa { get; set; }
+        public Models.Taxon ParentTaxon { get; set; }
     }
 }

@@ -49,6 +49,7 @@ namespace OxPollen.Data.Concrete
         {
             return _context.Taxa
                 .Include(m => m.ChildTaxa)
+                .Include(m => m.ParentTaxa)
                 .FirstOrDefault(m => m.TaxonId == id);
         }
     }

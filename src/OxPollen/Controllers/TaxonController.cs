@@ -46,7 +46,9 @@ namespace OxPollen.Controllers
                 NeotomaId = taxon.NeotomaId,
                 Rank = taxon.Rank,
                 ReferenceGrains = _taxonService.GetReferenceGrains(taxon).ToList(),
-                SubmittedGrains = _taxonService.GetUserGrains(taxon).ToList()
+                SubmittedGrains = _taxonService.GetUserGrains(taxon).ToList(),
+                ParentTaxon = taxon.ParentTaxa,
+                SubTaxa = taxon.ChildTaxa
             };
             return View("View", model);
         }

@@ -29,16 +29,6 @@
     </div>
 </div>
 
-<div class="row" id="warnings-container" style="display:none">
-    <div class="col-md-12">
-        <div class="alert alert-warning" role="alert">
-                <p style="display:none" id="neotoma-warning"><span class="glyphicon glyphicon-warning-sign"></span> Neotoma Link: Past distribution currently unavailable for this taxon.</p>
-                <p style="display:none" id="gbif-warning"><span class="glyphicon glyphicon-warning-sign"></span> GBIF Link: Present distribution currently unavailable for this taxon.</p>
-                <p style="display:none" id="gbif-warning-desc"><span class="glyphicon glyphicon-warning-sign"></span> GBIF Link: No English descriptions can be retrieved for this taxon.</p>
-        </div>
-    </div>
-</div>
-
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
@@ -82,6 +72,15 @@
         <div class="panel panel-default">
             <div class="panel-heading"><span class="glyphicon glyphicon-book"></span> Definition</div>
             <div class="panel-body">
+                <div class="row" id="warnings-container" style="display:none">
+                    <div class="col-md-12">
+                        <div class="alert alert-warning" role="alert">
+                            <p style="display:none" id="neotoma-warning"><span class="glyphicon glyphicon-warning-sign"></span> Neotoma Link: Past distribution currently unavailable for this taxon.</p>
+                            <p style="display:none" id="gbif-warning"><span class="glyphicon glyphicon-warning-sign"></span> GBIF Link: Present distribution currently unavailable for this taxon.</p>
+                            <p style="display:none" id="gbif-warning-desc"><span class="glyphicon glyphicon-warning-sign"></span> GBIF Link: No English descriptions can be retrieved for this taxon.</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-12">
                         <label>Distribution</label>
@@ -97,7 +96,7 @@
                                     <div id="map" style="height:300px"></div>
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="paleo">
-                                    <div id="neotoma-map-unavailable" class="alert alert-danger" role="alert" style="display:none">Past distributions unavailable from Neotoma.</div>
+                                    <div id="neotoma-map-unavailable" style="display:none"><p>Past distributions unavailable from Neotoma.</p></div>
                                     <div id="neotoma-map"></div>
                                     <div id="range"></div>
                                     <br />
@@ -110,9 +109,30 @@
                 <div class="row">
                     <div class="col-md-12">
                         <hr />
+                        <label>OxPollen Taxonomy</label>
+                        @if (Model.ParentTaxon != null)
+                        {
+                            <p>Parent: <a href="@Url.Action("View", new { id = Model.ParentTaxon.TaxonId })">@Model.ParentTaxon.LatinName</a></p>
+                        }
+                        @if (Model.SubTaxa.Count > 0)
+                        {
+                            <p>Children: </p>
+                            <ul>
+                                @foreach (var subTaxon in Model.SubTaxa)
+                                {
+                                    <li><a href="@Url.Action("View", new { id = subTaxon.TaxonId })">@subTaxon.LatinName</a></li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr />
                         <label>Description (GBIF)</label>
                         <p id="gbif-description"><span class="glyphicon glyphicon-refresh"></span></p>
                         <p id="description-source"><em>Source:</em></p>
+                        <hr />
                         <a class="btn btn-default" href="http://gbif.org/species/@Model.GbifId" target="_blank">View at GBIF</a>
                     </div>
                 </div>
