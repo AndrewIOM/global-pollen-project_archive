@@ -19,8 +19,9 @@
     <div class="col-sm-4">
         <img class="img-circle img-responsive home-tri-image" src="~/images/pollen1.png" alt="">
         <h3><a asp-action="Help" asp-controller="Grain">Submit Your Pollen Grains</a></h3>
-        <p>If you are having trouble identifying a pollen grain to family, genus or species level, submit your grain to OxPollen. Crowd source the identification from others working with pollen across the world.
-</p>
+        <p>
+            If you are having trouble identifying a pollen grain to family, genus or species level, submit your grain to OxPollen. Crowd source the identification from others working with pollen across the world.
+        </p>
     </div>
     <div class="col-sm-4">
         <img class="img-circle img-responsive home-tri-image" src="~/images/pollen2.jpg" alt="">
@@ -35,17 +36,28 @@
 </div>
 <hr />
 
+@* Infographics *@
+<div class="row" id="infographic-row">
+    <div class="col-md-4">
+        <p><span id="unidentified-count">??</span> unidentified grains</p>
+    </div>
+    <div class="col-md-8">
+        <div id="locations-map"></div>
+    </div>
+</div>
+<hr />
+
 @* About OxPollen *@
 <div class="row">
     <div class="col-sm-8">
-        <h2>How It Works</h2>
+        <h3>How It Works</h3>
         <p>Whether you are submitting a grain or identifying someone else’s you are contributing to the fastest growing crowd sourced palanological database in the world! Once a grain has been identified by a minimum of 3 individuals at a certainty of at least 75% it will be added into the digital OxPollen Reference Collection. This collection is paired with the Global Biodiversity Information Facility (GBIF) and Neotoma, enabling you to see current and past distributions.</p>
         <p>
             <a asp-action="Index" asp-controller="Grain" class="btn btn-primary btn-lg">Get Started »</a>
         </p>
     </div>
     <div class="col-sm-4">
-        <h2>Most Wanted</h2>
+        <h3>Most Wanted</h3>
         <p>Can you identify our most wanted pollen grains?</p>
         <ul class="grain-grid columns-8">
             @foreach (var grain in Model)
@@ -65,3 +77,10 @@
 <div class="row" style="text-align:center">
     <p>Banner Image by <em><a href="https://standingoutinmyfield.wordpress.com/2014/01/09/cool-things-ive-learned-about-pollen/">standingoutinmyfield</a></em>.</p>
 </div>
+
+@section scripts {
+    @* Continent Picker *@
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/topojson.v0.min.js"></script>
+    <script src="~/js/statistics/locations.js"></script>
+}

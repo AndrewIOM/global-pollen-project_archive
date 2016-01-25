@@ -10,6 +10,7 @@
 /// <reference path="js/grain/mapfilter.js" />
 /// <reference path="js/reference/addreferenceslides.js" />
 /// <reference path="js/site.js" />
+/// <reference path="js/statistics/locations.js" />
 /// <reference path="js/taxon/pastdistribution.js" />
 /// <reference path="js/taxon/presentdistribution.js" />
 /// <reference path="lib/bootstrap/dist/js/bootstrap.js" />
