@@ -41,21 +41,14 @@ namespace OxPollen.Controllers
             return View(model);
         }
 
-        private bool IsBase64String(string s)
-        {
-            s = s.Trim();
-            return (s.Length % 4 == 0) && Regex.IsMatch(s, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
-        }
-
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Add(GrainViewModel result)
         {
-            //Validation
-            //if (!string.IsNullOrEmpty(result.ImageOne)) if (!IsBase64String(result.ImageOne)) ModelState.AddModelError("ImageOne", "Image not ecoded in base64");
-            //if (!string.IsNullOrEmpty(result.ImageTwo)) if (!IsBase64String(result.ImageTwo)) ModelState.AddModelError("ImageTwo", "Image not ecoded in base64");
-            //if (!string.IsNullOrEmpty(result.ImageThree)) if (!IsBase64String(result.ImageThree)) ModelState.AddModelError("ImageThree", "Image not ecoded in base64");
-            //if (!string.IsNullOrEmpty(result.ImageFour)) if (!IsBase64String(result.ImageFour)) ModelState.AddModelError("ImageFour", "Image not ecoded in base64");
+            if (!string.IsNullOrEmpty(result.ImageOne)) if (!IsBase64String(result.ImageOne)) ModelState.AddModelError("ImageOne", "Image not ecoded in base64");
+            if (!string.IsNullOrEmpty(result.ImageTwo)) if (!IsBase64String(result.ImageTwo)) ModelState.AddModelError("ImageTwo", "Image not ecoded in base64");
+            if (!string.IsNullOrEmpty(result.ImageThree)) if (!IsBase64String(result.ImageThree)) ModelState.AddModelError("ImageThree", "Image not ecoded in base64");
+            if (!string.IsNullOrEmpty(result.ImageFour)) if (!IsBase64String(result.ImageFour)) ModelState.AddModelError("ImageFour", "Image not ecoded in base64");
             if (ModelState.ErrorCount > 0)
             {
                 return HttpBadRequest(ModelState);
@@ -263,7 +256,7 @@ namespace OxPollen.Controllers
         {
             var userId = User.GetUserId();
             var grain = _grainService.GetById(id);
-           // if (_idService.HasConfirmedIdentity(grain)) return HttpBadRequest("Can't delete grains with confirmed identity");
+            // if (_idService.HasConfirmedIdentity(grain)) return HttpBadRequest("Can't delete grains with confirmed identity");
 
             if (User.IsInRole("Admin") || grain.SubmittedBy.Id != userId)
             {
@@ -272,5 +265,19 @@ namespace OxPollen.Controllers
             }
             return HttpBadRequest("Can only delete grains that were submitted by you");
         }
+
+        private bool IsBase64String(string s)
+        {
+            try
+            {
+                byte[] data = Convert.FromBase64String(s);
+                return (s.Replace(" ", "").Length % 4 == 0);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }

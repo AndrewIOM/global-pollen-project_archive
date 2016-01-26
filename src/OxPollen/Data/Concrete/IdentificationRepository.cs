@@ -29,7 +29,10 @@ namespace OxPollen.Data.Concrete
 
         public IEnumerable<Identification> Find(Expression<Func<Identification, bool>> where)
         {
-            return _context.Identifications.Where(where);
+            return _context.Identifications
+                .Include(m => m.User)
+                .Include(m => m.Grain)
+                .Where(where);
         }
 
         public IEnumerable<Identification> GetAll()

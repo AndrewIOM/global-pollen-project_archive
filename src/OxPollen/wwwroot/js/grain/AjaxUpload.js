@@ -19,31 +19,27 @@
         imgs.push(instances[i].getElementsByClassName('lower-canvas')[0]);
     }
 
-    //var imgs = document.getElementsByClassName('darkroom-source-container')
-    //    .getElementsByClassName('lower-canvas');
+    var b64;
     if (imgs.length >= 1) {
-        image1.value = imgs[0].toDataURL();
+        b64 = (imgs[0].toDataURL('image/png')),
+        image1.value = b64.slice(b64.indexOf(',') + 1);
     }
     if (imgs.length >= 2) {
-        image2.value = imgs[1].toDataURL();
+        b64 = (imgs[1].toDataURL('image/png')),
+        image2.value = b64.slice(b64.indexOf(',') + 1);
     }
     if (imgs.length >= 3) {
-        image3.value = imgs[2].toDataURL();
+        b64 = (imgs[2].toDataURL('image/png')),
+        image3.value = b64.slice(b64.indexOf(',') + 1);
     }
     if (imgs.length >= 4) {
-        image4.value = imgs[3].toDataURL();
+        b64 = (imgs[3].toDataURL('image/png')),
+        image4.value = b64.slice(b64.indexOf(',') + 1);
     }
-
-    console.log(imgs);
-    console.log(image1.value);
-    console.log(image2.value);
-    console.log(image3.value);
-    console.log(image4.value);
 
     //Get form data
     var form = document.getElementById('addGrainForm');
     var formData = new FormData(form);
-    console.log(formData);
 
     //Progress Bar
     var progbar = form.getElementsByClassName('progress-bar')[0];
