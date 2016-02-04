@@ -37,7 +37,7 @@ namespace OxPollen.Controllers
             return View(model);
         }
 
-        public IActionResult About()
+        public IActionResult Guide()
         {
             return View();
         }

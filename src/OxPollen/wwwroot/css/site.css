@@ -87,7 +87,7 @@ footer ul {
     }
 
 body {
-    padding-top: 60px;
+    padding-top: 70px;
     line-height: 1.8em;
 }
 
@@ -263,6 +263,43 @@ ul.grain-grid.columns-8 li {
 }
 
 /* Bootstrap Customisations for OxPollen */
+@media (max-width: 992px) {
+    .navbar-header {
+        float: none;
+    }
+    .navbar-left,.navbar-right {
+        float: none !important;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-fixed-top {
+		top: 0;
+		border-width: 0 0 1px;
+	}
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+		margin-top: 7.5px;
+	}
+	.navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .collapse.in{
+  		display:block !important;
+	}
+}
+
 .col-centered {
     float: none;
     margin: 0 auto;
@@ -547,44 +584,66 @@ darkroom-container {
 
 /* Reference Grain List */
 .taxon-list-item {
-    width: 100%;
     background-color: #f5f5f5;
-    margin: 0.1em 0;
+    margin-bottom: 0.5em;
+    border: 1px solid transparent;
+    border-radius: 0.2em;
+    overflow: hidden;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0px 1px 1px rgba(0,0,0,0.05);
+    border-color: #dddddd;
 }
+
+.taxon-toggle {
+    float: right;
+    display: inline-block;
+    width: 4em;
+    height: 8em;
+    vertical-align: top;
+    background-color: #a8699a;
+}
+
+    .taxon-toggle:hover, .taxon-toggle:focus {
+        background-color: #83296f;
+    }
+
+    .taxon-toggle span {
+        width: 100%;
+        height: 100%;
+        color: white;
+        font-size: 1em;
+        text-align: center;
+            padding-top:3em;
+    }
 
 .taxon-list-item .col-md-11 {
-    padding-left:0;
+    padding-left: 0;
 }
 
-    .taxon-list-item img {
-        height: 8em;
-        width: 8em;
-        background-color: black;
-        vertical-align: top;
+.taxon-list-item img {
+    height: 8em;
+    width: 8em;
+    background-color: black;
+    vertical-align: top;
+}
+
+.taxon-list-item .taxon-details {
+    padding: 0.2em;
+    display: inline-block;
+}
+
+    .taxon-list-item .taxon-details h3 {
+        font-size: 2.4em;
+        margin-top: 0.2em;
     }
 
-    .taxon-list-item .taxon-details {
-        padding: 0.2em;
-        display: inline-block;
-    }
-
-        .taxon-list-item .taxon-details h3 {
-            margin: 0;
-            font-size: 2.4em;
+        .taxon-list-item .taxon-details h3:hover {
+            text-decoration: none !important;
         }
 
-        .subtaxa-button {
-            background-color:#a8699a;
-            color:white;
-            text-align:center;
-            padding:0;
-            height:8em;
-        }
-
-        .subtaxa-button a span {
-            color:white;
-        }
-
-        .taxon-list-item ul {
-            list-style:none;
-        }
+.taxon-list-item ul.panel-collapse {
+    list-style: none;
+    padding-left: 9em;
+    padding-top: 0.75em;
+    border-top: 0.2px dotted #9b538b;
+}

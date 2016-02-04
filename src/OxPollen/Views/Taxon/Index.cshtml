@@ -57,42 +57,52 @@
     </div>
 </div>
 
-@if (Model.Count > 0)
-{
-    @foreach (var taxon in Model)
-    {
-        <div class="row taxon-list-item">
-            <div class="col-md-11">
-                <a href="@Url.Action("View", new { id = @taxon.Id } )">
-                    <img src="/user-image-uploads/@taxon.ImageFilename" />
-                </a>
-                <div class="taxon-details">
-                    <a href="@Url.Action("View", new { id = @taxon.Id } )">
-                        <h3>@taxon.LatinName</h3>
-                    </a>
-                    <span>User Grains: @taxon.UserSubmissionsConfirmedCount</span>
-                    <span>Reference Slides: @taxon.ReferenceGrainsCount</span>
-                </div>
-                <ul id="taxon-@taxon.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                    @foreach (var subTaxa in taxon.Children)
-                    {
-                        <li>
-                            <a href="@Url.Action("View", "Taxon", new { id = subTaxa.Id})">@subTaxa.LatinName</a>
-                        </li>
-                    }
-                </ul>
+<p>
+    <strong>Key: </strong>
+    <span class="glyphicon glyphicon-user">  </span> = User Submissions with Confirmed Identity; 
+    <span class="glyphicon glyphicon-globe">  </span> = Digitised Reference Slides;  
+    <span class="glyphicon glyphicon-th-list">  </span> = Child Taxa
 
-            </div>
-            @if (taxon.Children.Count > 0)
+    </p>
+
+<div class="row">
+    @if (Model.Count > 0)
+    {
+        @foreach (var taxon in Model)
+        {
+            <div class="col-md-6">
+                    <div class="taxon-list-item">
+                        <img src="/user-image-uploads/@taxon.ImageFilename" />
+                        <div class="taxon-details">
+                            <a href="@Url.Action("View", new { id = @taxon.Id } )">
+                            <h3>@taxon.LatinName</h3>
+                            </a>
+                            <ul class="list-inline">
+                                <li><span class="glyphicon glyphicon-user"></span>  @taxon.UserSubmissionsConfirmedCount</li>
+                                <li><span class="glyphicon glyphicon-globe"></span> @taxon.ReferenceGrainsCount</li>
+                                <li><span class="glyphicon glyphicon-th-list"></span> @taxon.Children.Count</li>
+                            </ul>
+                        </div>
+                        @if (taxon.Children.Count > 0)
                     {
-                <div class="col-md-1 subtaxa-button">
-                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#taxon-@taxon.Id" aria-expanded="false" aria-controls="taxon-@taxon.Id"><span class="glyphicon glyphicon-collapse-down" style="font-size:2em;"></span></a>
-                </div>
-            }
-        </div>
+                            <div class="taxon-toggle">
+                                <a class="subtaxa-button" role="button" data-toggle="collapse" data-parent="#accordion" href="#taxon-@taxon.Id" aria-expanded="false" aria-controls="taxon-@taxon.Id"><span class="glyphicon glyphicon-th-list"></span></a>
+                            </div>
+                        }
+                        <ul id="taxon-@taxon.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                            @foreach (var subTaxa in taxon.Children)
+                    {
+                                <li>
+                                    <a href="@Url.Action("View", "Taxon", new { id = subTaxa.Id})">@subTaxa.LatinName</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+            </div>
+        }
     }
-}
-else
-{
-    <p>Our reference collection is currently empty. Get identifying!</p>
-}
+    else
+    {
+        <p>Our reference collection is currently empty. Get identifying!</p>
+    }
+</div>
