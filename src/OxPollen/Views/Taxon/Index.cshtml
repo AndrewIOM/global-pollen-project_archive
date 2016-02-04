@@ -19,6 +19,11 @@
     <br />
 }
 
+@section scripts {
+    <script src="~/lib/bootstrap/js/collapse.js"></script>
+    <script src="~/lib/bootstrap/js/transition.js"></script>
+}
+
 @* Breadcrumb *@
 <div class="row">
     <div class="col-md-12">
@@ -52,33 +57,42 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        @if (Model.Count > 0)
-        {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Latin Name</th>
-                        <th>Confirmed User Submissions</th>
-                        <th>Digitised Reference Slides</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                @foreach (var taxon in Model)
-                {
-                    <tr>
-                        <td>@taxon.LatinName</td>
-                        <td>@taxon.UserSubmissionsConfirmedCount</td>
-                        <td>@taxon.ReferenceGrainsCount</td>
-                        <td><a role="button" class="btn btn-primary" href="@Url.Action("View", new { id = @taxon.Id } )">View Details</a></td>
-                    </tr>
-                }
-            </table>
-        }
-        else
-        {
-            <p>Our reference collection is currently empty. Get identifying!</p>
-        }
-    </div>
-</div>    
+@if (Model.Count > 0)
+{
+    @foreach (var taxon in Model)
+    {
+        <div class="row taxon-list-item">
+            <div class="col-md-11">
+                <a href="@Url.Action("View", new { id = @taxon.Id } )">
+                    <img src="/user-image-uploads/@taxon.ImageFilename" />
+                </a>
+                <div class="taxon-details">
+                    <a href="@Url.Action("View", new { id = @taxon.Id } )">
+                        <h3>@taxon.LatinName</h3>
+                    </a>
+                    <span>User Grains: @taxon.UserSubmissionsConfirmedCount</span>
+                    <span>Reference Slides: @taxon.ReferenceGrainsCount</span>
+                </div>
+                <ul id="taxon-@taxon.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    @foreach (var subTaxa in taxon.Children)
+                    {
+                        <li>
+                            <a href="@Url.Action("View", "Taxon", new { id = subTaxa.Id})">@subTaxa.LatinName</a>
+                        </li>
+                    }
+                </ul>
+
+            </div>
+            @if (taxon.Children.Count > 0)
+                    {
+                <div class="col-md-1 subtaxa-button">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#taxon-@taxon.Id" aria-expanded="false" aria-controls="taxon-@taxon.Id"><span class="glyphicon glyphicon-collapse-down" style="font-size:2em;"></span></a>
+                </div>
+            }
+        </div>
+    }
+}
+else
+{
+    <p>Our reference collection is currently empty. Get identifying!</p>
+}

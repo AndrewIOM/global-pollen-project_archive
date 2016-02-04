@@ -12,6 +12,7 @@ namespace OxPollen.Services.Abstract
         IEnumerable<Taxon> GetAll();
         IEnumerable<Taxon> GetAll(Taxonomy rank);
         Taxon GetById(int id);
+        string GetRandomImageForTaxon(int id);
         IEnumerable<ReferenceGrain> GetReferenceGrains(Taxon taxon);
         IEnumerable<Grain> GetUserGrains(Taxon taxon);
         void RemoveTaxon(int id);

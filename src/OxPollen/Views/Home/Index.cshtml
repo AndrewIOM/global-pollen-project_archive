@@ -8,8 +8,9 @@
 @section homepageHeader {
     <header class="homepage-header">
         <div class="container">
-            <h1>OxPollen</h1>
+            <h1>The Global Pollen Project</h1>
             <p>The Open Platform for Pollen Identification</p>
+            <p class="header-attribution">Image Credit: <a target="_blank" href="https://standingoutinmyfield.wordpress.com/2014/01/09/cool-things-ive-learned-about-pollen/">standingoutinmyfield</a></p>
         </div>
     </header>
 }
@@ -17,21 +18,21 @@
 @* Marketing *@
 <div class="row" style="text-align:center">
     <div class="col-sm-4">
-        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen1.png" alt="">
-        <h3><a asp-action="Help" asp-controller="Grain">Submit Your Pollen Grains</a></h3>
-        <p>
-            If you are having trouble identifying a pollen grain to family, genus or species level, submit your grain to OxPollen. Crowd source the identification from others working with pollen across the world.
-        </p>
+        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen3.png" alt="">
+        <h3><a asp-action="Index" asp-controller="Taxon">Search Our  Collection</a></h3>
+        <p>Browse the dynamic and ever expanding reference collection of the Global Pollen Project! Use as a key or as a reference for your own research.</p>
     </div>
     <div class="col-sm-4">
         <img class="img-circle img-responsive home-tri-image" src="~/images/pollen2.jpg" alt="">
-        <h3><a asp-action="Index" asp-controller="Grain">Add Your Expertise</a></h3>
-        <p>Are you a specialist in a particular region or taxon? Help others by providing identifications and earn points on the leader board for your lab group or Institution.</p>
+        <h3><a asp-action="Help" asp-controller="Grain">Submit Your Pollen Grains</a></h3>
+        <p>
+            If you are having trouble identifying a pollen grain to family, genus or species level, submit your grain to the Global Pollen Project. Crowd source the identification from others working with pollen across the world.
+        </p>
     </div>
     <div class="col-sm-4">
-        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen3.png" alt="">
-        <h3><a asp-action="Index" asp-controller="Taxon">Search Our Reference Collection</a></h3>
-        <p>Browse the dynamic and ever expanding reference collection of OxPollen! Use as a key or as a reference for your own research.</p>
+        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen1.png" alt="">
+        <h3><a asp-action="Index" asp-controller="Grain">Add Your Expertise</a></h3>
+        <p>Are you a specialist in a particular region or taxon? Help others by providing identifications and earn points on the leader board for your lab group or Institution.</p>
     </div>
 </div>
 <hr />
@@ -49,14 +50,14 @@
 
 @* About OxPollen *@
 <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-5">
         <h3>How It Works</h3>
-        <p>Whether you are submitting a grain or identifying someone else’s you are contributing to the fastest growing crowd sourced palanological database in the world! Once a grain has been identified by a minimum of 3 individuals at a certainty of at least 75% it will be added into the digital OxPollen Reference Collection. This collection is paired with the Global Biodiversity Information Facility (GBIF) and Neotoma, enabling you to see current and past distributions.</p>
+        <p>Whether you are submitting a grain or identifying someone else’s you are contributing to the fastest growing crowd sourced palanological database in the world! Once a grain has been identified by a minimum of 3 individuals at a certainty of at least 75% it will be added into the digital 'Global Pollen Project' Reference Collection. This collection is paired with the <a href="http://gbif.org" target="_blank">Global Biodiversity Information Facility</a> and <a href="http://neotomadb.org" target="_blank">Neotoma</a>, enabling you to see current and past distributions.</p>
         <p>
             <a asp-action="Index" asp-controller="Grain" class="btn btn-primary btn-lg">Get Started »</a>
         </p>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-7">
         <h3>Most Wanted</h3>
         <p>Can you identify our most wanted pollen grains?</p>
         <ul class="grain-grid columns-8">
@@ -73,9 +74,6 @@
             }
         </ul>
     </div>
-</div>
-<div class="row" style="text-align:center">
-    <p>Banner Image by <em><a href="https://standingoutinmyfield.wordpress.com/2014/01/09/cool-things-ive-learned-about-pollen/">standingoutinmyfield</a></em>.</p>
 </div>
 
 @section scripts {

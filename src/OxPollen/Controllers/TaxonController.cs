@@ -27,7 +27,17 @@ namespace OxPollen.Controllers
                 LatinName = m.LatinName,
                 ReferenceGrainsCount = _taxonService.GetReferenceGrains(m).Count(),
                 UserSubmissionsConfirmedCount = _taxonService.GetUserGrains(m).Count(),
-                Rank = m.Rank
+                Rank = m.Rank,
+                ImageFilename = _taxonService.GetRandomImageForTaxon(m.TaxonId),
+                Children = m.ChildTaxa.Select(n => new TaxonViewModel()
+                {
+                    Children = null,
+                    Id = n.TaxonId,
+                    LatinName = n.LatinName,
+                    Rank = n.Rank,
+                    ReferenceGrainsCount = _taxonService.GetReferenceGrains(n).Count(),
+                    UserSubmissionsConfirmedCount = _taxonService.GetUserGrains(n).Count()
+                }).ToList()
             }).OrderBy(m => m.LatinName).ToList();
             return View(model);
         }

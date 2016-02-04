@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - OxPollen</title>
+    <title>@ViewData["Title"] - Global Pollen Project</title>
 
     <!-- Fonts -->
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
@@ -39,7 +39,8 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a asp-controller="Home" asp-action="Index" class="navbar-brand">
-                    OxPollen
+                    <span class="top">The Global</span>
+                    <span class="bottom">Pollen Project</span>
                 </a>
             </div>
             <div class="navbar-collapse collapse">
@@ -47,7 +48,7 @@
                     <li><a asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-controller="Taxon" asp-action="Index">Reference Collection</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pollen Records<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pollen Grains<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a asp-action="Index" asp-controller="Grain"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Identify Grains</a></li>
                             <li><a asp-action="Add" asp-controller="Grain"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Submit a Grain!</a></li>
@@ -72,7 +73,7 @@
                             <li><a asp-action="Help" asp-controller="Reference">Help</a></li>
                         </ul>
                     </li>
-                    <li><a asp-controller="Bounty" asp-action="Index">Bounty</a></li>
+                    <li><a asp-controller="Bounty" asp-action="Index">Leaderboard</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
@@ -101,10 +102,9 @@
                         <li><a asp-action="About">How to Cite</a></li>
                     </ul>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-5" style="padding-right:4em">
                     <h4>Contact</h4>
-                    <p>OxPollen, Long-Term Ecology Lab, Department of Zoology, University of Oxford</p>
-                    <h4>Share</h4>
+                    <p>The Global Pollen Project. <a href="http://oxlel.zoo.ox.ac.uk" target="_blank">Long-Term Ecology Lab</a>, Department of Zoology, University of Oxford, OX1 3PS, UK</p>
                     <a><span class="glyphicon glyphicon-envelope"></span> Email</a>
                 </div>
                 <div class="col-md-4 footer-images">
@@ -115,7 +115,7 @@
             <div class="row">
                 <hr />
                 <div class="col-md-12">
-                    <p>OxPollen &copy; 2016 - Andrew C. Martin and William J. Harvey</p>
+                    <p style="text-align:center;">OxPollen &copy; 2016 - Andrew C. Martin and William J. Harvey</p>
                 </div>
             </div>
         </div>

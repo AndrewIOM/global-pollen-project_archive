@@ -140,5 +140,24 @@ namespace OxPollen.Services.Concrete
             _uow.TaxonRepository.Delete(taxon);
             _uow.SaveChanges();
         }
+
+        public string GetRandomImageForTaxon(int id)
+        {
+            var taxon = _uow.TaxonRepository.GetById(id);
+            if (taxon == null) return null;
+            var grains = GetUserGrains(taxon).ToList();
+            if (grains.Count > 0)
+            {
+                return grains.First().Images.First().FileNameThumbnail;
+            }
+
+            var refGrains = GetReferenceGrains(taxon).ToList();
+            if (refGrains.Count > 0)
+            {
+                return refGrains.First().Images.First().FileNameThumbnail;
+            }
+
+            return null;
+        }
     }
 }
