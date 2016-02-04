@@ -598,7 +598,7 @@ darkroom-container {
     float: right;
     display: inline-block;
     width: 4em;
-    height: 8em;
+    height: 6em;
     vertical-align: top;
     background-color: #a8699a;
 }
@@ -613,18 +613,19 @@ darkroom-container {
         color: white;
         font-size: 1em;
         text-align: center;
-            padding-top:3em;
+            padding-top:2.3em;
     }
 
 .taxon-list-item .col-md-11 {
     padding-left: 0;
 }
 
-.taxon-list-item img {
-    height: 8em;
-    width: 8em;
+.taxon-list-item .img-container {
+    height: 6em;
+    width: 6em;
     background-color: black;
     vertical-align: top;
+    display:inline-block;
 }
 
 .taxon-list-item .taxon-details {
@@ -633,7 +634,7 @@ darkroom-container {
 }
 
     .taxon-list-item .taxon-details h3 {
-        font-size: 2.4em;
+        font-size: 1.75em;
         margin-top: 0.2em;
     }
 
@@ -647,3 +648,15 @@ darkroom-container {
     padding-top: 0.75em;
     border-top: 0.2px dotted #9b538b;
 }
+
+/* Sidebar on Guide */
+  #sidebar.affix-top {
+    position: static;
+    width:228px;
+  }
+
+  #sidebar.affix {
+    position: fixed;
+    top:150px;
+    width:228px;
+  }
