@@ -1,0 +1,115 @@
+﻿/* Grain Grid */
+
+/* Grain Images Grid */
+ul.grain-grid {
+    list-style: none;
+    font-size: 0px;
+    padding: 0;
+    list-style-type: none;
+}
+
+    ul.grain-grid li {
+        display: inline-block;
+        padding: 0.2em;
+        background: #fff;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        font-size: 1rem;
+        vertical-align: top;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        overflow: hidden;
+    }
+
+/*.img-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}*/
+
+.img-container {
+    background-color: lightgrey;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+}
+
+    .img-container img {
+        display: block;
+        vertical-align: middle;
+    }
+
+.portrait img {
+    width: 100%;
+}
+
+.landscape img {
+    height: 100%;
+}
+
+ul.grain-grid.columns-2 li {
+    width: 47.5%; /* this value + 2.5 should = 50% */
+}
+
+ul.grain-grid.columns-3 li {
+    width: 30.83%; /* this value + 2.5 should = 33% */
+}
+
+ul.grain-grid.columns-4 li {
+    width: 18em; /* this value + 2.5 should = 25% */
+    height: 18em;
+}
+
+ul.grain-grid.columns-8 li {
+    width: 10em;
+    height: 10em;
+}
+
+
+
+@media (max-width: 480px) {
+    ul.grid-nav li {
+        display: block;
+        margin: 0 0 5px;
+    }
+
+        ul.grid-nav li a {
+            display: block;
+        }
+
+    ul.grain-grid {
+        margin-left: 0;
+        text-align: center;
+    }
+}
+
+/* Ribbons for Corner of Images */
+.ribbon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    overflow: hidden;
+    width: 75px;
+    height: 75px;
+    text-align: right;
+}
+
+    .ribbon span {
+        font-size: 1.5em;
+        border-radius: 15px;
+        color: #fff;
+        text-align: center;
+        font-weight: bold;
+        line-height: 20px;
+        width: 20px;
+        display: block;
+        background: #83296F;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
