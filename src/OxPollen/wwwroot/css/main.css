@@ -324,6 +324,9 @@ footer ul {
       bottom: 2px;
       right: 2px;
       background: lightgrey; }
+      .grain-grid li a .img-container {
+        height: 100%;
+        width: 100%; }
       .grain-grid li a .Latitude {
         display: none; }
       .grain-grid li a .Longitude {
