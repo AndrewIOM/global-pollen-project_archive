@@ -392,6 +392,9 @@ footer ul {
   top: 5px;
   right: 5px; }
 
+.img-container {
+  overflow: hidden; }
+
 /* Map for Filtering Lat / Lon */
 .leaflet-areaselect-shade {
   position: absolute;
