@@ -29,8 +29,8 @@ namespace OxPollen.Controllers
                 {
                     Bounty = BountyUtility.Calculate(m),
                     Id = m.Id,
-                    ImageLocation = m.Images.First().FileName,
-                    ThumbnailLocation = m.Images.First().FileNameThumbnail,
+                    ImageLocation = m.Images != null ? m.Images.First().FileName : "",
+                    ThumbnailLocation = m.Images != null ? m.Images.First().FileNameThumbnail : "",
                     TimeAdded = m.TimeAdded
                 }).ToList();
 

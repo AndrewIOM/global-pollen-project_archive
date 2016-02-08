@@ -1,0 +1,125 @@
+﻿//Single images upload
+function handleFiles(input) {
+    var d = document.getElementById("images");
+    if (input.files.length) {
+        for (var i = 0; i < input.files.length; i++) {
+            setupReader(input.files[i], d);
+        }
+    }
+}
+
+function setupReader(file, d) {
+    //Create elements for image
+    var li = document.createElement('li');
+    d.appendChild(li);
+    var div = document.createElement('div');
+    div.className = "img-container";
+    li.appendChild(div);
+    var a = document.createElement('a');
+    div.appendChild(a);
+    var img = document.createElement("img");
+    var fr = new FileReader();
+    fr.onload = function (e) {
+        img.src = e.target.result;
+    };
+    fr.readAsDataURL(file);
+
+    //Format image for container
+    var refRatio = 300 / 300;
+    var imgH = img.height;
+    var imgW = img.width;
+    if ((imgW / imgH) < refRatio) {
+        div.className = "img-container portrait";
+    } else {
+        div.className = "img-container landscape";
+    }
+    a.appendChild(img);
+
+    //Create delete button
+    var del = document.createElement('span');
+    del.className = 'delete';
+    var icon = document.createElement('span');
+    icon.className = 'glyphicon glyphicon-trash';
+    del.appendChild(icon);
+    a.appendChild(del);
+    del.onclick = function () {
+        $(this).closest('li').remove();
+    };
+}
+
+//Ajax upload request
+function uploadFile(button) {
+    $('#submit1').prop('disabled', true);
+    $('#submit1').addClass('disabled');
+    $('#submit2').prop('disabled', true);
+    $('#submit2').addClass('disabled');
+
+    var collectionId = document.getElementById('CollectionId').value;
+
+    var images = document.getElementById('images').getElementsByTagName('img');
+    var imgsB64 = [];
+    for (var i = 0; i < images.length; i++) {
+        var imgEncoded = images[0].src;
+        imgEncoded = imgEncoded.slice(imgEncoded.indexOf(',') + 1);
+        imgsB64.push(imgEncoded);
+    }
+
+    //Get form data
+    var form = document.getElementById('addGrainForm');
+    var formData = new FormData(form);
+    formData.append('Images', imgsB64);
+
+    //Progress Bar
+    var progbar = form.getElementsByClassName('progress-bar')[0];
+    var progDiv = form.getElementsByClassName('progress')[0];
+    var submit = document.getElementById('submit');
+    progbar.className = 'progress-bar progress-bar-striped active';
+    submit1.className = 'btn btn-primary disabled';
+    submit2.className = 'btn btn-primary disabled';
+    progDiv.setAttribute('style', 'display:""');
+
+    //Ajax Request
+    ajax = new XMLHttpRequest();
+    (ajax.upload || ajax).addEventListener('progress', function (e) {
+        var done = e.position || e.loaded
+        var total = e.totalSize || e.total;
+        var progress = Math.round(done / total * 100) + '%';
+        progbar.setAttribute('style', 'width:' + progress);
+        progbar.innerHTML = progress;
+    });
+
+    ajax.onreadystatechange = function () {
+        if (ajax.readyState == 4 || ajax.readyState == "complete") {
+            if (ajax.status == 200) {
+                progbar.className = 'progress-bar progress-bar-success progress-bar-striped active';
+                if (button.id == 'submit1') {
+                    location.reload();
+                } else {
+                    location.href = "/Reference/Collection/" + collectionId;
+                }
+            }
+            if (ajax.status == 400 || ajax.status == 500) {
+                var result = ajax.responseText;
+                var resultJson = JSON.parse(result);
+                console.log(resultJson);
+                progbar.className = 'progress-bar progress-bar-danger progress-bar-striped';
+                submit1.className = 'btn btn-primary';
+                submit2.className = 'btn btn-primary';
+                var errorBox = document.getElementById('validation-errors-box');
+                $('#validation-errors-box').css('display', '');
+                var newContent = "";
+                $.each(resultJson, function (k, v) {
+                    newContent = newContent + '<p><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> ' + v[0] + '</p>';
+                });
+                errorBox.innerHTML = newContent;
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+                $('#submit').prop('disabled', false);
+                $('#submit').removeClass('disabled');
+                progDiv.setAttribute('style', 'display:none');
+            }
+        }
+    }
+
+    ajax.open("POST", "/Reference/AddGrain/" + collectionId);
+    ajax.send(formData);
+}

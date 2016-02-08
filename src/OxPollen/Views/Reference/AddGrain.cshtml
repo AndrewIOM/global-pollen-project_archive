@@ -1,0 +1,210 @@
+﻿@model OxPollen.ViewModels.Reference.ReferenceGrainViewModel
+
+@{
+    ViewBag.Title = "Add Reference Grain";
+}
+
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>Add Reference Grain</h2>
+            <p>Add a new reference grain</p>
+        </div>
+    </div>
+    <br />
+}
+
+@section scripts {
+    <script type="text/javascript" src="~/js/reference/AddGrain.js"></script>
+}
+
+<form id="addGrainForm" name="addGrain" method="post" onsubmit="return uploadFile()" action="">
+    <div asp-validation-summary="ValidationSummary.All" role="alert"></div>
+    <div id="validation-errors-box" style="display:none;" class="alert alert-danger" role="alert"></div>
+
+    @Html.HiddenFor(n => n.CollectionId)
+
+    <h4>Taxonomic Information</h4>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                This reference slide is of <select asp-for="Rank" class="form-control input-sm inline-dropdown" id="Rank">
+                    <option value="3">Species</option>
+                    <option value="2">Genus</option>
+                    <option value="1">Family</option>
+                </select> rank.
+            </p>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="updateList(this, 'Family');" placeholder="Family" />
+            <ul class="dropdown-menu autocomplete" id="FamilyList" style="display:none"></ul>
+            <span asp-validation-for="Family" class="text-danger"></span>
+        </div>
+        <div class="col-sm-4">
+            <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="updateList(this, 'Genus');" placeholder="Genus" />
+            <ul class="dropdown-menu autocomplete" id="GenusList" style="display:none"></ul>
+            <span asp-validation-for="Genus" class="text-danger"></span>
+        </div>
+        <div class="col-sm-4">
+            <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="updateList(this, 'Species');" placeholder="Species" />
+            <ul class="dropdown-menu autocomplete" id="SpeciesList" style="display:none"></ul>
+            <span asp-validation-for="Species" class="text-danger"></span>
+        </div>
+    </div>
+    <hr />
+
+    <h4>Images</h4>
+    <p>Please prepare your images (crop, rotate, contrast etc.) before uploading to the Global Pollen Project.</p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="glyphicon glyphicon-plus"></span> Add New Image</div>
+                <div class="panel-body">
+
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#modern" aria-controls="modern" role="tab" data-toggle="tab">Single Images</a></li>
+                        <li role="presentation"><a href="#paleo" aria-controls="paleo" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-eye-open"></span> Focus Image</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="modern">
+                            <br />
+                            <p>Use Single Images if a fixed camera setup is not available. </p>
+                            <div class="row">
+                                <div class="fileUpload btn btn-default">
+                                    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span><span> Add More Images</span>
+                                    <input type="file" multiple="multiple" class="upload" onchange="handleFiles(this);" />
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="paleo">
+                            <br />
+                            <p>Focus Images enable users to scroll through an image as if moving through the focus on a microscope.</p>
+                            <p><em>Coming Soon</em></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label>Current Images</label>
+            <ul id="images" class="grain-grid"></ul>
+        </div>
+    </div>
+    <hr />
+
+    <h4>Required Information</h4>
+    <p>We require these properties for all digitised reference slides.</p>
+    <div class="row">
+        <div class="col-md-2">
+            <label asp-for="MaxGrainSize"></label>
+        </div>
+        <div class="col-md-10">
+            <input asp-for="MaxGrainSize" class="form-control" />
+        </div>
+    </div>
+    <hr />
+
+    <h4>Additional Information</h4>
+    <p>Soon you will be able to assign exine properties to digitised reference slides.</p>
+
+        <a id="submit1" class="btn btn-primary" href="javascript: uploadFile(this)">Save and Add Another</a>
+        <a id="submit2" class="btn btn-default" href="javascript: uploadFile(this)">Save and Exit</a>
+        <a class="btn btn-default">Back</a>
+    <br />
+    <div class="row">
+        <div class="progress" style="display:none;">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+        </div>
+    </div>
+</form>
+
+@* Autocomplete Suggest for Taxon Names (GBIF) *@
+<script type="text/javascript">
+    function updateList(entryBox, rank) {
+        var query = '';
+        if (rank == 'Species') {
+            //Combine genus and species for canonical name
+            var genus = document.getElementById('Genus').value;
+            query += genus + " ";
+        }
+        query += entryBox.value;
+        var request = "http://api.gbif.org/v1/species/suggest?kingdom=Plantae&rank=" + rank + "&q=" + query;
+        ajaxHelper(request, 'GET', 'jsonp').done(function (data) {
+            var list = document.getElementById(rank + 'List');
+            $('#' + rank + 'List').css('display', 'block');
+            list.innerHTML = "";
+            if (!(data.length == 1 && data[0].canonicalName.toLowerCase() == document.getElementById(rank).value.toLowerCase())) {
+                for (var i = 0; i < data.length; i++) {
+                    if (i > 10) continue;
+                    var option = document.createElement('li');
+                    var link = document.createElement('a');
+                    option.appendChild(link);
+                    link.innerHTML = data[i].canonicalName;
+                    if (rank == 'Species' || rank == 'Genus') {
+                        var familySpan = document.createElement('span');
+                        familySpan.innerHTML = (data[i].family);
+                        familySpan.className = 'family-name';
+                        familySpan.style =
+                        link.appendChild(familySpan);
+                    }
+                    link.addEventListener('click', function (e) {
+                        var name = this.innerHTML.split('<')[0];
+                        if (rank == 'Species') {
+                            var species = name.split(' ')[1];
+                            $('#' + rank).val(species);
+                        } else {
+                            $('#' + rank).val(name);
+                        }
+
+                        //Handle family name
+                        if (rank == 'Species' || rank == 'Genus') {
+                            var family = this.getElementsByClassName("family-name")[0].innerHTML;
+                            //If family is not unique, don't use in autofill
+                            if (family != 'undefined') ajaxHelper("http://api.gbif.org/v1/species/match?rank=Family&name=" + family, 'GET', 'jsonp').done(function (data2) {
+                                if (data2.matchType == 'EXACT') {
+                                    $('#Family').val(family);
+                                }
+                            });
+                        }
+                        $('#' + rank + 'List').fadeOut();
+                    });
+                    list.appendChild(option);
+                }
+            } else {
+                $('#' + rank + 'List').fadeOut();
+            }
+            $('.family-name').css('display', 'none');
+        });
+    }
+
+    function disable(rank) {
+        var element;
+        if (rank == 'Family') element = 'FamilyList';
+        if (rank == 'Genus') element = 'GenusList';
+        if (rank == 'Species') element = 'SpeciesList';
+
+        setTimeout(func, 100);
+        function func() {
+            $('#' + element).fadeOut();
+        }
+    }
+
+    //Base Functions
+    function ajaxHelper(uri, method, dataType, data) {
+        //self.error('');
+        return $.ajax({
+            type: method,
+            url: uri,
+            dataType: dataType,
+            contentType: 'application/json',
+            data: data ? JSON.stringify(data) : null
+        }).fail(function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+            //self.error(errorThrown);
+        });
+    }
+</script>

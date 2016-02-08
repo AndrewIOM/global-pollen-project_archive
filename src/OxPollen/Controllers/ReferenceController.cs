@@ -116,7 +116,22 @@ namespace OxPollen.Controllers
             {
                 return HttpBadRequest();
             }
-            //TODO Limit addition to current user's collections only
+            var model = _refService.GetCollectionById(id);
+            if (model.User.Id != User.GetUserId()) return HttpBadRequest();
+            return View(new ReferenceGrainViewModel()
+            {
+                CollectionId = model.Id
+            });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Digitise")]
+        public IActionResult BatchAddGrains(int id)
+        {
+            if (id == 0)
+            {
+                return HttpBadRequest();
+            }
             var model = _refService.GetCollectionById(id);
             if (model.User.Id != User.GetUserId()) return HttpBadRequest();
             return View("AddGrains", model);
@@ -127,12 +142,7 @@ namespace OxPollen.Controllers
         public IActionResult AddGrain(ReferenceGrainViewModel result)
         {
             //TODO Limit addition to current user's collections only
-
-            Taxonomy rank;
-            if (result.Species != null) { rank = Taxonomy.Species; }
-            else if (result.Genus != null) { rank = Taxonomy.Genus; }
-            else rank = Taxonomy.Family;
-            if (!_backbone.IsValidTaxon(rank, result.Family, result.Genus, result.Species))
+            if (!_backbone.IsValidTaxon(result.Rank, result.Family, result.Genus, result.Species))
             {
                 ModelState.AddModelError("TaxonomicBackbone", "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again");
             }
@@ -142,16 +152,11 @@ namespace OxPollen.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            var filesToUpload = new List<string>();
-            filesToUpload.Add(result.ImageOne);
-            if (!string.IsNullOrEmpty(result.ImageTwo)) filesToUpload.Add(result.ImageTwo);
-            if (!string.IsNullOrEmpty(result.ImageThree)) filesToUpload.Add(result.ImageThree);
-            if (!string.IsNullOrEmpty(result.ImageFour)) filesToUpload.Add(result.ImageFour);
-            var uploadedFiles = _fileService.Upload(filesToUpload);
+            var uploadedFiles = _fileService.Upload(result.Images);
 
             var toSave = new ReferenceGrain()
             {
-                Collection = _refService.GetCollectionById(result.CollectionId),
+                Collection = _refService.GetCollectionById(result.CollectionId.Value),
                 Family = result.Family,
                 Genus = result.Genus,
                 Species = result.Species,

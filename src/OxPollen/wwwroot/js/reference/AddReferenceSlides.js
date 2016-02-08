@@ -32,10 +32,11 @@ function handleFiles(input) {
     } else {
         pending.innerHTML = "";
         var collectionNumber = window.location.href.split("/").pop();
+
+        var taxa = [];
         for (var i = 0; i < input.files.length; i++) {
             var fileName = input.files[i].name;
             var fileUrl = window.URL.createObjectURL(input.files[i]);
-            //TODO Check if image here
 
             //Parse filename
             var size = "";
@@ -62,6 +63,44 @@ function handleFiles(input) {
                 species = splitFilename[3];
             }
 
+            var rank;
+            if (species != "") {
+                rank = 'Species';
+            } else if (genus != "") {
+                rank = 'Genus';
+            } else {
+                rank = 'Family';
+            }
+
+            taxa.push({
+                rank: rank,
+                species: species,
+                genus: genus,
+                family: family,
+                size: size,
+                image: [fileUrl]
+            });
+        }
+
+        var taxaGroupedImages = [];
+        for (var i = 0; i < taxa.length; i++) {
+            var existing = filterTaxa(taxaGroupedImages, taxa[i].rank, taxa[i].family, taxa[i].genus, taxa[i].species);
+            if (existing.length == 0) {
+                var match = filterTaxa(taxa, taxa[i].rank, taxa[i].family, taxa[i].genus, taxa[i].species);
+                if (match.length == 1) {
+                    taxaGroupedImages.push(match[0]);
+                } else {
+                    //More than one image for this taxon
+                    var images = [];
+                    for (var j = 1; j < match.length; j++) {
+                        match[0].image.push(match[j].image[0]);
+                    }
+                    taxaGroupedImages.push(match[0]);
+                }
+            }
+        }
+
+        for (var i = 0; i < taxaGroupedImages.length; i++) {
             //Create ajax save form
             var f = document.createElement('form');
             f.id = 'upload-' + (i + 1);
@@ -79,11 +118,13 @@ function handleFiles(input) {
             row.appendChild(col2);
             f.appendChild(row);
 
-            var img = document.createElement("img");
-            img.src = fileUrl;
-            img.id = "image-upload-" + (i + 1);
-            img.style.height = '12em';
-            col1.appendChild(img);
+            for (var j = 0; j < taxaGroupedImages[i].image.length; j++) {
+                var img = document.createElement("img");
+                img.src = taxaGroupedImages[i].image[j];
+                img.id = "image-upload-" + (i + 1);
+                img.style.height = '12em';
+                col1.appendChild(img);
+            }
 
             var inputCollection = document.createElement('input');
             inputCollection.hidden = 'hidden';
@@ -91,30 +132,50 @@ function handleFiles(input) {
             inputCollection.value = collectionNumber;
             col2.appendChild(inputCollection);
 
+            var inputRank = document.createElement('select');
+            inputRank.id = 'Rank';
+            inputRank.name = 'Rank';
+            var speciesOption = document.createElement('option');
+            speciesOption.value = '3';
+            speciesOption.innerHTML = 'Species';
+            var genusOption = document.createElement('option');
+            genusOption.value = '2';
+            genusOption.innerHTML = 'Genus';
+            var familyOption = document.createElement('option');
+            familyOption.value = '1';
+            familyOption.innerHTML = 'Family';
+            inputRank.appendChild(familyOption);
+            inputRank.appendChild(genusOption);
+            inputRank.appendChild(speciesOption);
+
             var inputFamily = createFormField('Family', 'Family', 'Family', family);
             var inputGenus = createFormField('Genus', 'Genus', 'Genus', genus);
             var inputSpecies = createFormField('Species', 'Species', 'Species', species);
-            var inputSize = createFormField('ImagesScale', 'Grain Size (nm)', 'Grain Size (nanometres)', size);
+            var inputSize = createFormField('MaxGrainSize', 'Maximum Grain Diameter (nm)', 'Maximum Grain Diameter (nanometres)', size);
+            col2.appendChild(inputRank);
             col2.appendChild(inputFamily);
             col2.appendChild(inputGenus);
             col2.appendChild(inputSpecies);
             col2.appendChild(inputSize);
+
+            //Parse rank
+            var rank;
+            if (species != "") {
+                rank = 'Species';
+                inputRank.value = 3;
+            } else if (genus != "") {
+                rank = 'Genus';
+                inputRank.value = 2;
+            } else {
+                rank = 'Family';
+                inputRank.value = 1;
+            }
 
             var save = document.createElement('a');
             save.href = 'javascript: upload(' + (i + 1) + ')';
             save.className = 'btn btn-primary';
             save.innerHTML = 'Save';
             col2.appendChild(save);
-
-            var cancel = document.createElement('a');
-            cancel.setAttribute('role', 'button');
-            cancel.setAttribute('class', 'btn btn-danger');
-            cancel.href = 'javascript: bin()';
-            var cancelIcon = document.createElement('span');
-            cancelIcon.className = 'glyphicon glyphicon-trash';
-            cancelIcon.innerHTML = ' Cancel';
-            cancel.appendChild(cancelIcon);
-            col2.appendChild(cancel);
 
             //Create progress bar
             var progDiv = document.createElement('div');
@@ -132,11 +193,6 @@ function handleFiles(input) {
             col2.appendChild(errorMessage);
         }
     }
-}
-
-function bin() {
-    console.log('bin');
-    $("#parent").remove();
 }
 
 function getBase64Image(imgElem) {
@@ -161,7 +217,11 @@ function upload(formNumber) {
     progDiv.setAttribute('style', 'display:auto');
     var images = form.getElementsByTagName('img');
     var formData = new FormData(form);
-    formData.append('ImageOne', getBase64Image(images[0]));
+    var img = [];
+    for (var i = 0; i < images.length; i++) {
+        img.push(getBase64Image(images[i]));
+    }
+    formData.append('Images', img);
 
     ajax = new XMLHttpRequest();
     (ajax.upload || ajax).addEventListener('progress', function (e) {
@@ -207,13 +267,22 @@ function upload(formNumber) {
                 errorMessage.setAttribute('style', 'color:red;display:inline;font-size:0.8em');
 
                 btns[0].style.display = '';
-                btns[1].style.display = '';
             }
         }
     }
 
     btns[0].style.display = 'none';
-    btns[1].style.display = 'none';
     ajax.open("POST", "/Reference/AddGrain", true);
     ajax.send(formData);
+}
+
+function filterTaxa(taxa, rank, family, genus, species) {
+    var match = [];
+    for (var i = 0; i < taxa.length; i++) {
+        if (taxa[i].rank == rank && taxa[i].family == family && taxa[i].genus == genus
+            && taxa[i].species == species) {
+            match.push(taxa[i]);
+        }
+    }
+    return match;
 }

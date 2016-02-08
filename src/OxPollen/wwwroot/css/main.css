@@ -307,6 +307,15 @@ footer ul {
 .grain-grid {
   list-style: none;
   padding-left: 0; }
+  .grain-grid .delete {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: white;
+    width: 30px;
+    height: 25px;
+    text-align: center;
+    font-size: 1.6em; }
   .grain-grid li {
     position: relative;
     width: 24%;
