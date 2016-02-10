@@ -15,6 +15,7 @@
 }
 
 @section scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script type="text/javascript" src="~/js/reference/AddGrain.js"></script>
 }
 
@@ -111,9 +112,9 @@
     <h4>Additional Information</h4>
     <p>Soon you will be able to assign exine properties to digitised reference slides.</p>
 
-        <a id="submit1" class="btn btn-primary" href="javascript: uploadFile(this)">Save and Add Another</a>
-        <a id="submit2" class="btn btn-default" href="javascript: uploadFile(this)">Save and Exit</a>
-        <a class="btn btn-default">Back</a>
+    <a id="submit1" class="btn btn-primary" href="javascript: uploadFile(this)">Save and Add Another</a>
+    <a id="submit2" class="btn btn-default" href="javascript: uploadFile(this)">Save and Exit</a>
+    <a class="btn btn-default">Back</a>
     <br />
     <div class="row">
         <div class="progress" style="display:none;">

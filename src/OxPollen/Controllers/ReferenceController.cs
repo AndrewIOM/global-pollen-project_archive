@@ -141,10 +141,26 @@ namespace OxPollen.Controllers
         [Authorize(Roles = "Digitise")]
         public IActionResult AddGrain(ReferenceGrainViewModel result)
         {
-            //TODO Limit addition to current user's collections only
+            var collection = _refService.GetCollectionById(result.CollectionId.Value);
+            if (collection == null)
+            {
+                ModelState.AddModelError("CollectionId", "The collection specified does not exist.");
+            } else
+            {
+                if (collection.User.Id != User.GetUserId())
+                {
+                    ModelState.AddModelError("CollectionId", "You can only add grains to collections you own.");
+                }
+            }
+
             if (!_backbone.IsValidTaxon(result.Rank, result.Family, result.Genus, result.Species))
             {
                 ModelState.AddModelError("TaxonomicBackbone", "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again");
+            }
+
+            foreach (var image in result.Images)
+            {
+                if (!string.IsNullOrEmpty(image)) if (!IsBase64String(image)) ModelState.AddModelError("Images", "There was an encoding error when uploading your image. Please try a different image, or report the problem.");
             }
 
             if (!ModelState.IsValid)
@@ -153,10 +169,9 @@ namespace OxPollen.Controllers
             }
 
             var uploadedFiles = _fileService.Upload(result.Images);
-
             var toSave = new ReferenceGrain()
             {
-                Collection = _refService.GetCollectionById(result.CollectionId.Value),
+                Collection = collection,
                 Family = result.Family,
                 Genus = result.Genus,
                 Species = result.Species,
@@ -182,6 +197,19 @@ namespace OxPollen.Controllers
                 Species = saved.Species
             };
             return Ok(model);
+        }
+
+        private bool IsBase64String(string s)
+        {
+            try
+            {
+                byte[] data = Convert.FromBase64String(s);
+                return (s.Replace(" ", "").Length % 4 == 0);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         [Authorize(Roles = "Digitise")]

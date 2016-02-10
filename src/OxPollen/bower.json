@@ -12,7 +12,6 @@
     "fabric": "1.5.0",
     "leaflet": "0.7.7",
     "nouislider": "8.2.1",
-    "wnumb": "1.0.2",
-    "jquery-csv": "*"
+    "wnumb": "1.0.2"
   }
 }

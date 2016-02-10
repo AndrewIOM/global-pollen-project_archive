@@ -3,7 +3,9 @@ function handleFiles(input) {
     var d = document.getElementById("images");
     if (input.files.length) {
         for (var i = 0; i < input.files.length; i++) {
-            setupReader(input.files[i], d);
+            if (/\.(jpe?g|png|gif)$/i.test(input.files[i].name)) {
+                setupReader(input.files[i], d);
+            }
         }
     }
 }
@@ -18,11 +20,13 @@ function setupReader(file, d) {
     var a = document.createElement('a');
     div.appendChild(a);
     var img = document.createElement("img");
-    var fr = new FileReader();
-    fr.onload = function (e) {
-        img.src = e.target.result;
-    };
-    fr.readAsDataURL(file);
+    var uriArea = document.createElement('textarea');
+    uriArea.hidden = 'hidden';
+    a.appendChild(uriArea);
+    convertToDataURLviaCanvas(window.URL.createObjectURL(file), function (base64Img) {
+        img.src = base64Img;
+        uriArea.value = base64Img;
+    });
 
     //Format image for container
     var refRatio = 300 / 300;
@@ -47,6 +51,23 @@ function setupReader(file, d) {
     };
 }
 
+function convertToDataURLviaCanvas(url, callback) {
+    var img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = function () {
+        var canvas = document.createElement('CANVAS');
+        var ctx = canvas.getContext('2d');
+        var dataURL;
+        canvas.height = this.height;
+        canvas.width = this.width;
+        ctx.drawImage(this, 0, 0);
+        dataURL = canvas.toDataURL("image/png");
+        callback(dataURL);
+        canvas = null;
+    };
+    img.src = url;
+}
+
 //Ajax upload request
 function uploadFile(button) {
     $('#submit1').prop('disabled', true);
@@ -56,18 +77,18 @@ function uploadFile(button) {
 
     var collectionId = document.getElementById('CollectionId').value;
 
-    var images = document.getElementById('images').getElementsByTagName('img');
-    var imgsB64 = [];
-    for (var i = 0; i < images.length; i++) {
-        var imgEncoded = images[0].src;
-        imgEncoded = imgEncoded.slice(imgEncoded.indexOf(',') + 1);
-        imgsB64.push(imgEncoded);
-    }
-
     //Get form data
     var form = document.getElementById('addGrainForm');
     var formData = new FormData(form);
-    formData.append('Images', imgsB64);
+
+    var images = document.getElementById('images').getElementsByTagName('textarea');
+    var imgsB64 = [];
+    for (var i = 0; i < images.length; i++) {
+        var imgEncoded = images[0].value;
+        imgEncoded = imgEncoded.slice(imgEncoded.indexOf(',') + 1);
+        imgsB64.push(imgEncoded);
+        formData.append('Images[' + i + ']', imgEncoded);
+    }
 
     //Progress Bar
     var progbar = form.getElementsByClassName('progress-bar')[0];
