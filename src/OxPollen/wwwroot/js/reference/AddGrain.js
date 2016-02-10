@@ -22,7 +22,7 @@ function setupReader(file, d) {
     var img = document.createElement("img");
     var uriArea = document.createElement('textarea');
     uriArea.hidden = 'hidden';
-    a.appendChild(uriArea);
+    div.appendChild(uriArea);
     convertToDataURLviaCanvas(window.URL.createObjectURL(file), function (base64Img) {
         img.src = base64Img;
         uriArea.value = base64Img;
@@ -84,7 +84,7 @@ function uploadFile(button) {
     var images = document.getElementById('images').getElementsByTagName('textarea');
     var imgsB64 = [];
     for (var i = 0; i < images.length; i++) {
-        var imgEncoded = images[0].value;
+        var imgEncoded = images[i].value;
         imgEncoded = imgEncoded.slice(imgEncoded.indexOf(',') + 1);
         imgsB64.push(imgEncoded);
         formData.append('Images[' + i + ']', imgEncoded);
