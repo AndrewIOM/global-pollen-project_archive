@@ -43,43 +43,16 @@ namespace OxPollen
 
         public IConfigurationRoot Configuration { get; set; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add Entity Framework services to the services container.
             services.AddEntityFramework()
                 .AddSqlServer()
                 .AddDbContext<OxPollenDbContext>(options =>
                     options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
 
-            // Add Identity services to the services container.
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<OxPollenDbContext>()
                 .AddDefaultTokenProviders();
-
-            // Add MVC services to the services container.
-            services.AddMvc();
-
-            //Add CORS
-            services.AddCors();
-
-            // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
-            // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
-            // services.AddWebApiConventions();
-
-            // Database Services
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IIdentificationService, IdentificationService>();
-            services.AddTransient<IGrainService, GrainService>();
-            services.AddTransient<IFileStoreService, ImageService>();
-            services.AddTransient<IReferenceService, ReferenceService>();
-            services.AddTransient<ITaxonomyService, TaxonomyService>();
-
-            //Configurable Services
-            services.AddTransient<ITaxonomyBackbone, GbifTaxonomyBackbone>();
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
 
             services.AddAuthorization(options =>
             {
@@ -92,6 +65,23 @@ namespace OxPollen
                     policy.RequireRole("Digitise");
                 });
             });
+
+            services.AddMvc();
+            services.AddCors();
+
+            services.AddOptions();
+            services.Configure<Options.AuthMessageSenderOptions>(Configuration);
+
+            // DI Services
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IIdentificationService, IdentificationService>();
+            services.AddTransient<IGrainService, GrainService>();
+            services.AddTransient<IFileStoreService, ImageService>();
+            services.AddTransient<IReferenceService, ReferenceService>();
+            services.AddTransient<ITaxonomyService, TaxonomyService>();
+            services.AddTransient<ITaxonomyBackbone, GbifTaxonomyBackbone>();
+            services.AddTransient<IEmailSender, AuthMessageSender>();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -132,21 +122,21 @@ namespace OxPollen
             // Add and configure the options for authentication middleware to the request pipeline.
             // You can add options for middleware as shown below.
             // For more information see http://go.microsoft.com/fwlink/?LinkID=532715
-            //app.UseFacebookAuthentication(options =>
-            //{
-            //    options.AppId = Configuration["Authentication:Facebook:AppId"];
-            //    options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-            //});
+            app.UseFacebookAuthentication(options =>
+            {
+                options.AppId = Configuration["Authentication:Facebook:AppId"];
+                options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            });
             //app.UseGoogleAuthentication(options =>
             //{
             //    options.ClientId = Configuration["Authentication:Google:ClientId"];
             //    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
             //});
-            app.UseMicrosoftAccountAuthentication(options =>
-            {
-                options.ClientId = Configuration["Authentication:MicrosoftAccount:ClientId"];
-                options.ClientSecret = Configuration["Authentication:MicrosoftAccount:ClientSecret"];
-            });
+            //app.UseMicrosoftAccountAuthentication(options =>
+            //{
+            //    options.ClientId = Configuration["Authentication:MicrosoftAccount:ClientId"];
+            //    options.ClientSecret = Configuration["Authentication:MicrosoftAccount:ClientSecret"];
+            //});
             //app.UseTwitterAuthentication(options =>
             //{
             //    options.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];

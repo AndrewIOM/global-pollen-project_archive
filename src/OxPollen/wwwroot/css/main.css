@@ -4,6 +4,7 @@
 */
 /* Global Pollen Project: Colour Palette */
 /* Bootstrap Customisations for OxPollen */
+@import url(../wwwroot/lib/bootstrap-social/bootstrap-social.css);
 body {
   padding-top: 70px;
   line-height: 1.8em; }
@@ -307,15 +308,6 @@ footer ul {
 .grain-grid {
   list-style: none;
   padding-left: 0; }
-  .grain-grid .delete {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background-color: white;
-    width: 30px;
-    height: 25px;
-    text-align: center;
-    font-size: 1.6em; }
   .grain-grid li {
     position: relative;
     width: 24%;
@@ -333,6 +325,15 @@ footer ul {
       bottom: 2px;
       right: 2px;
       background: lightgrey; }
+      .grain-grid li a .delete {
+        position: absolute;
+        right: 0;
+        top: 0;
+        background-color: white;
+        width: 30px;
+        height: 25px;
+        text-align: center;
+        font-size: 1.6em; }
       .grain-grid li a .img-container {
         height: 100%;
         width: 100%; }

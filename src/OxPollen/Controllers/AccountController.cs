@@ -19,7 +19,6 @@ namespace OxPollen.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
         private readonly OxPollenDbContext _applicationDbContext;
         private static bool _databaseChecked;
 
@@ -27,13 +26,11 @@ namespace OxPollen.Controllers
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             IEmailSender emailSender,
-            ISmsSender smsSender,
             OxPollenDbContext applicationDbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
-            _smsSender = smsSender;
             _applicationDbContext = applicationDbContext;
         }
 
@@ -238,7 +235,29 @@ namespace OxPollen.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new AppUser { UserName = model.Email, Email = model.Email };
+
+                //Process OxPollen organisation details
+                var org = _applicationDbContext.Organisations.FirstOrDefault(o => o.Name == model.Organisation);
+                if (org == null)
+                {
+                    org = new Organisation()
+                    {
+                        Name = model.Organisation
+                    };
+                    _applicationDbContext.Organisations.Add(org);
+                    _applicationDbContext.SaveChanges();
+                }
+
+                var user = new AppUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Title = model.Title,
+                    Organisation = org
+                };
+
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -247,6 +266,11 @@ namespace OxPollen.Controllers
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return RedirectToLocal(returnUrl);
+                        //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+                        //    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                        //return RedirectToAction("AwaitingEmailConfirmation");
                     }
                 }
                 AddErrors(result);
@@ -410,10 +434,6 @@ namespace OxPollen.Controllers
             if (model.SelectedProvider == "Email")
             {
                 await _emailSender.SendEmailAsync(await _userManager.GetEmailAsync(user), "Security Code", message);
-            }
-            else if (model.SelectedProvider == "Phone")
-            {
-                await _smsSender.SendSmsAsync(await _userManager.GetPhoneNumberAsync(user), message);
             }
 
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
