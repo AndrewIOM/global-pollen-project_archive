@@ -71,13 +71,14 @@ namespace OxPollen
 
             services.AddOptions();
             services.Configure<Options.AuthMessageSenderOptions>(Configuration);
+            services.Configure<Options.AzureOptions>(Configuration);
 
             // DI Services
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IIdentificationService, IdentificationService>();
             services.AddTransient<IGrainService, GrainService>();
-            services.AddTransient<IFileStoreService, ImageService>();
+            services.AddTransient<IFileStoreService, AzureImageService>();
             services.AddTransient<IReferenceService, ReferenceService>();
             services.AddTransient<ITaxonomyService, TaxonomyService>();
             services.AddTransient<ITaxonomyBackbone, GbifTaxonomyBackbone>();

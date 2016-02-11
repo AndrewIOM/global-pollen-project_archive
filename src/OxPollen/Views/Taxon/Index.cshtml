@@ -73,7 +73,10 @@
             <div class="col-md-6">
                 <div class="taxon-list-item">
                     <div class="img-container">
-                        <img src="/user-image-uploads/@taxon.ImageFilename" />
+                        @if (!string.IsNullOrEmpty(taxon.ImageFilename))
+                        {
+                            <img src="@taxon.ImageFilename" />
+                        }
                     </div>
                     <div class="taxon-details">
                         <a href="@Url.Action("View", new { id = @taxon.Id } )">

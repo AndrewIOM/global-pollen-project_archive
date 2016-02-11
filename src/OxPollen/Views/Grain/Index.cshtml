@@ -40,7 +40,7 @@
                     <li>
                         <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
                             <div class="img-container">
-                                <img src="\user-image-uploads\@grain.ThumbnailLocation" />
+                                <img src="@grain.ThumbnailLocation" />
                                 <div class="ribbon"><span>@grain.Bounty</span></div>
                                 <span class="Latitude">@grain.Latitude</span>
                                 <span class="Longitude">@grain.Longitude</span>
