@@ -21,7 +21,6 @@
 /// <reference path="lib/fabric/dist/fabric.min.js" />
 /// <reference path="lib/hammer.js/hammer.js" />
 /// <reference path="lib/jquery/dist/jquery.js" />
-/// <reference path="lib/jquery-csv/src/jquery.csv.js" />
 /// <reference path="lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" />
 /// <reference path="lib/leaflet/dist/leaflet-src.js" />
 /// <reference path="lib/leaflet-area-select/dist/Map.SelectArea.min.js" />
