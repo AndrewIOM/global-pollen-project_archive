@@ -71,13 +71,14 @@ namespace OxPollen
 
             services.AddOptions();
             services.Configure<Options.AuthMessageSenderOptions>(Configuration);
+            services.Configure<Options.AzureOptions>(Configuration);
 
             // DI Services
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IIdentificationService, IdentificationService>();
             services.AddTransient<IGrainService, GrainService>();
-            services.AddTransient<IFileStoreService, ImageService>();
+            services.AddTransient<IFileStoreService, AzureImageService>();
             services.AddTransient<IReferenceService, ReferenceService>();
             services.AddTransient<ITaxonomyService, TaxonomyService>();
             services.AddTransient<ITaxonomyBackbone, GbifTaxonomyBackbone>();
@@ -132,16 +133,16 @@ namespace OxPollen
             //    options.ClientId = Configuration["Authentication:Google:ClientId"];
             //    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
             //});
-            //app.UseMicrosoftAccountAuthentication(options =>
-            //{
-            //    options.ClientId = Configuration["Authentication:MicrosoftAccount:ClientId"];
-            //    options.ClientSecret = Configuration["Authentication:MicrosoftAccount:ClientSecret"];
-            //});
-            //app.UseTwitterAuthentication(options =>
-            //{
-            //    options.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
-            //    options.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
-            //});
+            app.UseMicrosoftAccountAuthentication(options =>
+            {
+                options.ClientId = Configuration["Authentication:MicrosoftAccount:ClientId"];
+                options.ClientSecret = Configuration["Authentication:MicrosoftAccount:ClientSecret"];
+            });
+            app.UseTwitterAuthentication(options =>
+            {
+                options.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
+                options.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
+            });
 
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>

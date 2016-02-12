@@ -24,7 +24,7 @@
             @if (!string.IsNullOrEmpty(Model.IdentifiedSpecies))
             { <p>Species: @Model.IdentifiedSpecies</p> }
             @if (string.IsNullOrEmpty(Model.IdentifiedFamily) && string.IsNullOrEmpty(Model.IdentifiedGenus
-                                                                        ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
+                                                                                    ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
             {
                 <p>Unidentified</p>
             }
@@ -63,7 +63,7 @@
                 <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
                     @foreach (var image in Model.ImageUrls)
                     {
-                        <a><img src="\user-image-uploads\@image" onclick="return changeImage(this.src);" style="width:auto; height:5em;display:inline-block" /></a>
+                        <a><img src="@image" onclick="return changeImage(this.src);" style="width:auto; height:5em;display:inline-block" /></a>
                     }
                 </div>
             </div>
@@ -122,10 +122,11 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <label>Number of IDs</label>
+                        <label>Share</label>
                     </div>
                     <div class="col-md-8">
-                        @Model.Identifications.Count
+                        <a href="https://twitter.com/intent/tweet?button_hashtag=GlobalPollenProject&text=Help%20identify%20this%20pollen%20grain!" class="twitter-hashtag-button" url="location.href">Tweet this grain</a>
+                        <script>!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https'; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = p + '://platform.twitter.com/widgets.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'twitter-wjs');</script>
                     </div>
                 </div>
             </div>
@@ -140,52 +141,52 @@
                     @if (Model.AlreadyIdentifiedByUser)
                 {
                         <p>You identified this grain as <strong>@Model.UserIdentification.Family @Model.UserIdentification.Genus @Model.UserIdentification.Species</strong> on @Model.UserIdentification.Time</p>
-                                <p>Thank you for your identification.</p>
-                                <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
+                        <p>Thank you for your identification.</p>
+                        <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
                     }
                     else
                     {
                         <h4>Can you identify this grain?</h4>
-                                @using (Html.BeginForm("Identify", "Grain", FormMethod.Post, new { @class = "form" }))
+                        @using (Html.BeginForm("Identify", "Grain", FormMethod.Post, new { @class = "form" }))
                     {
-                                    @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
-                                    @Html.HiddenFor(m => m.GrainId)
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <p>
-                                                I can identify this grain to <select asp-for="TaxonomicResolution" class="form-control input-sm inline-dropdown" id="TaxonomicResolution">
-                                                    <option value="3">Species</option>
-                                                    <option value="2">Genus</option>
-                                                    <option value="1">Family</option>
-                                                </select> level.
-                                            </p>
+                            @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
+                            @Html.HiddenFor(m => m.GrainId)
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>
+                                        I can identify this grain to <select asp-for="TaxonomicResolution" class="form-control input-sm inline-dropdown" id="TaxonomicResolution">
+                                            <option value="3">Species</option>
+                                            <option value="2">Genus</option>
+                                            <option value="1">Family</option>
+                                        </select> level.
+                                    </p>
 
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="updateList(this, 'Family');" placeholder="Family" />
-                                            <ul class="dropdown-menu autocomplete" id="FamilyList" style="display:none"></ul>
-                                            <span asp-validation-for="Family" class="text-danger"></span>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="updateList(this, 'Genus');" placeholder="Genus" />
-                                            <ul class="dropdown-menu autocomplete" id="GenusList" style="display:none"></ul>
-                                            <span asp-validation-for="Genus" class="text-danger"></span>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="updateList(this, 'Species');" placeholder="Species" />
-                                            <ul class="dropdown-menu autocomplete" id="SpeciesList" style="display:none"></ul>
-                                            <span asp-validation-for="Species" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <br />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="updateList(this, 'Family');" placeholder="Family" />
+                                    <ul class="dropdown-menu autocomplete" id="FamilyList" style="display:none"></ul>
+                                    <span asp-validation-for="Family" class="text-danger"></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="updateList(this, 'Genus');" placeholder="Genus" />
+                                    <ul class="dropdown-menu autocomplete" id="GenusList" style="display:none"></ul>
+                                    <span asp-validation-for="Genus" class="text-danger"></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="updateList(this, 'Species');" placeholder="Species" />
+                                    <ul class="dropdown-menu autocomplete" id="SpeciesList" style="display:none"></ul>
+                                    <span asp-validation-for="Species" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <br />
                                     <div class="row">
                                         <div class="col-md-12">
                                             <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
                                         </div>
                                     </div>
-                                }
+                        }
                     }
                 }
                 else
