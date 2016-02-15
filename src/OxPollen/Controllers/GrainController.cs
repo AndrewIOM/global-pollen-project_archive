@@ -60,7 +60,7 @@ namespace OxPollen.Controllers
             if (!string.IsNullOrEmpty(result.ImageTwo)) filesToUpload.Add(result.ImageTwo);
             if (!string.IsNullOrEmpty(result.ImageThree)) filesToUpload.Add(result.ImageThree);
             if (!string.IsNullOrEmpty(result.ImageFour)) filesToUpload.Add(result.ImageFour);
-            var uploadedFiles = _uploadService.Upload(filesToUpload);
+            var uploadedFiles = _uploadService.UploadBase64Image(filesToUpload);
 
             AppUser currentUser = await UserManager.FindByNameAsync(User.GetUserName());
             var grain = new Grain()
@@ -77,8 +77,8 @@ namespace OxPollen.Controllers
             {
                 grain.Images.Add(new GrainImage()
                 {
-                    FileName = file.Item1,
-                    FileNameThumbnail = file.Item2
+                    FileName = file.Url,
+                    FileNameThumbnail = file.ThumbnailUrl
                 });
             }
             _grainService.Add(grain);

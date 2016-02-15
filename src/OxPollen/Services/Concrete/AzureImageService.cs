@@ -26,38 +26,33 @@ namespace OxPollen.Services.Concrete
             Configure(optionsAccessor.Value.AzureConnectionString, optionsAccessor.Value.AzureImageContainer);
         }
 
-        public List<Tuple<string, string>> Upload(List<string> base64Files)
+        public SavedImage UploadBase64Image(string base64)
         {
-            var photoUrls = new List<Tuple<string, string>>();
+            var trimmed = base64.Replace(@"data:image/png;base64,", "");
+            byte[] bytes = Convert.FromBase64String(trimmed);
+            var guid = Guid.NewGuid();
+            var filename = guid + "." + "png";
+            var filenameThumb = guid + "-thumb." + "png";
+            using (var stream = new MemoryStream(bytes))
+            {
+                var imageUri = SaveImage(800, stream, filename);
+                var thumbUri = SaveImage(200, stream, filenameThumb);
+                return new SavedImage(imageUri, thumbUri);
+            }
+        }
+
+        public List<SavedImage> UploadBase64Image(List<string> base64Files)
+        {
+            var photoUrls = new List<SavedImage>();
             foreach (var file in base64Files)
             {
-                var trimmed = file.Replace(@"data:image/png;base64,", "");
-                byte[] bytes = Convert.FromBase64String(trimmed);
-                var guid = Guid.NewGuid();
-                var filename = guid + "." + "png";
-                var filenameThumb = guid + "-thumb." + "png";
-                using (var stream = new MemoryStream(bytes))
-                {
-                    var imageUri = SaveImage(800, stream, filename);
-                    var thumbUri = SaveImage(200, stream, filenameThumb);
-                    photoUrls.Add(new Tuple<string, string>(imageUri, thumbUri));
-                }
+                var saved = UploadBase64Image(file);
+                photoUrls.Add(saved);
             }
             return photoUrls;
         }
 
-        public List<Tuple<string, string>> Upload(IList<IFormFile> files)
-        {
-            var photoUrls = new List<Tuple<string, string>>();
-            foreach (var file in files)
-            {
-                var uploadedFile = Upload(file);
-                if (!string.IsNullOrEmpty(uploadedFile.Item1)) photoUrls.Add(uploadedFile);
-            }
-            return photoUrls;
-        }
-
-        public Tuple<string, string> Upload(IFormFile file)
+        public SavedImage Upload(IFormFile file)
         {
             var extension = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.TrimStart('"').TrimEnd('"').Split('.').Last();
             if (!IsAcceptedExtension(extension)) return null;
@@ -68,8 +63,19 @@ namespace OxPollen.Services.Concrete
             {
                 var imageUri = SaveImage(800, stream, filename);
                 var thumbUri = SaveImage(200, stream, filenameThumb);
-                return new Tuple<string, string>(filename, filenameThumb);
+                return new SavedImage(filename, filenameThumb);
             }
+        }
+
+        public List<SavedImage> Upload(IList<IFormFile> files)
+        {
+            var photoUrls = new List<SavedImage>();
+            foreach (var file in files)
+            {
+                var uploadedFile = Upload(file);
+                photoUrls.Add(uploadedFile);
+            }
+            return photoUrls;
         }
 
         private bool IsAcceptedExtension(string extension)
@@ -106,13 +112,6 @@ namespace OxPollen.Services.Concrete
             }
         }
 
-        /// <summary>
-        /// Downscales the image and saves to Azure blob storage. Returns Azure URL.
-        /// </summary>
-        /// <param name="size"></param>
-        /// <param name="stream"></param>
-        /// <param name="saveFilePath"></param>
-        /// <returns></returns>
         private string SaveImage(int size, Stream stream, string saveFilePath)
         {
             double newHeight = 0;

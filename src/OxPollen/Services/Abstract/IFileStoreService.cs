@@ -1,15 +1,27 @@
 ﻿using Microsoft.AspNet.Http;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OxPollen.Services.Abstract
 {
     public interface IFileStoreService
     {
-        Tuple<string, string> Upload(IFormFile file);
-        List<Tuple<string,string>> Upload(IList<IFormFile> files);
-        List<Tuple<string,string>> Upload(List<string> base64Files);
+        SavedImage Upload(IFormFile file);
+        List<SavedImage> Upload(IList<IFormFile> files);
+
+        SavedImage UploadBase64Image(string base64File);
+        List<SavedImage> UploadBase64Image(List<string> base64Files);
     }
+
+    public class SavedImage
+    {
+        public string Url { get; set; }
+        public string ThumbnailUrl { get; set; }
+
+        public SavedImage(string url, string thumbnailUrl)
+        {
+            Url = url;
+            ThumbnailUrl = thumbnailUrl;
+        }
+    }
+
 }

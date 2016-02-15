@@ -8,9 +8,10 @@ using OxPollen.Data.Concrete;
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    partial class OxPollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160213171552_focusImages")]
+    partial class focusImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")

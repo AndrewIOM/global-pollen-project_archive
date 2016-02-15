@@ -13,5 +13,13 @@ namespace OxPollen.Models
 
         //Navigation
         public virtual Grain Grain { get; set; }
+
+        //Focus Image
+        public bool IsFocusImage { get; set; }
+        public string FocusLowUrl { get; set; }
+        public string FocusMedLowUrl { get; set; }
+        public string FocusMedUrl { get; set; }
+        public string FocusMedHighUrl { get; set; }
+        public string FocusHighUrl { get; set; }
     }
 }

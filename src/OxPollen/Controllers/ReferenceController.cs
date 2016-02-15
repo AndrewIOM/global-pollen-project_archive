@@ -168,7 +168,7 @@ namespace OxPollen.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            var uploadedFiles = _fileService.Upload(result.Images);
+            var standardImages = _fileService.UploadBase64Image(result.Images);
             var toSave = new ReferenceGrain()
             {
                 Collection = collection,
@@ -180,12 +180,33 @@ namespace OxPollen.Controllers
                 Images = new List<GrainImage>()
             };
 
-            foreach (var file in uploadedFiles)
+            foreach (var file in standardImages)
             {
                 toSave.Images.Add(new GrainImage()
                 {
-                    FileName = file.Item1,
-                    FileNameThumbnail = file.Item2
+                    FileName = file.Url,
+                    FileNameThumbnail = file.ThumbnailUrl,
+                    IsFocusImage = false
+                });
+            }
+
+            foreach (var image in result.FocusImages)
+            {
+                var low = _fileService.UploadBase64Image(image.FocusLowUrl);
+                var medLow = _fileService.UploadBase64Image(image.FocusMedLowUrl);
+                var med = _fileService.UploadBase64Image(image.FocusMedUrl);
+                var medHigh = _fileService.UploadBase64Image(image.FocusMedHighUrl);
+                var high = _fileService.UploadBase64Image(image.FocusHighUrl);
+                toSave.Images.Add(new GrainImage()
+                {
+                    FileName = med.Url,
+                    FileNameThumbnail = med.ThumbnailUrl,
+                    IsFocusImage = true,
+                    FocusLowUrl = low.Url,
+                    FocusMedLowUrl = medLow.Url,
+                    FocusMedUrl = med.Url,
+                    FocusMedHighUrl = medHigh.Url,
+                    FocusHighUrl = high.Url
                 });
             }
 

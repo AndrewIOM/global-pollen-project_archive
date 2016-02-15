@@ -14,9 +14,13 @@
     <br />
 }
 
+<link rel="stylesheet" href="~/lib/nouislider/distribute/nouislider.min.css"> @* TODO Move this *@
+
 @section scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script type="text/javascript" src="~/js/reference/AddGrain.js"></script>
+    <script src="~/lib/nouislider/distribute/nouislider.min.js"></script>
+    <script type="text/javascript" src="~/js/reference/AddFocusImage.js"></script>
 }
 
 <form id="addGrainForm" name="addGrain" method="post" onsubmit="return uploadFile()" action="">
@@ -84,15 +88,33 @@
                         <div role="tabpanel" class="tab-pane" id="paleo">
                             <br />
                             <p>Focus Images enable users to scroll through an image as if moving through the focus on a microscope.</p>
-                            <p><em>Coming Soon</em></p>
+                            <p>You must upload 5 images in sequence for a Focus Image. Add the prefixes 'f-1' through 'f-5' to the beginning of the file names.</p>
+                            <div class="row">
+                                <div class="fileUpload btn btn-default">
+                                    <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span><span> Upload New Image Set</span>
+                                    <input id="focus-upload-button" type="file" multiple="multiple" class="upload" onchange="handleFocusFrames(this);" />
+                                </div>
+                                <a id="focus-add-button" class="btn btn-default" onclick="confirmFocusImage()">Add Focus Image</a>
+                            </div>
+                            <p id="focus-upload-error"></p>
+                            <div id="focus-preview">
+                                <div class="zoom-canvas-container" style="position:relative">
+                                    <canvas id="focusImagePreview" class="zoom-canvas"></canvas>
+                                    <div id="focusSlider" style="display:inline-block;height:10em;position:absolute;bottom:0;right:0"></div>
+                                    <div id="focus-images" hidden="hidden"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <label>Current Images</label>
+            <label>Static Images:</label>
             <ul id="images" class="grain-grid"></ul>
+            <hr />
+            <label>Focus Images:</label>
+            <ul id="focusImages" class="grain-grid"></ul>
         </div>
     </div>
     <hr />

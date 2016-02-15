@@ -1,5 +1,4 @@
 ﻿$(document).ready(function () {
-    //Setup
     var canvas = document.getElementById('displayCanvas'); //<canvas>
     var image = new Image;
     var ctx = canvas.getContext('2d');
@@ -8,10 +7,6 @@
     image.src = firstImage.attr("src");
     respondCanvas();
     $(window).resize(respondCanvas);
-
-    //Zooming
-    //canvas.addEventListener('DOMMouseScroll', handleScroll, false);
-    //canvas.addEventListener('mousewheel', handleScroll, false);
 
     function respondCanvas() {
         canvas.width = $(container).width(); //max width
@@ -52,9 +47,8 @@
         imgObj.src = image.src;
     }
 
-    changeImage = function(src) {
+    changeImage = function (src) {
         image.src = src;
         redraw();
     }
-
 });

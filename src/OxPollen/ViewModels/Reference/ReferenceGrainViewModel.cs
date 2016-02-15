@@ -21,21 +21,46 @@ namespace OxPollen.ViewModels.Reference
         public double? MaxGrainSize { get; set; }
 
         public List<string> Images { get; set; }
+        public List<FocusImageViewModel> FocusImages { get; set; }
+
+        public ReferenceGrainViewModel()
+        {
+            Images = new List<string>();
+            FocusImages = new List<FocusImageViewModel>();
+        }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Images == null)
+            //Image Total
+            var imageTotal = 0;
+            if (Images != null)
+            {
+                imageTotal += Images.Count;
+            }
+            if (FocusImages != null)
+            {
+                imageTotal += FocusImages.Count;
+            }
+            if (imageTotal == 0)
             {
                 yield return new ValidationResult("Your must upload at least one image", new[] { "Images" });
             }
-            else
+
+            //Focus Image Format
+            if (FocusImages != null)
             {
-                if (Images.Count == 0)
+                foreach (var image in FocusImages)
                 {
-                    yield return new ValidationResult("Your must upload at least one image", new[] { "Images" });
+                    if (string.IsNullOrEmpty(image.FocusHighUrl) || string.IsNullOrEmpty(image.FocusLowUrl)
+                        || string.IsNullOrEmpty(image.FocusMedHighUrl) || string.IsNullOrEmpty(image.FocusMedLowUrl)
+                        || string.IsNullOrEmpty(image.FocusMedUrl))
+                    {
+                        yield return new ValidationResult("Focus Images must contain 5 focus levels", new[] { "FocusImages" });
+                    }
                 }
             }
 
+            //Taxonomy
             if (string.IsNullOrEmpty(Family))
             {
                 yield return new ValidationResult("Family is required", new[] { "Family" });
@@ -74,5 +99,14 @@ namespace OxPollen.ViewModels.Reference
                 }
             }
         }
+    }
+
+    public class FocusImageViewModel
+    {
+        public string FocusLowUrl { get; set; }
+        public string FocusMedLowUrl { get; set; }
+        public string FocusMedUrl { get; set; }
+        public string FocusMedHighUrl { get; set; }
+        public string FocusHighUrl { get; set; }
     }
 }

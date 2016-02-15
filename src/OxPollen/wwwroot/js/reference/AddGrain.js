@@ -81,6 +81,7 @@ function uploadFile(button) {
     var form = document.getElementById('addGrainForm');
     var formData = new FormData(form);
 
+    //Static Images
     var images = document.getElementById('images').getElementsByTagName('textarea');
     var imgsB64 = [];
     for (var i = 0; i < images.length; i++) {
@@ -88,6 +89,18 @@ function uploadFile(button) {
         imgEncoded = imgEncoded.slice(imgEncoded.indexOf(',') + 1);
         imgsB64.push(imgEncoded);
         formData.append('Images[' + i + ']', imgEncoded);
+    }
+
+    //Focus Images
+    var focusImageFrames = document.getElementById('focusImages').getElementsByTagName('img');
+    var focusImages = [];
+    var focusImageCount = 0;
+    for (var i = 0; i < focusImageFrames.length; i += 5) {
+        formData.append('FocusImages[' + focusImageCount + '].FocusLowUrl', focusImageFrames[i].src);
+        formData.append('FocusImages[' + focusImageCount + '].FocusMedLowUrl', focusImageFrames[i+1].src);
+        formData.append('FocusImages[' + focusImageCount + '].FocusMedUrl', focusImageFrames[i+2].src);
+        formData.append('FocusImages[' + focusImageCount + '].FocusMedHighUrl', focusImageFrames[i+3].src);
+        formData.append('FocusImages[' + focusImageCount + '].FocusHighUrl', focusImageFrames[i+4].src);
     }
 
     //Progress Bar
@@ -142,5 +155,22 @@ function uploadFile(button) {
     }
 
     ajax.open("POST", "/Reference/AddGrain/" + collectionId);
+    console.log(formData);
     ajax.send(formData);
+}
+
+
+//Focus Image Upload
+function focusFramesUpload(input) {
+    var d = document.getElementById("images");
+    if (input.files.length) {
+        var validImages = 0;
+        for (var i = 0; i < input.files.length; i++) {
+            if (/\.(jpe?g|png|gif)$/i.test(input.files[i].name)) {
+                validImages++;
+            }
+        }
+        if (validImages != 5) return; //TODO Add Error
+
+    }
 }
