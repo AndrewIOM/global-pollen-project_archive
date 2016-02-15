@@ -51,7 +51,6 @@
                             <li><a asp-action="Index" asp-controller="Reference">Browse</a></li>
                             @if (User.IsInRole("Digitise"))
                             {
-                                <li><a asp-action="Index" asp-controller="Reference">My Digitised Collections</a></li>
                                 <li><a asp-action="AddCollection" asp-controller="Reference">Add New Collection</a></li>
                             }
                             else

@@ -7,7 +7,9 @@
 }
 
 @section scripts {
-    <script type="text/javascript" src="~/js/Grain/ImageZoomer.js"></script>
+    <link rel="stylesheet" href="~/lib/nouislider/distribute/nouislider.min.css"> @* TODO Move this *@
+    <script src="~/lib/nouislider/distribute/nouislider.min.js"></script>
+    <script type="text/javascript" src="~/js/reference/GrainImageCanvas.js"></script>
 }
 
 @* Header *@
@@ -78,12 +80,27 @@
             <div class="panel-body">
                 <div class="zoom-canvas-container">
                     <canvas id="displayCanvas" class="zoom-canvas"></canvas>
+                    <div id="focusSlider"></div>
                 </div>
                 <hr />
                 <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
                     @foreach (var image in Model.Images)
                     {
-                        <a><img src="@image.FileName" onclick="return changeImage(this.src);" style="width:auto; height:5em;display:inline-block" /></a>
+                        @if (image.IsFocusImage)
+                        {
+                            <a onclick="return changeImage(this);" style="position:absolute;height:5em;">
+                                <img src="@image.FocusLowUrl" hidden="hidden" />
+                                <img src="@image.FocusMedLowUrl" hidden="hidden" />
+                                <img src="@image.FocusMedUrl" style="width:auto; height:5em;display:inline-block" />
+                                <img src="@image.FocusMedHighUrl" hidden="hidden" />
+                                <img src="@image.FocusHighUrl" hidden="hidden" />
+                                <span class="glyphicon glyphicon-eye-open focus-icon"></span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a onclick="return changeImage(this);"><img src="@image.FileName" style="width:auto; height:5em;display:inline-block" /></a>
+                        }
                     }
                 </div>
             </div>
@@ -91,3 +108,21 @@
     </div>
 </div>
 
+@* TODO: Move Style *@
+<style>
+    .focus-icon {
+        top: 2.7em;
+        right: 0.2em;
+        position: absolute;
+        background-color: white;
+        padding: 0.1em;
+        font-size: 1.2em;
+    }
+
+    #focusSlider {
+        height:15em;
+        position:absolute;
+        top:7em;
+        right:0;
+    }
+</style>

@@ -11,6 +11,7 @@
 /// <reference path="js/reference/addfocusimage.js" />
 /// <reference path="js/reference/addgrain.js" />
 /// <reference path="js/reference/addreferenceslides.js" />
+/// <reference path="js/reference/imagedisplay.js" />
 /// <reference path="js/site.js" />
 /// <reference path="js/statistics/locations.js" />
 /// <reference path="js/taxon/pastdistribution.js" />
