@@ -71,11 +71,11 @@
                 <div class="panel-body">
 
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active"><a href="#modern" aria-controls="modern" role="tab" data-toggle="tab">Single Images</a></li>
-                        <li role="presentation"><a href="#paleo" aria-controls="paleo" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-eye-open"></span> Focus Image</a></li>
+                        <li role="presentation" class="active"><a href="#single" aria-controls="single" role="tab" data-toggle="tab">Single Images</a></li>
+                        <li role="presentation"><a href="#focus" aria-controls="focus" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-eye-open"></span> Focus Image</a></li>
                     </ul>
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="modern">
+                        <div role="tabpanel" class="tab-pane active" id="single">
                             <br />
                             <p>Use Single Images if a fixed camera setup is not available. </p>
                             <div class="row">
@@ -85,7 +85,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="paleo">
+                        <div role="tabpanel" class="tab-pane" id="focus">
                             <br />
                             <p>Focus Images enable users to scroll through an image as if moving through the focus on a microscope.</p>
                             <p>You must upload 5 images in sequence for a Focus Image. Add the prefixes 'f-1' through 'f-5' to the beginning of the file names.</p>
@@ -100,7 +100,7 @@
                             <div id="focus-preview">
                                 <div class="zoom-canvas-container" style="position:relative">
                                     <canvas id="focusImagePreview" class="zoom-canvas"></canvas>
-                                    <div id="focusSlider" style="display:inline-block;height:10em;position:absolute;bottom:0;right:0"></div>
+                                    <div id="focusSlider" style="display:inline-block;height:10em;position:absolute;top:4em;left:0"></div>
                                     <div id="focus-images" hidden="hidden"></div>
                                 </div>
                             </div>

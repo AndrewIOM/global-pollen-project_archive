@@ -11,6 +11,8 @@ $(document).ready(function () {
     slider = document.getElementById('focusSlider');
     noUiSlider.create(slider, {
         start: [1],
+        step:1,
+        tooltips:true,
         range: {
             'min': [1],
             'max': [5]
@@ -83,7 +85,7 @@ function confirmFocusImage() {
 //Canvas Functions
 function respondCanvas() {
     canvas.width = 400;//$('#zoom-canvas-container').width(); //max width
-    canvas.height = 250;//$('#zoom-canvas-container').height(); //max height
+    canvas.height = 400;//$('#zoom-canvas-container').height(); //max height
     redraw();
 }
 
