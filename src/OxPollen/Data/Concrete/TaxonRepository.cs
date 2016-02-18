@@ -42,7 +42,7 @@ namespace OxPollen.Data.Concrete
         public IEnumerable<Taxon> GetAll()
         {
             return _context.Taxa
-                .Include(m => m.ChildTaxa);
+                .Include(m => m.ChildTaxa).Include(m => m.ParentTaxa);
         }
 
         public Taxon GetById(int id)

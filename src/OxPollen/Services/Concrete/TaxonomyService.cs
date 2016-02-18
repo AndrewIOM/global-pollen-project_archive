@@ -41,10 +41,12 @@ namespace OxPollen.Services.Concrete
                 }
             }
 
+            if (familyTaxon == null) return;
             if (!string.IsNullOrEmpty(genus))
             {
                 genus = FirstCharToUpper(genus);
-                genusTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus && m.Rank == Taxonomy.Genus).FirstOrDefault();
+                genusTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus 
+                    && m.Rank == Taxonomy.Genus && m.ParentTaxa.LatinName == family).FirstOrDefault();
                 if (genusTaxon == null)
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Genus,
@@ -63,10 +65,12 @@ namespace OxPollen.Services.Concrete
                 }
             }
 
+            if (genusTaxon == null) return;
             if (!string.IsNullOrEmpty(species) && !string.IsNullOrEmpty(genus))
             {
                 species = FirstCharToLower(species);
-                speciesTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus + " " + species && m.Rank == Taxonomy.Species).FirstOrDefault();
+                speciesTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus + " " + species && m.Rank == Taxonomy.Species
+                    && m.ParentTaxa.LatinName == genus).FirstOrDefault();
                 if (speciesTaxon == null)
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
@@ -118,8 +122,8 @@ namespace OxPollen.Services.Concrete
         public IEnumerable<ReferenceGrain> GetReferenceGrains(Taxon taxon)
         {
             IEnumerable<ReferenceGrain> result = new List<ReferenceGrain>();
-            if (taxon.Rank == Taxonomy.Species) result = _uow.RefGrainRepository.Find(m => m.Genus + " " + m.Species == taxon.LatinName);
-            else if (taxon.Rank == Taxonomy.Genus) result = _uow.RefGrainRepository.Find(m => m.Genus == taxon.LatinName);
+            if (taxon.Rank == Taxonomy.Species) result = _uow.RefGrainRepository.Find(m => m.Genus + " " + m.Species == taxon.LatinName && m.Genus == taxon.ParentTaxa.LatinName);
+            else if (taxon.Rank == Taxonomy.Genus) result = _uow.RefGrainRepository.Find(m => m.Genus == taxon.LatinName && m.Family == taxon.ParentTaxa.LatinName);
             else result = _uow.RefGrainRepository.Find(m => m.Family == taxon.LatinName);
             return result;
         }
@@ -127,8 +131,8 @@ namespace OxPollen.Services.Concrete
         public IEnumerable<Grain> GetUserGrains(Taxon taxon)
         {
             IEnumerable<Grain> result = new List<Grain>();
-            if (taxon.Rank == Taxonomy.Species) result = _uow.GrainRepository.Find(m => m.Genus + " " + m.Species == taxon.LatinName);
-            else if (taxon.Rank == Taxonomy.Genus) result = _uow.GrainRepository.Find(m => m.Genus == taxon.LatinName);
+            if (taxon.Rank == Taxonomy.Species) result = _uow.GrainRepository.Find(m => m.Genus + " " + m.Species == taxon.LatinName && m.Genus == taxon.ParentTaxa.LatinName);
+            else if (taxon.Rank == Taxonomy.Genus) result = _uow.GrainRepository.Find(m => m.Genus == taxon.LatinName && m.Family == taxon.ParentTaxa.LatinName);
             else result = _uow.GrainRepository.Find(m => m.Family == taxon.LatinName);
             return result;
         }

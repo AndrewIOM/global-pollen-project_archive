@@ -177,6 +177,7 @@ namespace OxPollen.Controllers
                 Species = result.Species,
                 SubmittedBy = _userService.GetById(User.GetUserId()),
                 TimeAdded = DateTime.Now,
+                MaxSizeNanoMetres = result.MaxGrainSize.Value,
                 Images = new List<GrainImage>()
             };
 
