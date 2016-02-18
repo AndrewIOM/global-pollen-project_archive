@@ -21,11 +21,7 @@ $('document').ready(function () {
     //Error Handling
     neotomaId = $('#NeotomaId').val();
     if (neotomaId == 0) {
-        var neotomaWarning = document.getElementById('neotoma-warning');
         var unavailableDiv = document.getElementById('neotoma-map-unavailable');
-        var warningsContainer = document.getElementById('warnings-container');
-        warningsContainer.style.display = '';
-        neotomaWarning.style.display = '';
         unavailableDiv.style.display = '';
     } else {
 

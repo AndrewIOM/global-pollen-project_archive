@@ -1,14 +1,6 @@
-﻿var gbifWarning = document.getElementById('gbif-warning');
-var gbifDescWarning = document.getElementById('gbif-warning-desc');
-var warningsContainer = document.getElementById('warnings-container');
-
-$('document').ready(function () {
+﻿$('document').ready(function () {
     var gbifId = $('#GbifId').val();
-    if (gbifId == 0) {
-        warningsContainer.style.display = '';
-        gbifWarning.style.display = '';
-        gbifDescWarning.style.display = '';
-    } else {
+    if (gbifId != 0) {
         populateGbifDescription(gbifId);
         gbifMap(gbifId);
     }
@@ -50,8 +42,6 @@ var populateGbifDescription = function (gbifId) {
         if (description == '') {
             holder.innerHTML = 'Not Available';
             sourceHolder.innerHTML = 'Source: None Available';
-            warningsContainer.style.display = '';
-            gbifDescWarning.style.display = '';
         } else {
             holder.innerHTML = description;
             sourceHolder.innerHTML = 'Source: ' + source;
