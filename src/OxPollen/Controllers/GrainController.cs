@@ -122,18 +122,6 @@ namespace OxPollen.Controllers
         [HttpPost]
         public async Task<IActionResult> Identify(IdentificationViewModel result)
         {
-            //Vadiation
-            if (result.TaxonomicResolution == Taxonomy.Family && string.IsNullOrEmpty(result.Family))
-                ModelState.AddModelError("Family", "You must specify a family name");
-            if (result.TaxonomicResolution == Taxonomy.Genus && string.IsNullOrEmpty(result.Genus))
-                ModelState.AddModelError("Genus", "You must specify a genus name");
-            if (result.TaxonomicResolution == Taxonomy.Species && (string.IsNullOrEmpty(result.Species) || string.IsNullOrEmpty(result.Genus)))
-                ModelState.AddModelError("Species", "You must enter both the genus and species");
-            if (!_taxonomy.IsValidTaxon(result.TaxonomicResolution, result.Family, result.Genus, result.Species))
-            {
-                ModelState.AddModelError("Family", "The taxon specified is not present in the taxonomic backbone. Check your spellings and try again.");
-            }
-
             var record = _grainService.GetById(result.GrainId);
             Identification myIdentification = null;
             if (record != null)
@@ -141,6 +129,11 @@ namespace OxPollen.Controllers
                 myIdentification = _idService.GetByUser(User.GetUserId())
                     .FirstOrDefault(m => m.Grain.Id == result.GrainId);
                 if (myIdentification != null) ModelState.AddModelError("User", "You have already identified this grain, sorry!");
+            }
+
+            if (!_taxonomy.IsValidTaxon(result.TaxonomicResolution, result.Family, result.Genus, result.Species))
+            {
+                ModelState.AddModelError("Family", "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again");
             }
 
             if (ModelState.ErrorCount > 0)

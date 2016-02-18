@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OxPollen.ViewModels
 {
-    public class IdentificationViewModel
+    public class IdentificationViewModel : IValidatableObject
     {
         public int GrainId { get; set; }
         public DateTime TimeAdded { get; set; }
@@ -31,5 +31,47 @@ namespace OxPollen.ViewModels
         public string Genus { get; set; }
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "The name must be alphabetic only.")]
         public string Species { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            //Taxonomy
+            if (string.IsNullOrEmpty(Family))
+            {
+                yield return new ValidationResult("Family is required", new[] { "Family" });
+            }
+            if (TaxonomicResolution == Taxonomy.Family)
+            {
+                if (!string.IsNullOrEmpty(Genus))
+                {
+                    yield return new ValidationResult("You specified a Genus name for a Family ID. Check and resubmit.", new[] { "Genus" });
+                }
+                if (!string.IsNullOrEmpty(Species))
+                {
+                    yield return new ValidationResult("You specified a Species name for a Family ID. Check and resubmit.", new[] { "Species" });
+                }
+            }
+            else if (TaxonomicResolution == Taxonomy.Genus)
+            {
+                if (string.IsNullOrEmpty(Genus))
+                {
+                    yield return new ValidationResult("Genus is required for a Genus-rank ID.", new[] { "Genus" });
+                }
+                if (!string.IsNullOrEmpty(Species))
+                {
+                    yield return new ValidationResult("Species names are not valid when identifying to Genus level.", new[] { "Species" });
+                }
+            }
+            else if (TaxonomicResolution == Taxonomy.Species)
+            {
+                if (string.IsNullOrEmpty(Genus))
+                {
+                    yield return new ValidationResult("Genus is required for a Species-rank ID.", new[] { "Genus" });
+                }
+                if (string.IsNullOrEmpty(Species))
+                {
+                    yield return new ValidationResult("Species is required for a Species-rank ID.", new[] { "Species" });
+                }
+            }
+        }
     }
 }

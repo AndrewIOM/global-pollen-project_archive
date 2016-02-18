@@ -9,7 +9,7 @@
 }
 
 @section scripts {
-<script type="text/javascript" src="~/js/Grain/ImageZoomer.js"></script>
+    <script type="text/javascript" src="~/js/Grain/ImageZoomer.js"></script>
 }
 
 @* Header *@
@@ -24,7 +24,7 @@
             @if (!string.IsNullOrEmpty(Model.IdentifiedSpecies))
             { <p>Species: @Model.IdentifiedSpecies</p> }
             @if (string.IsNullOrEmpty(Model.IdentifiedFamily) && string.IsNullOrEmpty(Model.IdentifiedGenus
-                                                                                    ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
+                                                                                            ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
             {
                 <p>Unidentified</p>
             }
@@ -156,7 +156,7 @@
                                     <p>
                                         I can identify this grain to <select asp-for="TaxonomicResolution" class="form-control input-sm inline-dropdown" id="TaxonomicResolution">
                                             <option value="3">Species</option>
-                                            <option value="2">Genus</option>
+                                            <option selected="selected" value="2">Genus</option>
                                             <option value="1">Family</option>
                                         </select> level.
                                     </p>
@@ -181,11 +181,11 @@
                                 </div>
                             </div>
                             <br />
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
-                                        </div>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+                                </div>
+                            </div>
                         }
                     }
                 }
@@ -267,45 +267,44 @@
             var list = document.getElementById(rank + 'List');
             $('#' + rank + 'List').css('display', 'block');
             list.innerHTML = "";
-            if (!(data.length == 1 && data[0].canonicalName.toLowerCase() == document.getElementById(rank).value.toLowerCase())) {
-                for (var i = 0; i < data.length; i++) {
-                    if (i > 10) continue;
-                    var option = document.createElement('li');
-                    var link = document.createElement('a');
-                    option.appendChild(link);
-                    link.innerHTML = data[i].canonicalName;
-                    if (rank == 'Species' || rank == 'Genus') {
-                        var familySpan = document.createElement('span');
-                        familySpan.innerHTML = (data[i].family);
-                        familySpan.className = 'family-name';
-                        familySpan.style =
-                        link.appendChild(familySpan);
-                    }
-                    link.addEventListener('click', function (e) {
-                        var name = this.innerHTML.split('<')[0];
-                        if (rank == 'Species') {
-                            var species = name.split(' ')[1];
-                            $('#' + rank).val(species);
-                        } else {
-                            $('#' + rank).val(name);
-                        }
+            for (var i = 0; i < data.length; i++) {
+                if (i > 10) continue;
+                var option = document.createElement('li');
+                var link = document.createElement('a');
+                option.appendChild(link);
+                link.innerHTML = data[i].canonicalName;
 
-                        //Handle family name
-                        if (rank == 'Species' || rank == 'Genus') {
-                            var family = this.getElementsByClassName("family-name")[0].innerHTML;
-                            //If family is not unique, don't use in autofill
-                            if (family != 'undefined') ajaxHelper("http://api.gbif.org/v1/species/match?rank=Family&name=" + family, 'GET', 'jsonp').done(function (data2) {
-                                if (data2.matchType == 'EXACT') {
-                                    $('#Family').val(family);
-                                }
-                            });
-                        }
-                        $('#' + rank + 'List').fadeOut();
-                    });
-                    list.appendChild(option);
+                var matchCount = 0;
+                for (var j = 0; j < data.length; j++) {
+                    if (data[j].canonicalName == data[i].canonicalName) {
+                        matchCount++;
+                    }
+                };
+
+                if (rank == 'Species' || rank == 'Genus') {
+                    var familySpan = document.createElement('span');
+                    familySpan.innerHTML = (data[i].family + ',' + matchCount);
+                    familySpan.className = 'family-name';
+                    link.appendChild(familySpan);
                 }
-            } else {
-                $('#' + rank + 'List').fadeOut();
+                link.addEventListener('click', function (e) {
+                    var name = this.innerHTML.split('<')[0];
+                    if (rank == 'Species') {
+                        var species = name.split(' ')[1];
+                        $('#' + rank).val(species);
+                    } else {
+                        $('#' + rank).val(name);
+                    }
+
+                    //Autofill family name
+                    var family = this.getElementsByClassName("family-name")[0].innerHTML.split(',')[0];
+                    var matchCount = this.getElementsByClassName("family-name")[0].innerHTML.split(',')[1];
+                    if (matchCount == 1) {
+                        $('#Family').val(family);
+                    };
+                    $('#' + rank + 'List').fadeOut();
+                });
+                list.appendChild(option);
             }
             $('.family-name').css('display', 'none');
         });

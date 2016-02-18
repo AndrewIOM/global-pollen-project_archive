@@ -65,7 +65,7 @@ namespace OxPollen.Services.Concrete
 
             if (!string.IsNullOrEmpty(species) && !string.IsNullOrEmpty(genus))
             {
-                species = FirstCharToUpper(species);
+                species = FirstCharToLower(species);
                 speciesTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus + " " + species && m.Rank == Taxonomy.Species).FirstOrDefault();
                 if (speciesTaxon == null)
                 {
@@ -127,7 +127,7 @@ namespace OxPollen.Services.Concrete
         public IEnumerable<Grain> GetUserGrains(Taxon taxon)
         {
             IEnumerable<Grain> result = new List<Grain>();
-            if (taxon.Rank == Taxonomy.Species) result = _uow.GrainRepository.Find(m => m.Species == taxon.LatinName);
+            if (taxon.Rank == Taxonomy.Species) result = _uow.GrainRepository.Find(m => m.Genus + " " + m.Species == taxon.LatinName);
             else if (taxon.Rank == Taxonomy.Genus) result = _uow.GrainRepository.Find(m => m.Genus == taxon.LatinName);
             else result = _uow.GrainRepository.Find(m => m.Family == taxon.LatinName);
             return result;

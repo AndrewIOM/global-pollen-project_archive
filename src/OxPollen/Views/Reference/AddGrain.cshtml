@@ -145,7 +145,6 @@
     </div>
 </form>
 
-@* Autocomplete Suggest for Taxon Names (GBIF) *@
 <script type="text/javascript">
     function updateList(entryBox, rank) {
         var query = '';
@@ -160,45 +159,44 @@
             var list = document.getElementById(rank + 'List');
             $('#' + rank + 'List').css('display', 'block');
             list.innerHTML = "";
-            if (!(data.length == 1 && data[0].canonicalName.toLowerCase() == document.getElementById(rank).value.toLowerCase())) {
-                for (var i = 0; i < data.length; i++) {
-                    if (i > 10) continue;
-                    var option = document.createElement('li');
-                    var link = document.createElement('a');
-                    option.appendChild(link);
-                    link.innerHTML = data[i].canonicalName;
-                    if (rank == 'Species' || rank == 'Genus') {
-                        var familySpan = document.createElement('span');
-                        familySpan.innerHTML = (data[i].family);
-                        familySpan.className = 'family-name';
-                        familySpan.style =
-                        link.appendChild(familySpan);
-                    }
-                    link.addEventListener('click', function (e) {
-                        var name = this.innerHTML.split('<')[0];
-                        if (rank == 'Species') {
-                            var species = name.split(' ')[1];
-                            $('#' + rank).val(species);
-                        } else {
-                            $('#' + rank).val(name);
-                        }
+            for (var i = 0; i < data.length; i++) {
+                if (i > 10) continue;
+                var option = document.createElement('li');
+                var link = document.createElement('a');
+                option.appendChild(link);
+                link.innerHTML = data[i].canonicalName;
 
-                        //Handle family name
-                        if (rank == 'Species' || rank == 'Genus') {
-                            var family = this.getElementsByClassName("family-name")[0].innerHTML;
-                            //If family is not unique, don't use in autofill
-                            if (family != 'undefined') ajaxHelper("http://api.gbif.org/v1/species/match?rank=Family&name=" + family, 'GET', 'jsonp').done(function (data2) {
-                                if (data2.matchType == 'EXACT') {
-                                    $('#Family').val(family);
-                                }
-                            });
-                        }
-                        $('#' + rank + 'List').fadeOut();
-                    });
-                    list.appendChild(option);
+                var matchCount = 0;
+                for (var j = 0; j < data.length; j++) {
+                    if (data[j].canonicalName == data[i].canonicalName) {
+                        matchCount++;
+                    }
+                };
+
+                if (rank == 'Species' || rank == 'Genus') {
+                    var familySpan = document.createElement('span');
+                    familySpan.innerHTML = (data[i].family + ',' + matchCount);
+                    familySpan.className = 'family-name';
+                    link.appendChild(familySpan);
                 }
-            } else {
-                $('#' + rank + 'List').fadeOut();
+                link.addEventListener('click', function (e) {
+                    var name = this.innerHTML.split('<')[0];
+                    if (rank == 'Species') {
+                        var species = name.split(' ')[1];
+                        $('#' + rank).val(species);
+                    } else {
+                        $('#' + rank).val(name);
+                    }
+
+                    //Autofill family name
+                    var family = this.getElementsByClassName("family-name")[0].innerHTML.split(',')[0];
+                    var matchCount = this.getElementsByClassName("family-name")[0].innerHTML.split(',')[1];
+                    if (matchCount == 1) {
+                        $('#Family').val(family);
+                    };
+                    $('#' + rank + 'List').fadeOut();
+                });
+                list.appendChild(option);
             }
             $('.family-name').css('display', 'none');
         });
