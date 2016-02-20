@@ -11,6 +11,8 @@ using OxPollen;
 using OxPollen.Models;
 using OxPollen.Services;
 using OxPollen.ViewModels;
+using OxPollen.Services.Abstract;
+using OxPollen.Data.Concrete;
 
 namespace OxPollen.Controllers
 {
@@ -19,16 +21,68 @@ namespace OxPollen.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IUserService _userService;
+        private readonly OxPollenDbContext _dbContext; //TODO Remove
         private readonly IEmailSender _emailSender;
 
         public ManageController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IUserService userService,
+            OxPollenDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _userService = userService;
+            _dbContext = context;
+        }
+
+        [HttpGet]
+        public IActionResult ChangePublicProfile()
+        {
+            var currentUser = _userService.GetById(User.GetUserId());
+            var model = new ChangePublicProfileViewModel()
+            {
+                FirstName = currentUser.FirstName,
+                LastName = currentUser.LastName,
+                Organisation = currentUser.Organisation.Name,
+                Title = currentUser.Title
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult ChangePublicProfile(ChangePublicProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var currentUser = _userService.GetById(User.GetUserId());
+            currentUser.FirstName = model.FirstName;
+            currentUser.Title = model.Title;
+            currentUser.LastName = model.LastName;
+
+            var existingOrg = _userService.GetOrganisations().FirstOrDefault
+                (m => m.Name.Equals(model.Organisation, StringComparison.InvariantCultureIgnoreCase));
+            if (existingOrg == null)
+            {
+                var org = _dbContext.Organisations.Add(new Organisation()
+                {
+                    Name = model.Organisation
+                });
+                _dbContext.SaveChanges();
+                currentUser.Organisation = org.Entity;
+                _userService.Update(currentUser);
+            } else
+            {
+                currentUser.Organisation = existingOrg;
+                _userService.Update(currentUser);
+            }
+            return RedirectToAction("Index");
         }
 
         //
@@ -52,7 +106,9 @@ namespace OxPollen.Controllers
                 PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
                 TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
                 Logins = await _userManager.GetLoginsAsync(user),
-                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user)
+                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                FullName = user.FullName(),
+                Organisation = user.Organisation.Name
             };
 
             return View(model);
@@ -246,7 +302,7 @@ namespace OxPollen.Controllers
 
         private async Task<AppUser> GetCurrentUserAsync()
         {
-            return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
+            return _userService.GetById(User.GetUserId());
         }
 
         private IActionResult RedirectToLocal(string returnUrl)

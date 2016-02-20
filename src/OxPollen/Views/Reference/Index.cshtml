@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Physical Reference Collections";
-    ViewBag.Subtitle = "These collections have been digitised into OxPollen by organisations around the world";
+    ViewBag.Subtitle = "These collections have been digitised into the Global Pollen Project by organisations around the world";
 }
 
 @section homepageHeader {
@@ -32,13 +32,6 @@
             <div class="panel panel-primary">
                 <div class="panel-heading"><span class="glyphicon glyphicon-edit"></span> Digitisation Features</div>
                 <div class="panel-body">
-                    <p>To digitise a reference collection: </p>
-                    <ol>
-                        <li>Create a new reference collection in OxPollen to hold your local collection. </li>
-                        <li>Take images of each slide in your reference collection. You can take images of either an area of the slide (multiple grains), a single grain, or both!</li>
-                        <li>Save the images into a folder, with the file name in the format FAMILY_GENUS_SPECIES.jpg</li>
-                        <li>Use the batch-upload form to add all images at once.</li>
-                    </ol>
                     <a class="btn btn-default" role="button" href="@Url.Action("AddCollection")"><span class="glyphicon glyphicon-plus"></span> Add a New Collection</a>
                 </div>
             </div>
@@ -55,31 +48,18 @@
         }
         else
         {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Collection</th>
-                        <th>Organisation</th>
-                        <th>Description</th>
-                        <th>Digitised Taxa</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                @foreach (var collection in Model)
-                {
-                    <tr>
-                        <td>@collection.Name</td>
-                        <td>@collection.Institution, @collection.CountryCode</td>
-                        <td>@collection.Description</td>
-                        <td>@collection.Grains.Count</td>
-                        <td><a role="button" class="btn btn-primary" href="@Url.Action("Collection", new { id = @collection.Id } )">View Details</a></td>
-                        @if (User.IsInRole("Digitise") && collection.User.UserName == User.Identity.Name)
-                        {
-                            <td><a role="button" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this collection? This CANNOT be undone.')" href="@Url.Action("DeleteCollection", new { id = @collection.Id } )"><span class="glyphicon glyphicon-trash"></span> Delete Collection</a></td>
-                        }
-                    </tr>
-                }
-            </table>
-        }
+                <ul class="ref-collection-list">
+                    @foreach (var collection in Model)
+                    {
+                        <li>
+                            <a href="@Url.Action("Collection", new { id = @collection.Id } )">
+                                <h4>@collection.Name</h4>
+                            </a>
+                            <h6>@collection.Institution, @collection.CountryCode.</h6><h6>@collection.Grains.Count digitised slides</h6>
+                            <p class="region-label">@collection.FocusRegion</p>
+                        </li>
+                    }
+                </ul>
+            }
     </div>
 </div>

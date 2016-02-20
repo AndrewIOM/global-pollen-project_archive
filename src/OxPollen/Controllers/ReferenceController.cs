@@ -110,6 +110,54 @@ namespace OxPollen.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Digitise")]
+        public IActionResult EditCollection(int id)
+        {
+            var collection = _refService.GetCollectionById(id);
+            if (collection == null)
+            {
+                return HttpBadRequest();
+            }
+            if (collection.User.Id != User.GetUserId())
+            {
+                return HttpUnauthorized();
+            }
+
+            return View("AddCollection", collection);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Digitise")]
+        public IActionResult EditCollection(ReferenceCollection model)
+        {
+            var collection = _refService.GetCollectionById(model.Id);
+            if (collection == null)
+            {
+                return HttpBadRequest();
+            }
+            if (collection.User.Id != User.GetUserId())
+            {
+                return HttpUnauthorized();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("AddCollection", model);
+            }
+
+            collection.CountryCode = model.CountryCode;
+            collection.Description = model.Description;
+            collection.FocusRegion = model.FocusRegion;
+            collection.Institution = model.Institution;
+            collection.Name = model.Name;
+            collection.WebAddress = model.WebAddress;
+            collection.ContactEmail = model.ContactEmail;
+
+            _refService.UpdateCollection(collection);
+            return RedirectToAction("Collection", new { id = model.Id });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Digitise")]
         public IActionResult AddGrain(int id)
         {
             if (id == 0)

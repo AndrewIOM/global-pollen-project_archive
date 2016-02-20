@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using Microsoft.Data.Entity;
 
 namespace OxPollen.Data.Concrete
 {
@@ -38,7 +39,7 @@ namespace OxPollen.Data.Concrete
 
         public IEnumerable<Organisation> GetAll()
         {
-            return _context.Organisations;
+            return _context.Organisations.Include(m => m.Members);
         }
 
         public Organisation GetById(int id)

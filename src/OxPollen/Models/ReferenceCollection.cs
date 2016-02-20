@@ -14,20 +14,33 @@ namespace OxPollen.Models
 
         [Required]
         public string Name { get; set; }
+
         [Required]
         public string Institution { get; set; }
+
         [Required]
         [Description("The country where the collection is located")]
-        [DisplayName("Country")]
+        [Display(Name = "Country")]
         public string CountryCode { get; set; }
-        [Required]
-        [Description("The global region for which the majority of taxa were collected")]
-        [DisplayName("Regional Focus")]
+
+        [Description("The global region for which the majority of taxa were collected. If the collection spans multiple regions, leave this blank.")]
+        [Display(Name = "Regional Focus")]
         public string FocusRegion { get; set; }
+
         [Required]
+        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
+        [Display(Name = "Website Address")]
+        [DataType(DataType.Url)]
+        public string WebAddress { get; set; }
+
+        [Display(Name = "Email Address for Enquiries")]
+        [DataType(DataType.EmailAddress)]
+        public string ContactEmail { get; set; }
+
         public virtual List<ReferenceGrain> Grains { get; set; }
+
         public virtual AppUser User { get; set; }
     }
 }

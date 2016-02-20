@@ -1,11 +1,12 @@
 ﻿@model ReferenceCollection
 @{
     ViewData["Title"] = "Add Reference Collection";
+    ViewData["Subtitle"] = "Enables digitisation of reference slides";
 }
 
 @section scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    
+
     @* Continent Picker *@
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
@@ -29,58 +30,73 @@
             <div class="panel panel-primary">
                 <div class="panel-heading"><span class="glyphicon glyphicon-edit"></span> Digitisation Features</div>
                 <div class="panel-body">
-                    <p>To digitise a reference collection, first add the collection here.</p>
-                    @using (Html.BeginForm("AddCollection", "Reference", FormMethod.Post, new { @class = "form" }))
-                        {
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label asp-for="Name"></label>
-                            </div>
+                    <p>To digitise a reference collection, first add the collection here. You will also be able to edit this information later.</p>
+                    @using (Html.BeginForm(FormMethod.Post, new { @class = "form-horizontal" }))
+                    {
+                        <h4>Basic Information</h4>
+                        <hr />
+                        <div class="form-group">
+                            <label asp-for="Name" class="col-md-2 control-label"></label>
                             <div class="col-md-10">
-                                <input type="text" asp-for="Name" class="form-control" />
+                                <input asp-for="Name" class="form-control" />
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label asp-for="Institution"></label>
-                            </div>
+                        <div class="form-group">
+                            <label asp-for="Description" class="col-md-2 control-label"></label>
                             <div class="col-md-10">
-                                <input type="text" asp-for="Institution" class="form-control"/>
-                                <span asp-validation-for="Institution" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label asp-for="Description"></label>
-                            </div>
-                            <div class="col-md-10">
-                                <textarea asp-for="Description" class="form-control"></textarea>
+                                <textarea rows="8" asp-for="Description" class="form-control"></textarea>
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label for="CountryCode">Country</label>
-                            </div>
+                        <div class="form-group">
+                            <label asp-for="Institution" class="col-md-2 control-label"></label>
                             <div class="col-md-10">
-                                <input type="text" asp-for="CountryCode" class="form-control" />
+                                <input asp-for="Institution" class="form-control" />
+                                <span asp-validation-for="Institution" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CountryCode" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="CountryCode" class="form-control" />
                                 <span asp-validation-for="CountryCode" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label for="FocusRegion">Focus Region</label>
-                            </div>
+                        <h4>Geographic Extent</h4>
+                        <hr />
+                        <p>
+                            If your collection has a geographical focus, please select the region from the map below.
+                            This information allows users to filter collections to those of their region of interest.
+                            If your collection falls outwidth the regional bounds here, leave this blank to mark your collection as global.
+                        </p>
+                        <div class="form-group">
+                            <label asp-for="FocusRegion" class="col-md-2 control-label"></label>
                             <div class="col-md-10">
-                                <input type="text" asp-for="FocusRegion" class="form-control" readonly="readonly"/>
+                                <input type="text" asp-for="FocusRegion" class="form-control" readonly="readonly" />
                                 <span asp-validation-for="FocusRegion" class="text-danger"></span>
                                 <div id="continent-picker"></div>
                             </div>
                         </div>
+                        <h4>Outreach</h4>
+                        <hr />
+                        <p>If users wish to contact you with queries about your collection, or wish to access the physical slides, this information will help them contact you.</p>
+                        <div class="form-group">
+                            <label asp-for="ContactEmail" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="ContactEmail" class="form-control" />
+                                <span asp-validation-for="ContactEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="WebAddress" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="WebAddress" class="form-control" />
+                                <span asp-validation-for="WebAddress" class="text-danger"></span>
+                            </div>
+                        </div>
 
-
-                        <input class="btn btn-primary" type="submit" name="submit" value="Add" />
+                        <input class="btn btn-primary" type="submit" name="submit" value="Save" />
                         <a asp-action="Index" class="btn btn-default">Cancel</a>
                     }
                 </div>

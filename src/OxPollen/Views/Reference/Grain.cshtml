@@ -1,8 +1,10 @@
-﻿@model OxPollen.Models.ReferenceGrain
+﻿@model ReferenceGrain
 
 @{
-    ViewBag.Title = Model.Collection.Name;
-    ViewBag.Subtitle = Model.ReferenceGrainId + ": " + Model.Family;
+    if (!string.IsNullOrEmpty(Model.Species)) { ViewBag.Title = ViewBag.Title = Model.Genus + " " + Model.Species; }
+    else if (!string.IsNullOrEmpty(Model.Genus)) { ViewBag.Title = Model.Genus; }
+    else { ViewBag.Title = Model.Family; };
+    ViewBag.Subtitle = "Digitised Reference Slide in the collection: " + Model.Collection.Name;
     var timeSinceAdd = DateTime.Now - Model.TimeAdded;
 }
 

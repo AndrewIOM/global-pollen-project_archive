@@ -20,6 +20,10 @@ namespace OxPollen.ViewModels
         public bool TwoFactor { get; set; }
 
         public bool BrowserRemembered { get; set; }
+
+        public string FullName { get; set; }
+        
+        public string Organisation { get; set; }
     }
 
     public class ManageLoginsViewModel
@@ -67,6 +71,24 @@ namespace OxPollen.ViewModels
         public string ConfirmPassword { get; set; }
     }
 
+    public class ChangePublicProfileViewModel
+    {
+        [Required]
+        [Display(Name = "Title")]
+        public string Title { get; set; }
+
+        [Required]
+        [Display(Name = "Forename(s)")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Surname")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "Organisation")]
+        public string Organisation { get; set; }
+    }
 
     public class AddPhoneNumberViewModel
     {

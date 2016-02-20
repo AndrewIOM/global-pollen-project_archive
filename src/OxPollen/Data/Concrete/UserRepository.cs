@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using Microsoft.Data.Entity;
 
 namespace OxPollen.Data.Concrete
 {
@@ -33,7 +34,7 @@ namespace OxPollen.Data.Concrete
 
         public IEnumerable<AppUser> Find(Expression<Func<AppUser, bool>> where)
         {
-            return _context.Users.Where(where);
+            return _context.Users.Include(m => m.Organisation).Where(where);
         }
 
         public IEnumerable<AppUser> GetAll()
