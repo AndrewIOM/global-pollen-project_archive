@@ -103,9 +103,9 @@
                     @foreach (var grain in Model.Grains)
                     {
                         <tr>
-                            <td>@grain.Family</td>
+                            @*<td>@grain.Family</td>
                             <td>@grain.Genus</td>
-                            <td>@grain.Species</td>
+                            <td>@grain.Species</td>*@
                             <td>
                                 <a class="btn btn-default" href="@Url.Action("Grain", "Reference", new { id = @grain.ReferenceGrainId })">View</a>
                                 @if (Model.User.UserName == User.Identity.Name && User.IsInRole("Digitise"))

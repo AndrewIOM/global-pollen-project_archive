@@ -11,9 +11,11 @@ namespace OxPollen.Services.Concrete
     public class IdentificationService : IIdentificationService
     {
         private IUnitOfWork _uow;
-        public IdentificationService(IUnitOfWork uow)
+        private ITaxonomyService _taxonomyService;
+        public IdentificationService(IUnitOfWork uow, ITaxonomyService taxonomyService)
         {
             _uow = uow;
+            _taxonomyService = taxonomyService;
         }
 
         public void Add(Identification newIdentification)
@@ -32,12 +34,8 @@ namespace OxPollen.Services.Concrete
             var newGenusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
             var newSpeciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
 
-            grain.Family = newFamilyName;
-            grain.Genus = newGenusName;
-            grain.Species = newSpeciesName;
-
-            var taxonService = new TaxonomyService(_uow);
-            taxonService.CreateOrUpdateTaxonomy(newFamilyName, newGenusName, newSpeciesName);
+            var taxon = _taxonomyService.CreateOrUpdateTaxonomy(newFamilyName, newGenusName, newSpeciesName);
+            grain.IdentifiedAs = taxon;
 
             UpdateBountyScores(grain, oldFamilyName, newFamilyName, Taxonomy.Family);
             UpdateBountyScores(grain, oldGenusName, newGenusName, Taxonomy.Genus);
@@ -82,12 +80,8 @@ namespace OxPollen.Services.Concrete
             var newGenusName = GetConfirmedName(Taxonomy.Genus, grain.Identifications);
             var newSpeciesName = GetConfirmedName(Taxonomy.Species, grain.Identifications);
 
-            grain.Family = newFamilyName;
-            grain.Genus = newGenusName;
-            grain.Species = newSpeciesName;
-
-            var taxonService = new TaxonomyService(_uow);
-            taxonService.CreateOrUpdateTaxonomy(newFamilyName, newGenusName, newSpeciesName);
+            var taxon = _taxonomyService.CreateOrUpdateTaxonomy(newFamilyName, newGenusName, newSpeciesName);
+            grain.IdentifiedAs = taxon;
 
             UpdateBountyScores(grain, oldFamilyName, newFamilyName, Taxonomy.Family, identification);
             UpdateBountyScores(grain, oldGenusName, newGenusName, Taxonomy.Genus, identification);

@@ -11,7 +11,7 @@ namespace OxPollen.Services.Concrete
     public class ReferenceService : IReferenceService
     {
         private IUnitOfWork _uow;
-        public ReferenceService(IUnitOfWork uow)
+        public ReferenceService(IUnitOfWork uow, ITaxonomyService taxonomyService)
         {
             _uow = uow;
         }
@@ -25,13 +25,7 @@ namespace OxPollen.Services.Concrete
 
         public ReferenceGrain AddGrain(ReferenceGrain grain)
         {
-            grain.Family = FirstCharToUpper(grain.Family);
-            grain.Genus = FirstCharToUpper(grain.Genus);
-            grain.Species = FirstCharToLower(grain.Species);
-
             _uow.RefGrainRepository.Add(grain);
-            var taxonService = new TaxonomyService(_uow);
-            taxonService.CreateOrUpdateTaxonomy(grain.Family, grain.Genus, grain.Species);
             _uow.SaveChanges();
             return _uow.RefGrainRepository.GetAll().OrderBy(i => i.ReferenceGrainId).Last();
         }
@@ -103,6 +97,15 @@ namespace OxPollen.Services.Concrete
 
         public List<ReferenceCollection> ListCollections()
         {
+            ////Temporay fix to connect reference grains to taxa
+            //var refGrains = _uow.RefGrainRepository.GetAll().ToList();
+            //foreach (var slide in refGrains)
+            //{
+            //    var taxon = _taxonomyService.CreateOrUpdateTaxonomy(slide.Family, slide.Genus, slide.Species);
+            //    slide.Taxon = taxon;
+            //    _uow.RefGrainRepository.Update(slide);
+            //    _uow.SaveChanges();
+            //}
             return _uow.RefCollectionRepository.GetAll().ToList();
         }
     }

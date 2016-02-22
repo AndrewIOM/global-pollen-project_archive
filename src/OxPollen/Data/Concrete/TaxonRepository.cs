@@ -35,14 +35,43 @@ namespace OxPollen.Data.Concrete
         public IEnumerable<Taxon> Find(Expression<Func<Taxon, bool>> where)
         {
             return _context.Taxa
-                .Include(m => m.ChildTaxa)
+                //Grains
+                .Include(f => f.ReferenceGrains)
+                .Include(f => f.UserGrains)
+
+                .Include(f => f.ChildTaxa)
+                .ThenInclude(g => g.ReferenceGrains)
+
+                .Include(f => f.ChildTaxa)
+                .ThenInclude(g => g.UserGrains)
+
+                .Include(f => f.ChildTaxa)
+                .ThenInclude(g => g.ChildTaxa)
+                .ThenInclude(s => s.ReferenceGrains)
+
+                .Include(f => f.ChildTaxa)
+                .ThenInclude(g => g.ChildTaxa)
+                .ThenInclude(s => s.UserGrains)
+
+                //Parent
+                .Include(m => m.ParentTaxa)
+
+                //Query
                 .Where(where);
         }
 
         public IEnumerable<Taxon> GetAll()
         {
             return _context.Taxa
-                .Include(m => m.ChildTaxa).Include(m => m.ParentTaxa);
+                .Include(m => m.ReferenceGrains)
+                .ThenInclude(n => n.Images)
+                .Include(m => m.UserGrains)
+                .ThenInclude(n => n.Images)
+                .Include(m => m.ChildTaxa)
+                .ThenInclude(n => n.UserGrains)
+                .Include(m => m.ChildTaxa)
+                .ThenInclude(n => n.ReferenceGrains)
+                .Include(m => m.ParentTaxa);
         }
 
         public Taxon GetById(int id)
@@ -50,6 +79,10 @@ namespace OxPollen.Data.Concrete
             return _context.Taxa
                 .Include(m => m.ChildTaxa)
                 .Include(m => m.ParentTaxa)
+                .Include(m => m.ReferenceGrains)
+                .ThenInclude(n => n.Images)
+                .Include(m => m.UserGrains)
+                .ThenInclude(n => n.Images)
                 .FirstOrDefault(m => m.TaxonId == id);
         }
     }

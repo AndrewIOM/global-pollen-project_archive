@@ -5,40 +5,78 @@ using OxPollen.ViewModels;
 using OxPollen.Services.Abstract;
 using OxPollen.ViewModels.Taxon;
 using Microsoft.AspNet.Authorization;
+using OxPollen.Data.Concrete;
+using Microsoft.Data.Entity;
+using System.Collections.Generic;
 
 namespace OxPollen.Controllers
 {
     public class TaxonController : Controller
     {
         private readonly ITaxonomyService _taxonService;
-        public TaxonController(ITaxonomyService taxonService)
+        private readonly OxPollenDbContext _context;
+        public TaxonController(ITaxonomyService taxonService, OxPollenDbContext context)
         {
             _taxonService = taxonService;
+            _context = context;
         }
 
         // GET: /<controller>/
         public IActionResult Index(Taxonomy? rank)
         {
             var rankFilter = rank.HasValue ? rank.Value : Taxonomy.Genus;
-            var taxa = _taxonService.GetAll().Where(m => m.Rank == rankFilter).ToList();
-            var model = taxa.Select(m => new TaxonViewModel()
+
+            //Temporary Fix until EF7 RC2 is released. 
+            //Can't use multiple ThenIncludes in current build for single joined query...
+            var taxa = _context.Taxa
+                .Include(m => m.ChildTaxa)
+                .Include(m => m.UserGrains)
+                .ThenInclude(n => n.Images)
+                .Include(m => m.ReferenceGrains)
+                .ThenInclude(n => n.Images)
+                .OrderBy(m => m.LatinName)
+                .ToList();
+            var ofRank = taxa.Where(m => m.Rank == rankFilter);
+
+            var model = new List<TaxonViewModel>();
+            foreach (var taxon in ofRank)
             {
-                Id = m.TaxonId,
-                LatinName = m.LatinName,
-                ReferenceGrainsCount = _taxonService.GetReferenceGrains(m).Count(),
-                UserSubmissionsConfirmedCount = _taxonService.GetUserGrains(m).Count(),
-                Rank = m.Rank,
-                ImageFilename = _taxonService.GetRandomImageForTaxon(m.TaxonId),
-                Children = m.ChildTaxa.Select(n => new TaxonViewModel()
+                var viewModel = new TaxonViewModel()
                 {
-                    Children = null,
-                    Id = n.TaxonId,
-                    LatinName = n.LatinName,
-                    Rank = n.Rank,
-                    ReferenceGrainsCount = _taxonService.GetReferenceGrains(n).Count(),
-                    UserSubmissionsConfirmedCount = _taxonService.GetUserGrains(n).Count()
-                }).ToList()
-            }).OrderBy(m => m.LatinName).ToList();
+                    Id = taxon.TaxonId,
+                    LatinName = taxon.LatinName,
+                    Rank = taxon.Rank,
+                    ReferenceGrainsCount = taxon.ReferenceGrains.Count,
+                    UserSubmissionsConfirmedCount = taxon.UserGrains.Count,
+                    ImageFilename = GetImageRecursive(taxon),
+                    Children = taxon.ChildTaxa.Select(t => new TaxonChildViewModel()
+                    {
+                        Id = t.TaxonId,
+                        LatinName = t.LatinName
+                    }).ToList()
+                };
+
+                if (taxon.ChildTaxa != null)
+                {
+                    foreach (var child in taxon.ChildTaxa)
+                    {
+                        viewModel.ReferenceGrainsCount += child.ReferenceGrains.Count;
+                        viewModel.UserSubmissionsConfirmedCount += child.UserGrains.Count;
+
+                        if (child.ChildTaxa != null)
+                        {
+                            foreach (var subChild in child.ChildTaxa)
+                            {
+                                viewModel.ReferenceGrainsCount += subChild.ReferenceGrains.Count;
+                                viewModel.UserSubmissionsConfirmedCount += subChild.UserGrains.Count;
+                            }
+                        }
+
+                    }
+                }
+
+                model.Add(viewModel);
+            }
             return View(model);
         }
 
@@ -55,8 +93,8 @@ namespace OxPollen.Controllers
                 LatinName = taxon.LatinName,
                 NeotomaId = taxon.NeotomaId,
                 Rank = taxon.Rank,
-                ReferenceGrains = _taxonService.GetReferenceGrains(taxon).ToList(),
-                SubmittedGrains = _taxonService.GetUserGrains(taxon).ToList(),
+                ReferenceGrains = taxon.ReferenceGrains,
+                SubmittedGrains = taxon.UserGrains,
                 ParentTaxon = taxon.ParentTaxa,
                 SubTaxa = taxon.ChildTaxa
             };
@@ -71,8 +109,8 @@ namespace OxPollen.Controllers
             {
                 if (taxon.ChildTaxa.Count == 0)
                 {
-                    var refCount = _taxonService.GetReferenceGrains(taxon).ToList().Count();
-                    var grainCount = _taxonService.GetUserGrains(taxon).ToList().Count();
+                    var refCount = taxon.ReferenceGrains.Count();
+                    var grainCount = taxon.UserGrains.Count();
                     if (grainCount == 0 && refCount == 0)
                     {
                         _taxonService.RemoveTaxon(taxon.TaxonId);
@@ -89,8 +127,8 @@ namespace OxPollen.Controllers
             var taxon = _taxonService.GetById(id);
             if (taxon == null) return HttpBadRequest();
 
-            var refCount = _taxonService.GetReferenceGrains(taxon).Count();
-            var grainCount = _taxonService.GetUserGrains(taxon).Count();
+            var refCount = taxon.ReferenceGrains.Count();
+            var grainCount = taxon.UserGrains.Count();
             if (grainCount == 0 && refCount == 0)
             {
                 _taxonService.RemoveTaxon(taxon.TaxonId);
@@ -98,5 +136,30 @@ namespace OxPollen.Controllers
             }
             return HttpBadRequest();
         }
+
+        private string GetImageRecursive(Taxon taxon)
+        {
+            if (taxon.ReferenceGrains.Count > 0)
+            {
+                if (taxon.ReferenceGrains.First().Images.Count > 0)
+                {
+                    return taxon.ReferenceGrains.First().Images.First().FileNameThumbnail;
+                }
+            }
+            else if (taxon.UserGrains.Count > 0)
+            {
+                if (taxon.UserGrains.First().Images.Count > 0)
+                {
+                    return taxon.UserGrains.First().Images.First().FileNameThumbnail;
+                }
+            }
+            foreach (var child in taxon.ChildTaxa)
+            {
+                var result = GetImageRecursive(child);
+                if (!string.IsNullOrEmpty(result)) return result;
+            }
+            return null;
+        }
+
     }
 }
