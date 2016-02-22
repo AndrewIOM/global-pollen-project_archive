@@ -86,6 +86,22 @@ namespace OxPollen.Controllers
             var taxon = _taxonService.GetById(id);
             if (taxon == null) return HttpNotFound();
 
+            List<Grain> userGrains = taxon.UserGrains;
+            List<ReferenceGrain> refGrains = taxon.ReferenceGrains;
+            foreach (var child in taxon.ChildTaxa)
+            {
+                var childTaxon = _taxonService.GetById(child.TaxonId);
+                userGrains.AddRange(childTaxon.UserGrains);
+                refGrains.AddRange(childTaxon.ReferenceGrains);
+
+                foreach (var subChild in childTaxon.ChildTaxa)
+                {
+                    var subChildTaxa = _taxonService.GetById(subChild.TaxonId);
+                    userGrains.AddRange(subChildTaxa.UserGrains);
+                    refGrains.AddRange(subChildTaxa.ReferenceGrains);
+                }
+            }
+
             var model = new TaxonDetailViewModel()
             {
                 GbifId = taxon.GbifId,
@@ -93,8 +109,8 @@ namespace OxPollen.Controllers
                 LatinName = taxon.LatinName,
                 NeotomaId = taxon.NeotomaId,
                 Rank = taxon.Rank,
-                ReferenceGrains = taxon.ReferenceGrains,
-                SubmittedGrains = taxon.UserGrains,
+                ReferenceGrains = refGrains,
+                SubmittedGrains = userGrains,
                 ParentTaxon = taxon.ParentTaxa,
                 SubTaxa = taxon.ChildTaxa
             };
