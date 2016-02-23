@@ -15,8 +15,12 @@ namespace OxPollen.Models
         public int GbifId { get; set; }
         public int NeotomaId { get; set; }
 
-        //Navigation Properties
+        //Taxonomy
         public virtual List<Taxon> ChildTaxa { get; set; }
         public virtual Taxon ParentTaxa { get; set; }
+
+        //Grains
+        public List<Grain> UserGrains { get; set; }
+        public List<ReferenceGrain> ReferenceGrains { get; set; }
     }
 }

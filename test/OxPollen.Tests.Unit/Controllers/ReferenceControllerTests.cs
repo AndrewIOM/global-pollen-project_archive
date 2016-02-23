@@ -96,17 +96,6 @@ namespace OxPollen.Tests.Unit.Controllers
         [InlineData("Poaceae", "Fraxinus", "", Taxonomy.Genus)]
         public void AddGrain_Post_AssignsTaxonomicRank(string family, string genus, string species, Taxonomy realRank)
         {
-            var sut = new ReferenceController(_fileService.Object, _refService.Object, _userService.Object,
-                _emailSender.Object, _backbone.Object);
-            var formData = new ReferenceGrainViewModel()
-            {
-                CollectionId = 1,
-                Family = family,
-                Genus = genus,
-                Species = species
-            };
-            var result = sut.AddGrain(formData);
-
         }
 
         [Fact]

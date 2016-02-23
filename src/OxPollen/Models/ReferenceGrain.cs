@@ -10,10 +10,8 @@ namespace OxPollen.Models
     {
         [Key]
         public int ReferenceGrainId { get; set; }
-
-        public string Family { get; set; }
-        public string Genus { get; set; }
-        public string Species { get; set; }
+        [Required]
+        public Taxon Taxon { get; set; }
 
         [Required]
         public double MaxSizeNanoMetres { get; set; }
@@ -22,5 +20,11 @@ namespace OxPollen.Models
         public virtual List<GrainImage> Images { get; set; }
         public virtual AppUser SubmittedBy { get; set; }
         public virtual ReferenceCollection Collection { get; set; }
+
+        //Cached Properties
+        public string Family { get; set; }
+        public string Genus { get; set; }
+        public string Species { get; set; }
+
     }
 }

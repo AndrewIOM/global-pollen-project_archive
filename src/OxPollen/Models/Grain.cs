@@ -1,5 +1,4 @@
-﻿using OxPollen.Data.Abstract;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -29,11 +28,14 @@ namespace OxPollen.Models
         public int? AgeYearsBeforePresent { get; set; }
         public double? LockedBounty { get; set; }
 
+        //Cached Properties (TODO remove)
+        public string Family { get; set; }
+        public string Genus { get; set; }
+        public string Species { get; set; }
+
         //Identifications
         public virtual List<Identification> Identifications { get; set; }
-        public string Species { get; set; }
-        public string Genus { get; set; }
-        public string Family { get; set; }
+        public Taxon IdentifiedAs { get; set; }
 
         public Grain()
         {

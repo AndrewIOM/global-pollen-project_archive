@@ -8,9 +8,10 @@ using OxPollen.Data.Concrete;
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    partial class OxPollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160221152846_taxonomy-refactor")]
+    partial class taxonomyrefactor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -165,6 +166,10 @@ namespace OxPollen.Migrations
 
                     b.Property<int?>("AgeYearsBeforePresent");
 
+                    b.Property<string>("Family");
+
+                    b.Property<string>("Genus");
+
                     b.Property<int?>("IdentifiedAsTaxonId");
 
                     b.Property<bool>("IsDeleted");
@@ -176,6 +181,8 @@ namespace OxPollen.Migrations
                     b.Property<double>("Longitude");
 
                     b.Property<double>("MaxSizeNanoMetres");
+
+                    b.Property<string>("Species");
 
                     b.Property<string>("SubmittedById")
                         .IsRequired();
@@ -285,12 +292,17 @@ namespace OxPollen.Migrations
 
                     b.Property<int?>("CollectionId");
 
+                    b.Property<string>("Family");
+
+                    b.Property<string>("Genus");
+
                     b.Property<double>("MaxSizeNanoMetres");
+
+                    b.Property<string>("Species");
 
                     b.Property<string>("SubmittedById");
 
-                    b.Property<int?>("TaxonTaxonId")
-                        .IsRequired();
+                    b.Property<int?>("TaxonTaxonId");
 
                     b.Property<DateTime>("TimeAdded");
 

@@ -15,9 +15,7 @@ namespace OxPollen.Models
         public double LongitudeLow { get; set; }
 
         //Filter by ID Level
-        public bool UnknownSpecies { get; set; }
-        public bool UnknownGenus { get; set; }
-        public bool UnknownFamily { get; set; }
+        public Taxonomy UnidentifiedRank { get; set; }
 
         public GrainSearchFilter()
         {
@@ -27,9 +25,7 @@ namespace OxPollen.Models
             LatitudeLow = -90;
             LongitudeHigh = 180;
             LongitudeLow = -180;
-            UnknownSpecies = true;
-            UnknownGenus = true;
-            UnknownFamily = true;
+            UnidentifiedRank = Taxonomy.Genus;
         }
     }
 }

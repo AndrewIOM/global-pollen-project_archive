@@ -17,18 +17,21 @@ namespace OxPollen.Controllers
         private IUserService _userService;
         private readonly IEmailSender _emailSender;
         private readonly ITaxonomyBackbone _backbone;
+        private ITaxonomyService _taxonomyService;
         public ReferenceController(
             IFileStoreService fileService,
             IReferenceService refService,
             IUserService userService,
             IEmailSender emailSender,
-            ITaxonomyBackbone backbone)
+            ITaxonomyBackbone backbone,
+            ITaxonomyService taxonomyService)
         {
             _fileService = fileService;
             _refService = refService;
             _userService = userService;
             _emailSender = emailSender;
             _backbone = backbone;
+            _taxonomyService = taxonomyService;
         }
 
         public IActionResult Index()
@@ -80,7 +83,7 @@ namespace OxPollen.Controllers
             _userService.Update(user);
 
             //Send email to all admins to let them know
-            var adminEmail = "oxpollen@gmail.com"; //temporary hack
+            var adminEmail = "andrew.martin@zoo.ox.ac.uk"; //temporary hack
             _emailSender.SendEmailAsync(adminEmail, "Request for digitisation rights",
                 user.FullName() + " has requested digitisation rights. They write: " + result.Comments).Wait();
             return RedirectToAction("RequestAccess");
@@ -172,19 +175,6 @@ namespace OxPollen.Controllers
             });
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Digitise")]
-        public IActionResult BatchAddGrains(int id)
-        {
-            if (id == 0)
-            {
-                return HttpBadRequest();
-            }
-            var model = _refService.GetCollectionById(id);
-            if (model.User.Id != User.GetUserId()) return HttpBadRequest();
-            return View("AddGrains", model);
-        }
-
         [HttpPost]
         [Authorize(Roles = "Digitise")]
         public IActionResult AddGrain(ReferenceGrainViewModel result)
@@ -217,12 +207,11 @@ namespace OxPollen.Controllers
             }
 
             var standardImages = _fileService.UploadBase64Image(result.Images);
+            var taxon = _taxonomyService.CreateOrUpdateTaxonomy(result.Family, result.Genus, result.Species);
             var toSave = new ReferenceGrain()
             {
                 Collection = collection,
-                Family = result.Family,
-                Genus = result.Genus,
-                Species = result.Species,
+                Taxon = taxon,
                 SubmittedBy = _userService.GetById(User.GetUserId()),
                 TimeAdded = DateTime.Now,
                 MaxSizeNanoMetres = result.MaxGrainSize.Value,
@@ -260,13 +249,7 @@ namespace OxPollen.Controllers
             }
 
             var saved = _refService.AddGrain(toSave);
-            var model = new ReferenceGrainViewModel()
-            {
-                Family = saved.Family,
-                Genus = saved.Genus,
-                Species = saved.Species
-            };
-            return Ok(model);
+            return Ok();
         }
 
         private bool IsBase64String(string s)
@@ -301,5 +284,34 @@ namespace OxPollen.Controllers
             _refService.DeleteGrain(id);
             return RedirectToAction("Collection", new { id = grain.Collection.Id });
         }
+
+        private string GetName(Taxonomy rank, ReferenceGrain grain)
+        {
+            string species = null;
+            string genus = null;
+            string family = null;
+            if (grain.Taxon != null)
+            {
+                if (grain.Taxon.Rank == Taxonomy.Species)
+                {
+                    species = grain.Taxon.LatinName;
+                    genus = grain.Taxon.ParentTaxa.LatinName;
+                    family = grain.Taxon.ParentTaxa.ParentTaxa.LatinName;
+                }
+                else if (grain.Taxon.Rank == Taxonomy.Genus)
+                {
+                    genus = grain.Taxon.LatinName;
+                    family = grain.Taxon.ParentTaxa.LatinName;
+                }
+                else
+                {
+                    family = grain.Taxon.LatinName;
+                }
+            }
+            if (rank == Taxonomy.Species) return species;
+            if (rank == Taxonomy.Genus) return genus;
+            return family;
+        }
+
     }
 }

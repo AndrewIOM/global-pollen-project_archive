@@ -104,9 +104,9 @@ namespace OxPollen.Controllers
                 UserIdentification = myIdentification,
                 GrainId = record.Id,
                 Age = record.AgeYearsBeforePresent,
-                IdentifiedFamily = record.Family,
-                IdentifiedGenus = record.Genus,
-                IdentifiedSpecies = record.Species,
+                IdentifiedFamily = GetIdentifiedName(Taxonomy.Family, record),
+                IdentifiedGenus = GetIdentifiedName(Taxonomy.Genus, record),
+                IdentifiedSpecies = GetIdentifiedName(Taxonomy.Species, record),
                 ImageUrls = record.Images.Select(m => m.FileName).ToList(),
                 Latitude = record.Latitude,
                 Longitude = record.Longitude,
@@ -146,9 +146,9 @@ namespace OxPollen.Controllers
                     UserIdentification = myIdentification,
                     GrainId = record.Id,
                     Age = record.AgeYearsBeforePresent,
-                    IdentifiedFamily = record.Family,
-                    IdentifiedGenus = record.Genus,
-                    IdentifiedSpecies = record.Species,
+                    IdentifiedFamily = GetIdentifiedName(Taxonomy.Family, record),
+                    IdentifiedGenus = GetIdentifiedName(Taxonomy.Genus, record),
+                    IdentifiedSpecies = GetIdentifiedName(Taxonomy.Species, record),
                     ImageUrls = record.Images.Select(m => m.FileName).ToList(),
                     Latitude = record.Latitude,
                     Longitude = record.Longitude,
@@ -216,9 +216,9 @@ namespace OxPollen.Controllers
                 ImageLocation = m.Images.First().FileName,
                 Bounty = BountyUtility.Calculate(m),
                 TimeAdded = m.TimeAdded,
-                ConfirmedFamily = m.Family,
-                ConfirmedGenus = m.Genus,
-                ConfirmedSpecies = m.Species,
+                ConfirmedFamily = GetIdentifiedName(Taxonomy.Family, m),
+                ConfirmedGenus = GetIdentifiedName(Taxonomy.Genus, m),
+                ConfirmedSpecies = GetIdentifiedName(Taxonomy.Species, m),
             }).ToList();
             return View(model);
         }
@@ -270,6 +270,34 @@ namespace OxPollen.Controllers
             {
                 return false;
             }
+        }
+
+        private string GetIdentifiedName(Taxonomy rank, Grain record)
+        {
+            string species = null;
+            string genus = null;
+            string family = null;
+            if (record.IdentifiedAs != null)
+            {
+                if (record.IdentifiedAs.Rank == Taxonomy.Species)
+                {
+                    species = record.IdentifiedAs.LatinName;
+                    genus = record.IdentifiedAs.ParentTaxa.LatinName;
+                    family = record.IdentifiedAs.ParentTaxa.ParentTaxa.LatinName;
+                }
+                else if (record.IdentifiedAs.Rank == Taxonomy.Genus)
+                {
+                    genus = record.IdentifiedAs.LatinName;
+                    family = record.IdentifiedAs.ParentTaxa.LatinName;
+                }
+                else
+                {
+                    family = record.IdentifiedAs.LatinName;
+                }
+            }
+            if (rank == Taxonomy.Species) return species;
+            if (rank == Taxonomy.Genus) return genus;
+            return family;
         }
 
     }

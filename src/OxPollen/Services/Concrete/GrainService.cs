@@ -37,18 +37,8 @@ namespace OxPollen.Services.Concrete
 
         public IEnumerable<Grain> GetUnidentifiedGrains(Taxonomy rank)
         {
-            IEnumerable<Grain> result;
-            if (rank == Taxonomy.Family)
-            {
-                result = _uow.GrainRepository.Find(m => string.IsNullOrEmpty(m.Family));
-            }
-            else if (rank == Taxonomy.Genus)
-            {
-                result = _uow.GrainRepository.Find(m => string.IsNullOrEmpty(m.Genus));
-            } else
-            {
-                result = _uow.GrainRepository.Find(m => string.IsNullOrEmpty(m.Species));
-            }
+            var result = _uow.GrainRepository.Find(m => m.IdentifiedAs == null); //|| m.IdentifiedAs.Rank < rank);
+            //TODO Fix method
             return result;
         }
 
@@ -67,9 +57,7 @@ namespace OxPollen.Services.Concrete
             var result = _uow.GrainRepository.GetAll();
 
             //Filter
-            if (filter.UnknownFamily) result = result.Where(m => string.IsNullOrEmpty(m.Family));
-            if (filter.UnknownGenus) result = result.Where(m => string.IsNullOrEmpty(m.Genus));
-            if (filter.UnknownSpecies) result = result.Where(m => string.IsNullOrEmpty(m.Species));
+            result = result.Where(m => m.IdentifiedAs != null ? m.IdentifiedAs.Rank < filter.UnidentifiedRank : true);
             result = result.Where(m => m.Latitude >= filter.LatitudeLow && m.Latitude <= filter.LatitudeHigh);
             result = result.Where(m => m.Longitude >= filter.LongitudeLow && m.Longitude <= filter.LongitudeHigh);
 

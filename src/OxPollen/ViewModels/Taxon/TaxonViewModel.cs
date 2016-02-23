@@ -11,7 +11,12 @@ namespace OxPollen.ViewModels
         public string ImageFilename { get; set; }
         public int UserSubmissionsConfirmedCount { get; set; }
         public int ReferenceGrainsCount { get; set; }
+        public List<TaxonChildViewModel> Children { get; set; }
+    }
 
-        public List<TaxonViewModel> Children { get; set; }
+    public class TaxonChildViewModel
+    {
+        public int Id { get; set; }
+        public string LatinName { get; set; }
     }
 }

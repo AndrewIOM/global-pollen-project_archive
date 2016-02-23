@@ -42,6 +42,9 @@ namespace OxPollen.Data.Concrete
             return _context.ReferenceGrains.Include(m => m.Images)
                 .Include(m => m.Collection)
                 .ThenInclude(n => n.User)
+                .Include(m => m.Taxon)
+                .ThenInclude(n => n.ParentTaxa)
+                .ThenInclude(o => o.ParentTaxa)
                 .FirstOrDefault(m => m.ReferenceGrainId == id);
         }
 
