@@ -103,9 +103,32 @@
                     @foreach (var grain in Model.Grains)
                     {
                         <tr>
-                            @*<td>@grain.Family</td>
-                            <td>@grain.Genus</td>
-                            <td>@grain.Species</td>*@
+                            @if (grain.Taxon != null)
+                            {
+                                if (grain.Taxon.Rank == Taxonomy.Species)
+                                {
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxa.ParentTaxa.TaxonId })">@grain.Taxon.ParentTaxa.ParentTaxa.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxa.TaxonId })">@grain.Taxon.ParentTaxa.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.TaxonId })">@grain.Taxon.LatinName</a></td>
+                                }
+                                else if (grain.Taxon.Rank == Taxonomy.Genus)
+                                {
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxa.TaxonId })">@grain.Taxon.ParentTaxa.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.TaxonId })">@grain.Taxon.LatinName</a></td>
+                            <td>Unknown</td>
+                                }
+                                else
+                                {
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.TaxonId })">@grain.Taxon.LatinName</a></td>
+                            <td>Unknown</td>
+                            <td>Unknown</td>
+                                }
+                            } else
+                            {
+                                <td>Unable to Retrieve</td>
+                                <td>Unable to Retrieve</td>
+                                <td>Unable to Retrieve</td>
+                            }
                             <td>
                                 <a class="btn btn-default" href="@Url.Action("Grain", "Reference", new { id = @grain.ReferenceGrainId })">View</a>
                                 @if (Model.User.UserName == User.Identity.Name && User.IsInRole("Digitise"))

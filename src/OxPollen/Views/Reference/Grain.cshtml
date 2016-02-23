@@ -4,28 +4,6 @@
     ViewBag.Title = Model.Taxon.LatinName;
     ViewBag.Subtitle = "Digitised Reference Slide in the collection: " + Model.Collection.Name;
     var timeSinceAdd = DateTime.Now - Model.TimeAdded;
-
-    string species = null;
-    string genus = null;
-    string family = null;
-    if (Model.Taxon != null)
-    {
-        if (Model.Taxon.Rank == Taxonomy.Species)
-        {
-            species = Model.Taxon.LatinName;
-            genus = Model.Taxon.ParentTaxa.LatinName;
-            family = Model.Taxon.ParentTaxa.ParentTaxa.LatinName;
-        }
-        else if (Model.Taxon.Rank == Taxonomy.Genus)
-        {
-            genus = Model.Taxon.LatinName;
-            family = Model.Taxon.ParentTaxa.LatinName;
-        }
-        else
-        {
-            family = Model.Taxon.LatinName;
-        }
-    }
 }
 
 @section scripts {
@@ -63,32 +41,37 @@
             <div class="panel-heading"><span class="glyphicon glyphicon-book"></span> Details</div>
             <div class="panel-body">
                 <h4>Taxonomy</h4>
-                <label>Family</label>
-                @if (string.IsNullOrEmpty(family))
-                {
-                    <p>Unknown</p>
-                }
-                else
-                {
-                    <p>@genus</p>
-                }
-                <label>Genus</label>
-                @if (string.IsNullOrEmpty(genus))
-                {
-                    <p>Unknown</p>
-                }
-                else
-                {
-                    <p>@species</p>
-                }
-                <label>Species</label>
-                @if (string.IsNullOrEmpty(species))
-                {
-                    <p>Unknown</p>
-                }
-                else
-                {
-                    <p>@species</p>
+                @{
+                    if (Model.Taxon != null)
+                    {
+                        if (Model.Taxon.Rank == Taxonomy.Species)
+                        {
+                            <label>Family</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.ParentTaxa.ParentTaxa.TaxonId})">@Model.Taxon.ParentTaxa.ParentTaxa.LatinName</a></p>
+                            <label>Genus</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.ParentTaxa.TaxonId})">@Model.Taxon.ParentTaxa.LatinName</a></p>
+                            <label>Species</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.TaxonId})">@Model.Taxon.LatinName</a></p>
+                        }
+                        else if (Model.Taxon.Rank == Taxonomy.Genus)
+                        {
+                            <label>Family</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.ParentTaxa.TaxonId})">@Model.Taxon.ParentTaxa.LatinName</a></p>
+                            <label>Genus</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.TaxonId})">@Model.Taxon.LatinName</a></p>
+                            <label>Species</label>
+                            <p>Unknown</p>
+                        }
+                        else
+                        {
+                            <label>Family</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.TaxonId})">@Model.Taxon.LatinName</a></p>
+                            <label>Genus</label>
+                            <p>Unknown</p>
+                            <label>Species</label>
+                            <p>Unknown</p>
+                        }
+                    }
                 }
                 <hr />
                 <h4>Additional Details</h4>
