@@ -21,5 +21,10 @@ namespace OxPollen.Models
         public virtual AppUser SubmittedBy { get; set; }
         public virtual ReferenceCollection Collection { get; set; }
 
+        //Cached Properties
+        public string Family { get; set; }
+        public string Genus { get; set; }
+        public string Species { get; set; }
+
     }
 }

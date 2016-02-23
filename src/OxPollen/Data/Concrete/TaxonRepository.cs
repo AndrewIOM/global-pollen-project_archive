@@ -38,23 +38,12 @@ namespace OxPollen.Data.Concrete
                 //Grains
                 .Include(f => f.ReferenceGrains)
                 .Include(f => f.UserGrains)
-
-                .Include(f => f.ChildTaxa)
-                .ThenInclude(g => g.ReferenceGrains)
-
-                .Include(f => f.ChildTaxa)
-                .ThenInclude(g => g.UserGrains)
-
                 .Include(f => f.ChildTaxa)
                 .ThenInclude(g => g.ChildTaxa)
-                .ThenInclude(s => s.ReferenceGrains)
-
-                .Include(f => f.ChildTaxa)
-                .ThenInclude(g => g.ChildTaxa)
-                .ThenInclude(s => s.UserGrains)
 
                 //Parent
                 .Include(m => m.ParentTaxa)
+                .ThenInclude(n => n.ParentTaxa)
 
                 //Query
                 .Where(where);

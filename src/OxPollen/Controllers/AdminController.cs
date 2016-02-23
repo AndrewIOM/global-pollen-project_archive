@@ -36,6 +36,30 @@ namespace OxPollen.Controllers
         public IActionResult Taxa()
         {
             var taxa = _context.Taxa.OrderBy(m => m.LatinName).ToList();
+
+            //TEMP: Connect up ref grains
+            //var refGrains = _context.ReferenceGrains.ToList();
+            //foreach (var grain in refGrains)
+            //{
+            //        var parent = _taxonService.CreateOrUpdateTaxonomy(grain.Family, grain.Genus, grain.Species);
+            //        grain.Taxon = parent;
+            //        _context.ReferenceGrains.Update(grain);
+            //}
+
+            ////TEMP: Connect up ref grains
+            //var grains = _context.UserGrains
+            //    .Include(m => m.IdentifiedAs).ToList();
+            //foreach (var grain in grains)
+            //{
+            //    if (grain.IdentifiedAs == null)
+            //    {
+            //        var parent = _taxonService.CreateOrUpdateTaxonomy(grain.Family, grain.Genus, grain.Species);
+            //        grain.IdentifiedAs = parent;
+            //        _context.UserGrains.Update(grain);
+            //    }
+            //}
+            //_context.SaveChanges();
+
             return View(taxa);
         }
 

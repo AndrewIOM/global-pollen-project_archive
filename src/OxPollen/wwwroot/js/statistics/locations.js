@@ -59,7 +59,7 @@
                 unidentifiedNumber.innerHTML = unidentifiedCounter;
             })
             .delay(function (d, i) {
-                return 4000 + (i / data.length * 1500);
+                return 2000 + (i / data.length * 1500);
             })
             .ease("variable")
             .attr('opacity', '1');

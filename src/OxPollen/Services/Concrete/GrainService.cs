@@ -37,15 +37,9 @@ namespace OxPollen.Services.Concrete
 
         public IEnumerable<Grain> GetUnidentifiedGrains(Taxonomy rank)
         {
-            if (rank == Taxonomy.Family)
-            {
-                return _uow.GrainRepository.Find(m => m.IdentifiedAs == null);
-            }
-            else if (rank == Taxonomy.Genus)
-            {
-                return _uow.GrainRepository.Find(m => m.IdentifiedAs == null || m.IdentifiedAs.Rank == Taxonomy.Family);
-            }
-            return _uow.GrainRepository.Find(m => m.IdentifiedAs == null || m.IdentifiedAs.Rank == Taxonomy.Genus);
+            var result = _uow.GrainRepository.Find(m => m.IdentifiedAs == null); //|| m.IdentifiedAs.Rank < rank);
+            //TODO Fix method
+            return result;
         }
 
         public Grain MarkDeleted(int id)
@@ -63,9 +57,7 @@ namespace OxPollen.Services.Concrete
             var result = _uow.GrainRepository.GetAll();
 
             //Filter
-            if (filter.UnknownFamily) result = result.Where(m => m.IdentifiedAs == null);
-            if (filter.UnknownGenus) result = result.Where(m => m.IdentifiedAs == null || m.IdentifiedAs.Rank < Taxonomy.Genus);
-            if (filter.UnknownSpecies) result = result.Where(m => m.IdentifiedAs == null || m.IdentifiedAs.Rank < Taxonomy.Species);
+            result = result.Where(m => m.IdentifiedAs != null ? m.IdentifiedAs.Rank < filter.UnidentifiedRank : true);
             result = result.Where(m => m.Latitude >= filter.LatitudeLow && m.Latitude <= filter.LatitudeHigh);
             result = result.Where(m => m.Longitude >= filter.LongitudeLow && m.Longitude <= filter.LongitudeHigh);
 

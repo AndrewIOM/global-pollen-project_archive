@@ -83,7 +83,7 @@ namespace OxPollen.Controllers
             _userService.Update(user);
 
             //Send email to all admins to let them know
-            var adminEmail = "oxpollen@gmail.com"; //temporary hack
+            var adminEmail = "andrew.martin@zoo.ox.ac.uk"; //temporary hack
             _emailSender.SendEmailAsync(adminEmail, "Request for digitisation rights",
                 user.FullName() + " has requested digitisation rights. They write: " + result.Comments).Wait();
             return RedirectToAction("RequestAccess");

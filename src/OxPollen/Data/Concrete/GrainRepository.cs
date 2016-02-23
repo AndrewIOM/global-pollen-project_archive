@@ -34,11 +34,12 @@ namespace OxPollen.Data.Concrete
 
         public IEnumerable<Grain> Find(Expression<Func<Grain, bool>> where)
         {
-            return _context.UserGrains.Include(m => m.Identifications)
+            var result = _context.UserGrains.Include(m => m.Identifications)
                 .Include(m => m.IdentifiedAs)
                 .ThenInclude(n => n.ParentTaxa)
                 .ThenInclude(o => o.ParentTaxa)
                 .Include(m => m.Images).Where(m => !m.IsDeleted).Where(where);
+            return result;
         }
 
         public IEnumerable<Grain> GetAll()
