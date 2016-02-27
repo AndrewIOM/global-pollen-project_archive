@@ -137,6 +137,18 @@ namespace OxPollen.Controllers
             return RedirectToAction("Users");
         }
 
+        public IActionResult VerifyEmail(string id)
+        {
+            if (id == User.GetUserId()) return HttpBadRequest();
+
+            var user = _context.Users.FirstOrDefault(m => m.Id == id);
+            if (user == null) return HttpBadRequest();
+            user.EmailConfirmed = true;
+            _context.Users.Update(user);
+            _context.SaveChanges();
+            return RedirectToAction("Users");
+        }
+
         public IActionResult UnbanUser(string id)
         {
             if (id == User.GetUserId()) return HttpBadRequest();

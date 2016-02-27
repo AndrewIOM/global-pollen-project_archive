@@ -138,7 +138,7 @@ namespace OxPollen.Controllers
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">" + callbackUrl + "</a>. You can also copy and paste the address into your browser.");
                     //await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("AwaitingEmailConfirmation");
                 }
