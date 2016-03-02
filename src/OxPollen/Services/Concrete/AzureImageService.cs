@@ -144,6 +144,7 @@ namespace OxPollen.Services.Concrete
             imgDest.DrawImage(curImage, 0, 0, newImage.Width, newImage.Height);
 
             CloudBlockBlob blob = _container.GetBlockBlobReference(saveFilePath);
+            if (blob.Exists()) throw new Exception("Blob already exists: " + blob.Uri.AbsoluteUri);
             MemoryStream memoryStream = new MemoryStream();
             newImage.Save(memoryStream, info[1], param);
             blob.Properties.ContentType = "image/png";
