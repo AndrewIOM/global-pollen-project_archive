@@ -50,7 +50,14 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Institution" class="col-md-2 control-label"></label>
+                            <label class="col-md-2 control-label">Owned By</label>
+                            <div class="col-md-10">
+                                <input asp-for="OwnedBy" class="form-control" />
+                                <span asp-validation-for="OwnedBy" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Institution Where Collection is Located</label>
                             <div class="col-md-10">
                                 <input asp-for="Institution" class="form-control" />
                                 <span asp-validation-for="Institution" class="text-danger"></span>

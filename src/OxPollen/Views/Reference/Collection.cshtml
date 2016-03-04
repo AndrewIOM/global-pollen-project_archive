@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = Model.Name;
     ViewData["Subtitle"] = "Digitised Collection in the Global Pollen Project";
+    var slides = Model.Grains.OrderBy(m => m.Taxon.LatinName).ToList();
 }
 
 @section homepageHeader {
@@ -52,16 +53,16 @@
 
     <div class="row">
         <div class="col-md-12">
-            <label>Description</label>
-            <p>@Model.Description</p>
+            <label>Owner and Location</label>
+            <p>This collection is owned by @Model.OwnedBy, and is located at @Model.Institution, @Model.CountryCode.</p>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <label>Organisation</label>
-            <p>@Model.Institution, @Model.CountryCode</p>
-        </div>
+<div class="row">
+    <div class="col-md-12">
+        <label>Description</label>
+        <p>@Model.Description</p>
     </div>
+</div>
     @if (!string.IsNullOrEmpty(Model.WebAddress) || !string.IsNullOrEmpty(Model.ContactEmail))
     {
         <div class="row">
@@ -100,7 +101,7 @@
                     </tr>
                 </thead>
                 <tbody id="grain-table-body">
-                    @foreach (var grain in Model.Grains)
+                    @foreach (var grain in slides)
                     {
                         <tr>
                             @if (grain.Taxon != null)

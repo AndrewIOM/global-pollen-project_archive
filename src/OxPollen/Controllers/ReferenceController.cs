@@ -151,6 +151,7 @@ namespace OxPollen.Controllers
             collection.Description = model.Description;
             collection.FocusRegion = model.FocusRegion;
             collection.Institution = model.Institution;
+            collection.OwnedBy = model.OwnedBy;
             collection.Name = model.Name;
             collection.WebAddress = model.WebAddress;
             collection.ContactEmail = model.ContactEmail;

@@ -19,6 +19,9 @@ namespace OxPollen.Models
         public string Institution { get; set; }
 
         [Required]
+        public string OwnedBy { get; set; }
+
+        [Required]
         [Description("The country where the collection is located")]
         [Display(Name = "Country")]
         public string CountryCode { get; set; }

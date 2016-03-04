@@ -8,9 +8,10 @@ using OxPollen.Data.Concrete;
 namespace OxPollen.Migrations
 {
     [DbContext(typeof(OxPollenDbContext))]
-    partial class OxPollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160304113817_collectionowners2")]
+    partial class collectionowners2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -277,7 +278,7 @@ namespace OxPollen.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<string>("OwnedBy")
+                    b.Property<string>("Owner")
                         .IsRequired();
 
                     b.Property<string>("UserId");
