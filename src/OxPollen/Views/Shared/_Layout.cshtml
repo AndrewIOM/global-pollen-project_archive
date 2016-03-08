@@ -35,20 +35,12 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-controller="Home" asp-action="Guide">About</a></li>
-                    <li><a asp-controller="Taxon" asp-action="Index">Reference Collection</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Grains<span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reference Collection<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a asp-action="Index" asp-controller="Grain"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Identify Grains</a></li>
-                            <li><a asp-action="Add" asp-controller="Grain"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Submit a Grain!</a></li>
+                            <li><a asp-action="Index" asp-controller="Taxon"><span class="glyphicon glyphicon-book"></span> Browse All Taxa</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a asp-action="Help" asp-controller="Grain">Help</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Physical Collections<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a asp-action="Index" asp-controller="Reference">Browse</a></li>
+                            <li><a asp-action="Index" asp-controller="Reference">Physical Collections</a></li>
                             @if (User.IsInRole("Digitise"))
                             {
                                 <li><a asp-action="AddCollection" asp-controller="Reference">Add New Collection</a></li>
@@ -57,11 +49,13 @@
                             {
                                 <li><a asp-action="RequestAccess" asp-controller="Reference">Get Started with Digitisation</a></li>
                             }
-                            <li role="separator" class="divider"></li>
-                            <li><a asp-action="Help" asp-controller="Reference">Help</a></li>
+                            @*<li role="separator" class="divider"></li>
+                            <li><a asp-action="Help" asp-controller="Reference">Help</a></li>*@
                         </ul>
                     </li>
-                    <li><a asp-controller="Bounty" asp-action="Index">Leaders</a></li>
+                    <li><a asp-controller="Grain" asp-action="Identify"><span class="glyphicon glyphicon-search"></span> Identify</a></li>
+                    <li><a asp-action="Add" asp-controller="Grain"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Submit a Grain!</a></li>
+                    <li><a asp-controller="Bounty" asp-action="Index">Leaderboard</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
@@ -84,10 +78,10 @@
                 <div class="col-md-3">
                     <h4>Information</h4>
                     <ul>
-                        <li><a asp-action="Guide">About the Project</a></li>
+                        <li><a asp-action="Guide" asp-controller="Home">About the Project</a></li>
                         <li><a asp-action="Terms" asp-controller="Home">Terms and Conditions</a></li>
-                        <li><a asp-action="Terms">Licensing</a></li>
-                        <li><a asp-action="Guide">How to Cite</a></li>
+                        <li><a asp-action="Terms" asp-controller="Home">Licensing</a></li>
+                        <li><a asp-action="Guide" asp-controller="Home">How to Cite</a></li>
                     </ul>
                 </div>
                 <div class="col-md-5" style="padding-right:4em">
