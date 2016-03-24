@@ -1,4 +1,4 @@
-﻿@model List<OxPollen.ViewModels.TaxonViewModel>
+﻿@model OxPollen.ViewModels.Taxon.TaxonIndexViewModel
 
 @{
     ViewBag.Title = "Reference Collection";
@@ -36,9 +36,9 @@
 
 @* Filters *@
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters</div>
+            <div class="panel-heading">Display</div>
             <div class="panel-body">
                 <span>Taoxnomic Rank: </span>
                 <div class="dropdown" style="display:inline;">
@@ -55,6 +55,20 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</div>
+            <div class="panel-body">
+                @using (Html.BeginForm("Index", "Taxon", FormMethod.Get, new { @class = "form-inline" }))
+                {
+                    <div class="form-group">
+                        <input asp-for="Query" class="form-control" placeholder="Latin Name" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Go</button>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 <p>
@@ -66,48 +80,77 @@
 </p>
 
 <div class="row">
-    @if (Model.Count > 0)
+    @foreach (var taxon in Model.Taxa)
     {
-        @foreach (var taxon in Model)
-        {
-            <div class="col-md-6">
-                <div class="taxon-list-item">
-                    <div class="img-container">
-                        @if (!string.IsNullOrEmpty(taxon.ImageFilename))
-                        {
-                            <img src="@taxon.ImageFilename" />
-                        }
-                    </div>
-                    <div class="taxon-details">
-                        <a href="@Url.Action("View", new { id = @taxon.Id } )">
-                            <h3>@taxon.LatinName</h3>
-                        </a>
-                        <ul class="list-inline">
-                            <li><span class="glyphicon glyphicon-user"></span>  @taxon.UserSubmissionsConfirmedCount</li>
-                            <li><span class="glyphicon glyphicon-globe"></span> @taxon.ReferenceGrainsCount</li>
-                            <li><span class="glyphicon glyphicon-th-list"></span> @taxon.Children.Count</li>
-                        </ul>
-                    </div>
-                    @if (taxon.Children.Count > 0)
+        <div class="col-md-6">
+            <div class="taxon-list-item">
+                <div class="img-container">
+                    @if (!string.IsNullOrEmpty(taxon.ImageFilename))
                     {
-                        <div class="taxon-toggle">
-                            <a class="subtaxa-button" role="button" data-toggle="collapse" data-parent="#accordion" href="#taxon-@taxon.Id" aria-expanded="false" aria-controls="taxon-@taxon.Id"><span class="glyphicon glyphicon-th-list"></span></a>
-                        </div>
+                        <img src="@taxon.ImageFilename" />
                     }
-                    <ul id="taxon-@taxon.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                        @foreach (var subTaxa in taxon.Children)
-                    {
-                            <li>
-                                <a href="@Url.Action("View", "Taxon", new { id = subTaxa.Id})">@subTaxa.LatinName</a>
-                            </li>
-                        }
+                </div>
+                <div class="taxon-details">
+                    <a href="@Url.Action("View", new { id = @taxon.Id } )">
+                        <h3>@taxon.LatinName</h3>
+                    </a>
+                    <ul class="list-inline">
+                        <li><span class="glyphicon glyphicon-user"></span>  @taxon.UserSubmissionsConfirmedCount</li>
+                        <li><span class="glyphicon glyphicon-globe"></span> @taxon.ReferenceGrainsCount</li>
+                        <li><span class="glyphicon glyphicon-th-list"></span> @taxon.Children.Count</li>
                     </ul>
                 </div>
+                @if (taxon.Children.Count > 0)
+                {
+                    <div class="taxon-toggle">
+                        <a class="subtaxa-button" role="button" data-toggle="collapse" data-parent="#accordion" href="#taxon-@taxon.Id" aria-expanded="false" aria-controls="taxon-@taxon.Id"><span class="glyphicon glyphicon-th-list"></span></a>
+                    </div>
+                }
+                <ul id="taxon-@taxon.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    @foreach (var subTaxa in taxon.Children)
+                    {
+                        <li>
+                            <a href="@Url.Action("View", "Taxon", new { id = subTaxa.Id})">@subTaxa.LatinName</a>
+                        </li>
+                    }
+                </ul>
             </div>
-        }
+        </div>
     }
-    else
-    {
-        <p>Our reference collection is currently empty. Get identifying!</p>
-    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+
+        <nav>
+            <ul class="pagination">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li>
+                        <a href="@Url.Action("Index", new { rank = Model.Rank, query = Model.Query, p = (Model.CurrentPage - 1) })" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.NumberOfPages; i++)
+                {
+                    if (i == Model.CurrentPage)
+                    {
+                        <li class="active"><a href="@Url.Action("Index", new { rank = Model.Rank, query = Model.Query, p = i })">@i</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="@Url.Action("Index", new { rank = Model.Rank, query = Model.Query, p = i })">@i</a></li>
+                    }
+                }
+                @if (Model.CurrentPage < Model.NumberOfPages)
+                {
+                    <li>
+                        <a href="@Url.Action("Index", new { rank = Model.Rank, query = Model.Query, p = (Model.CurrentPage + 1) })" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
 </div>

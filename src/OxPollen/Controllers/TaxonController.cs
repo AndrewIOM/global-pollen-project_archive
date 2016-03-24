@@ -8,6 +8,7 @@ using Microsoft.AspNet.Authorization;
 using OxPollen.Data.Concrete;
 using Microsoft.Data.Entity;
 using System.Collections.Generic;
+using System;
 
 namespace OxPollen.Controllers
 {
@@ -22,24 +23,33 @@ namespace OxPollen.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index(Taxonomy? rank)
+        public IActionResult Index(Taxonomy? rank, int p = 1, string query = null)
         {
             var rankFilter = rank.HasValue ? rank.Value : Taxonomy.Genus;
 
             //Temporary Fix until EF7 RC2 is released. 
             //Can't use multiple ThenIncludes in current build for single joined query...
-            var taxa = _context.Taxa
+            //TODO Currently hardcoded page size of 40
+            var allTaxa = _context.Taxa
                 .Include(m => m.ChildTaxa)
                 .Include(m => m.UserGrains)
                 .ThenInclude(n => n.Images)
                 .Include(m => m.ReferenceGrains)
                 .ThenInclude(n => n.Images)
                 .OrderBy(m => m.LatinName)
-                .ToList();
-            var ofRank = taxa.Where(m => m.Rank == rankFilter);
+                .ToList()
+                .Where(m => m.Rank == rankFilter).ToList();
+            if (!string.IsNullOrEmpty(query)) { allTaxa = allTaxa.Where(m => m.LatinName.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList(); }
+            var page = allTaxa.Skip((p - 1) * 40).Take(40);
 
-            var model = new List<TaxonViewModel>();
-            foreach (var taxon in ofRank)
+            var model = new TaxonIndexViewModel();
+            model.NumberOfPages = (int)Math.Ceiling(allTaxa.Count / 40.0);
+            model.CurrentPage = p;
+            model.PageSize = 40;
+            model.Query = query;
+            model.Rank = rankFilter;
+
+            foreach (var taxon in page)
             {
                 var viewModel = new TaxonViewModel()
                 {
@@ -74,8 +84,7 @@ namespace OxPollen.Controllers
 
                     }
                 }
-
-                model.Add(viewModel);
+                model.Taxa.Add(viewModel);
             }
             return View(model);
         }
@@ -151,6 +160,12 @@ namespace OxPollen.Controllers
                 return RedirectToAction("Taxa", "Admin");
             }
             return HttpBadRequest();
+        }
+
+        public IActionResult Suggest(string searchTerm)
+        {
+            var result = _taxonService.GetAll().Where(m => m.LatinName.Contains(searchTerm)).ToList();
+            return Ok(result);
         }
 
         private string GetImageRecursive(Taxon taxon)
