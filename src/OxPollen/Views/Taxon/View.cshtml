@@ -9,13 +9,13 @@
 
 @* Header *@
 @section homepageHeader {
-    <div class="addgrain-section headsection">
-        <div class="container">
-            <h2>@ViewBag.Title</h2>
-            <p><strong>@Model.Rank</strong> in the OxPollen Reference Collection</p>
-        </div>
+<div class="addgrain-section headsection">
+    <div class="container">
+        <h2>@ViewBag.Title</h2>
+        <p><strong>@Model.Rank</strong> in the Global Pollen Project Reference Collection</p>
     </div>
-    <br />
+</div>
+<br />
 }
 
 @* Breadcrumb *@
@@ -40,13 +40,13 @@
                         <ul class="grain-grid columns-8">
                             @foreach (var grain in Model.ReferenceGrains)
                             {
-                                <li>
-                                    <a href="@Url.Action("Grain", "Reference", new { id = @grain.ReferenceGrainId } )">
-                                        <div class="img-container">
-                                            <img src="@grain.Images.First().FileNameThumbnail" />
-                                        </div>
-                                    </a>
-                                </li>
+                            <li>
+                                <a href="@Url.Action(" Grain", "Reference" , new { id=@grain.ReferenceGrainId } )">
+                                    <div class="img-container">
+                                        <img src="@grain.Images.First().FileNameThumbnail" />
+                                    </div>
+                                </a>
+                            </li>
                             }
                         </ul>
                         <hr />
@@ -54,13 +54,13 @@
                         <ul class="grain-grid columns-8">
                             @foreach (var grain in Model.SubmittedGrains)
                             {
-                                <li>
-                                    <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
-                                        <div class="img-container">
-                                            <img src="@grain.Images.First().FileNameThumbnail" />
-                                        </div>
-                                    </a>
-                                </li>
+                            <li>
+                                <a href="@Url.Action(" Identify", "Grain" , new { id=@grain.Id } )">
+                                    <div class="img-container">
+                                        <img src="@grain.Images.First().FileNameThumbnail" />
+                                    </div>
+                                </a>
+                            </li>
                             }
                         </ul>
                     </div>
@@ -109,31 +109,31 @@
                 <div class="row">
                     <div class="col-md-12">
                         <hr />
-                        <label>OxPollen Taxonomy</label>
-                        @if (Model.ParentTaxon != null)
-                        {
-                            <p>Parent: <a href="@Url.Action("View", new { id = Model.ParentTaxon.TaxonId })">@Model.ParentTaxon.LatinName</a></p>
-                        }
-                        @if (Model.SubTaxa.Count > 0)
-                        {
-                            <p>Children: </p>
-                            <ul>
-                                @foreach (var subTaxon in Model.SubTaxa)
-                                {
-                                    <li><a href="@Url.Action("View", new { id = subTaxon.TaxonId })">@subTaxon.LatinName</a></li>
-                                }
-                            </ul>
-                        }
+                        <label>Description</label>
+                        <div id="gbif-image"></div>
+                        <p id="gbif-description"><span class="glyphicon glyphicon-refresh"></span></p>
+                        <p><span id="description-source"></span> | <span id="gbif-image-source"></span></p>
+                        <a class="btn btn-default" href="http://gbif.org/species/@Model.GbifId" target="_blank">View at GBIF</a>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <hr />
-                        <label>Description (GBIF)</label>
-                        <p id="gbif-description"><span class="glyphicon glyphicon-refresh"></span></p>
-                        <p id="description-source"><em>Source:</em></p>
-                        <hr />
-                        <a class="btn btn-default" href="http://gbif.org/species/@Model.GbifId" target="_blank">View at GBIF</a>
+                        <label>Taxonomy</label>
+                        @if (Model.ParentTaxon != null)
+                        {
+                            <p>Parent: <a href="/Taxon/View/@Model.ParentTaxon.TaxonId">@Model.ParentTaxon.LatinName</a></p>
+                        }
+                        @if (Model.SubTaxa.Count > 0)
+                        {
+                            <p>Children: </p>
+                            <ul>
+                                @foreach (var subTaxon in Model.SubTaxa.OrderBy(m => m.LatinName))
+                                {
+                                    <li><a href="/Taxon/View/@subTaxon.TaxonId">@subTaxon.LatinName</a></li>
+                                }
+                            </ul>
+                        }
                     </div>
                 </div>
             </div>
@@ -143,13 +143,13 @@
 
 @section scripts {
     @* Present Distribution Map *@
-    <script type="text/javascript" src="~/lib/leaflet/dist/leaflet.js"></script>
-    <script src="~/lib/nouislider/distribute/nouislider.min.js"></script>
-    <script src="~/js/taxon/PresentDistribution.js"></script>
+<script type="text/javascript" src="~/lib/leaflet/dist/leaflet.js"></script>
+<script src="~/lib/nouislider/distribute/nouislider.min.js"></script>
+<script src="~/js/taxon/PresentDistribution.js"></script>
 
     @* Past Distribution Map *@
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="http://d3js.org/topojson.v0.min.js"></script>
-    <script src="~/lib/wnumb/wNumb.js"></script>
-    <script src="~/js/taxon/PastDistribution.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v0.min.js"></script>
+<script src="~/lib/wnumb/wNumb.js"></script>
+<script src="~/js/taxon/PastDistribution.js"></script>
 }

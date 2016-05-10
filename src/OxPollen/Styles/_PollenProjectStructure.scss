@@ -28,9 +28,9 @@
     font-style: italic;
 }
 
-    .header-attribution a {
-        color: white;
-    }
+.header-attribution a {
+    color: white;
+}
 
 h1 {
     font-size: 3em;
@@ -155,9 +155,9 @@ darkroom-container {
     text-align: center;
 }
 
-    .image-thumbnails a img {
-        border: 1px solid grey;
-    }
+.image-thumbnails a img {
+    border: 1px solid grey;
+}
 
 .zoom-canvas {
     border: 1px solid grey;
@@ -186,4 +186,14 @@ darkroom-container {
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+}
+
+.inset-framed {
+    width: 40%;
+    height: auto;
+    border: 1px solid lightgrey;
+    padding: 5px;
+    background-color: white;
+    float: right;
+    margin: 1em 1em 0 0;
 }

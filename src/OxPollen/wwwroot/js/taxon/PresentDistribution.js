@@ -3,6 +3,7 @@
     if (gbifId != 0) {
         populateGbifDescription(gbifId);
         gbifMap(gbifId);
+        populateGbifImages(gbifId);
     }
 });
 
@@ -41,10 +42,35 @@ var populateGbifDescription = function (gbifId) {
         }
         if (description == '') {
             holder.innerHTML = 'Not Available';
-            sourceHolder.innerHTML = 'Source: None Available';
+            sourceHolder.innerHTML = 'No Text Available';
         } else {
             holder.innerHTML = description;
-            sourceHolder.innerHTML = 'Source: ' + source;
+            sourceHolder.innerHTML = 'Text Source: ' + source;
+        }
+    });
+}
+
+//GBIF Images
+var populateGbifImages = function (gbifId) {
+    var holder = document.getElementById('gbif-image');
+    var sourceHolder = document.getElementById('gbif-image-source');
+
+    var gbifUri = "http://api.gbif.org/v1/species/" + gbifId;
+    ajaxHelper(gbifUri + '/media', 'GET', 'jsonp').done(function (data) {
+        var source = '';
+        var image = '';
+        for (i = 0; i < data.results.length; i++) {
+            console.log(data.results[i]);
+            if (data.results[i].type == 'StillImage' && image == '') {
+                image = '<a target="_blank" href="' + data.results[i].references + '"><img src="' + data.results[i].identifier + '" class="img-responsive inset-framed" alt="' + data.results[i].description + '"></a>';
+                source = '<a href="' + data.results[i].references + '">Image Source</a>';
+            }
+        }
+        if (image == '') {
+            holder.innerHTML = '<p>No Image Available</p>';
+        } else {
+            holder.innerHTML = image;
+            sourceHolder.innerHTML = source;
         }
     });
 }
