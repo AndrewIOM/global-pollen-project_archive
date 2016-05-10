@@ -41,7 +41,7 @@
                             @foreach (var grain in Model.ReferenceGrains)
                             {
                             <li>
-                                <a href="@Url.Action(" Grain", "Reference" , new { id=@grain.ReferenceGrainId } )">
+                                <a href="/Reference/Grain/@grain.ReferenceGrainId">
                                     <div class="img-container">
                                         <img src="@grain.Images.First().FileNameThumbnail" />
                                     </div>
@@ -55,7 +55,7 @@
                             @foreach (var grain in Model.SubmittedGrains)
                             {
                             <li>
-                                <a href="@Url.Action(" Identify", "Grain" , new { id=@grain.Id } )">
+                                <a href="/Grain/Identify/@grain.Id">
                                     <div class="img-container">
                                         <img src="@grain.Images.First().FileNameThumbnail" />
                                     </div>
