@@ -139,3 +139,8 @@ h1, h2, h3, h4, h5, h6 {
 .navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
     color: black;
 }
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    background-color:#83296f;
+    border-color: #83296f;
+}

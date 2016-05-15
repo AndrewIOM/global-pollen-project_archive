@@ -1,7 +1,7 @@
 ﻿@model ReferenceGrain
 
 @{
-    ViewBag.Title = Model.Taxon.LatinName;
+    ViewBag.Title = Model.Taxon.LatinName + " - " + Model.Collection.Name;
     ViewBag.Subtitle = "Digitised Reference Slide in the collection: " + Model.Collection.Name;
     var timeSinceAdd = DateTime.Now - Model.TimeAdded;
 }
@@ -16,7 +16,7 @@
 @section homepageHeader {
     <div class="addgrain-section headsection">
         <div class="container">
-            <h2>@ViewData["Title"]</h2>
+            <h2>@Model.Taxon.LatinName</h2>
             <p>@ViewData["Subtitle"]</p>
         </div>
     </div>
