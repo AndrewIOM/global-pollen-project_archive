@@ -211,3 +211,6 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 /src/OxPollen/wwwroot/user-image-uploads
+/src/OxPollen/wwwroot/lib
+/src/OxPollen/Properties/PublishProfiles
+/src/OxPollen/wwwroot/testdata
