@@ -108,7 +108,7 @@
                     </div>
                 }
                 <ul id="taxon-@taxon.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                    @foreach (var subTaxa in taxon.Children)
+                    @foreach (var subTaxa in taxon.Children.OrderBy(m => m.LatinName))
                     {
                         <li>
                             <a href="@Url.Action("View", "Taxon", new { id = subTaxa.Id})">@subTaxa.LatinName</a>
