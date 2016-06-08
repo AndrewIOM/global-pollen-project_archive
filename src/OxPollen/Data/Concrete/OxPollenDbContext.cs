@@ -12,6 +12,7 @@ namespace OxPollen.Data.Concrete
 
         //Taxonomy
         public DbSet<Taxon> Taxa { get; set; }
+        public DbSet<PlantListTaxon> PlantListTaxa { get; set; }
 
         //Reference Collection
         public DbSet<ReferenceGrain> ReferenceGrains { get; set; }

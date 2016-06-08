@@ -8,6 +8,13 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Authorization;
 using System.Security.Claims;
 using OxPollen.Services.Abstract;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Http;
+using Microsoft.Net.Http.Headers;
+using System.IO;
+using Microsoft.AspNet.Hosting;
+using OxPollen.Utilities;
 
 namespace OxPollen.Controllers
 {
@@ -18,12 +25,15 @@ namespace OxPollen.Controllers
         private readonly RoleManager<IdentityRole> _roleMan;
         private readonly UserManager<AppUser> _userManager;
         private readonly ITaxonomyService _taxonService;
-        public AdminController(ITaxonomyService taxon, OxPollenDbContext context, RoleManager<IdentityRole> role, UserManager<AppUser> userManager)
+        private IHostingEnvironment _environment;
+        public AdminController(ITaxonomyService taxon, OxPollenDbContext context, 
+            RoleManager<IdentityRole> role, UserManager<AppUser> userManager, IHostingEnvironment environment)
         {
             _context = context;
             _roleMan = role;
             _userManager = userManager;
             _taxonService = taxon;
+            _environment = environment;
         }
 
         // GET: /Admin/
@@ -36,30 +46,6 @@ namespace OxPollen.Controllers
         public IActionResult Taxa()
         {
             var taxa = _context.Taxa.OrderBy(m => m.LatinName).ToList();
-
-            //TEMP: Connect up ref grains
-            //var refGrains = _context.ReferenceGrains.ToList();
-            //foreach (var grain in refGrains)
-            //{
-            //        var parent = _taxonService.CreateOrUpdateTaxonomy(grain.Family, grain.Genus, grain.Species);
-            //        grain.Taxon = parent;
-            //        _context.ReferenceGrains.Update(grain);
-            //}
-
-            ////TEMP: Connect up ref grains
-            //var grains = _context.UserGrains
-            //    .Include(m => m.IdentifiedAs).ToList();
-            //foreach (var grain in grains)
-            //{
-            //    if (grain.IdentifiedAs == null)
-            //    {
-            //        var parent = _taxonService.CreateOrUpdateTaxonomy(grain.Family, grain.Genus, grain.Species);
-            //        grain.IdentifiedAs = parent;
-            //        _context.UserGrains.Update(grain);
-            //    }
-            //}
-            //_context.SaveChanges();
-
             return View(taxa);
         }
 
@@ -165,5 +151,25 @@ namespace OxPollen.Controllers
             _context.SaveChanges();
             return RedirectToAction("Users");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePlantList(ICollection<IFormFile> files)
+        {
+            var uploads = Path.Combine(_environment.WebRootPath, "uploads");
+            foreach (var file in files)
+            {
+                if (file.Length > 0)
+                {
+                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                    await file.SaveAsAsync(Path.Combine(uploads, fileName));
+
+                    //Seed plant list
+                    var tool = new PlantListParser(fileName, _context);
+                    tool.Refresh();
+                }
+            }
+            return View();
+        }
+
     }
 }

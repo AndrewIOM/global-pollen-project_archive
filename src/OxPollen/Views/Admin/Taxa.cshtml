@@ -43,3 +43,12 @@
         </tr>
     }
 </table>
+
+<h4>Update 'The Plant List' taxonomy</h4>
+<hr />
+<p>Upload a Darwin core archive of Kew's the plant list here to update the internal taxonomic backbone.</p>
+<p>Do NOT use unless you know exactly what you are doing.</p>
+<form method="post" asp-action="UpdatePlantList" asp-controller="Admin" enctype="multipart/form-data">
+    <input type="file" name="files" multiple />
+    <input type="submit" value="Upload" />
+</form>
