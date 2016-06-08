@@ -266,15 +266,15 @@ namespace OxPollen.Controllers
             }
         }
 
-        [Authorize(Roles = "Digitise")]
-        public IActionResult DeleteCollection(int id)
-        {
-            var collection = _refService.GetCollectionById(id);
-            if (collection == null) return HttpBadRequest();
-            if (User.Identity.Name != collection.User.UserName) return HttpBadRequest();
-            _refService.DeleteCollection(id);
-            return RedirectToAction("Index");
-        }
+        //[Authorize(Roles = "Digitise")]
+        //public IActionResult DeleteCollection(int id)
+        //{
+        //    var collection = _refService.GetCollectionById(id);
+        //    if (collection == null) return HttpBadRequest();
+        //    if (User.Identity.Name != collection.User.UserName) return HttpBadRequest();
+        //    _refService.DeleteCollection(id);
+        //    return RedirectToAction("Index");
+        //}
 
         [Authorize(Roles = "Digitise")]
         public IActionResult DeleteGrain(int id)

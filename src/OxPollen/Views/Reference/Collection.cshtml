@@ -44,7 +44,7 @@
                         <a role="button" class="btn btn-default" href="@Url.Action("AddGrain", "Reference", new { id = Model.Id })"><span class="glyphicon glyphicon-plus"></span> Add Reference Slide</a>
                         @*<a role="button" class="btn btn-default" href="@Url.Action("BatchAddGrains", "Reference", new { id = Model.Id })"><span class="glyphicon glyphicon-plus"></span> Batch Add (PREVIEW)</a>*@
                         <a role="button" class="btn btn-default" href="@Url.Action("EditCollection", "Reference", new { id = Model.Id })">Edit Metadata</a>
-                        <a role="button" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this collection? This CANNOT be undone.')" href="@Url.Action("DeleteCollection", new { id = Model.Id } )"><span class="glyphicon glyphicon-trash"></span> Delete Collection</a>
+                        @*<a role="button" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this collection? This CANNOT be undone.')" href="@Url.Action("DeleteCollection", new { id = Model.Id } )"><span class="glyphicon glyphicon-trash"></span> Delete Collection</a>*@
                     </div>
                 </div>
             </div>
