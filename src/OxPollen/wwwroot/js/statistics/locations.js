@@ -1,11 +1,11 @@
 ﻿$('document').ready(function () {
 
     var width = $('#locations-map').width();
-    var height = width * 0.70;
+    var height = width * 0.5;
 
-    var projection = d3.geo.mercator()
+    var projection = d3.geo.equirectangular()
         .scale((width + 1) / 2 / Math.PI)
-        .translate([width / 2, height * 0.75])
+        .translate([width / 2, height * 0.5])
         .precision(.1);
 
     var svg = d3.select("#locations-map").append("svg")

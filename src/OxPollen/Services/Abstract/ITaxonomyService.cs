@@ -10,6 +10,7 @@ namespace OxPollen.Services.Abstract
         Taxon CreateOrUpdateTaxonomy(string family, string genus, string species);
         IEnumerable<Taxon> GetAll();
         IEnumerable<Taxon> GetAll(Taxonomy rank);
+        IEnumerable<Taxon> Suggest(string search);
         Taxon GetById(int id);
         void RemoveTaxon(int id);
     }

@@ -8,6 +8,7 @@
 /// <reference path="js/grain/ImageManipluation.js" />
 /// <reference path="js/grain/imagezoomer.js" />
 /// <reference path="js/grain/mapfilter.js" />
+/// <reference path="js/home/search.js" />
 /// <reference path="js/reference/addfocusimage.js" />
 /// <reference path="js/reference/addgrain.js" />
 /// <reference path="js/reference/addreferenceslides.js" />

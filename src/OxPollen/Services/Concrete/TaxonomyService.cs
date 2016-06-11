@@ -4,6 +4,7 @@ using OxPollen.Models;
 using OxPollen.Data.Abstract;
 using OxPollen.Utilities;
 using System.Linq;
+using System;
 
 namespace OxPollen.Services.Concrete
 {
@@ -122,6 +123,12 @@ namespace OxPollen.Services.Concrete
             _uow.SaveChanges();
         }
 
+        public IEnumerable<Taxon> Suggest(string search)
+        {
+            var result = _uow.TaxonRepository.Find(m => m.LatinName.Contains(search));
+            return result;
+        }
+
         private string FirstCharToUpper(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
@@ -133,6 +140,5 @@ namespace OxPollen.Services.Concrete
             if (string.IsNullOrEmpty(input)) return input;
             return input.First().ToString().ToLower() + input.Substring(1).ToLower();
         }
-
     }
 }

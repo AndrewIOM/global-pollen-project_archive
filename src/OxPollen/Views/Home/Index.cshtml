@@ -10,16 +10,27 @@
         <div class="container">
             <h1>The Global Pollen Project</h1>
             <p>The Open Platform for Pollen Identification</p>
+
+            <form action="/Taxon" method="get" class="form-inline search-big">
+                <input name="Query" title="Search by latin name" id="ref-collection-search" type="search" class="form-control input-lg" placeholder="Search by Latin Name" />
+                <div class="dropdown-menu" id="suggestList" style="display:none"></div>
+                <button type="submit" title="Search" class="btn btn-primary input-lg">Go</button>
+            </form>
+
             <p class="header-attribution">Image Credit: <a target="_blank" href="https://standingoutinmyfield.wordpress.com/2014/01/09/cool-things-ive-learned-about-pollen/">standingoutinmyfield</a></p>
         </div>
     </header>
 }
 
+@* Search *@
+<div class="row">
+</div>
+
 @* Marketing *@
 <div class="row" style="text-align:center">
     <div class="col-sm-4">
         <img class="img-circle img-responsive home-tri-image" src="~/images/pollen3.png" alt="">
-        <h3><a asp-action="Index" asp-controller="Taxon">Search Our  Collection</a></h3>
+        <h3><a asp-action="Index" asp-controller="Taxon">Browse Our Collection</a></h3>
         <p>Browse the dynamic and ever expanding reference collection of the Global Pollen Project! Use as a key or as a reference for your own research.</p>
     </div>
     <div class="col-sm-4">
@@ -81,4 +92,5 @@
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/topojson.v0.min.js"></script>
     <script src="~/js/statistics/locations.js"></script>
+    <script src="~/js/home/suggest.js"></script>
 }

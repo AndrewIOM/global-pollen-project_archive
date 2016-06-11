@@ -164,7 +164,12 @@ namespace OxPollen.Controllers
 
         public IActionResult Suggest(string searchTerm)
         {
-            var result = _taxonService.GetAll().Where(m => m.LatinName.Contains(searchTerm)).ToList();
+            var result = _taxonService.Suggest(searchTerm).Take(10).Select(m => new TaxonSuggest()
+            {
+                Id = m.TaxonId,
+                Name = m.LatinName,
+                Rank = m.Rank
+            });
             return Ok(result);
         }
 

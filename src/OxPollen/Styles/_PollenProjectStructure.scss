@@ -20,6 +20,37 @@
     }
 }
 
+.search-big {
+    margin-top: 2em;
+    position: relative;
+
+    input {
+        width: 20em;
+    }
+}
+
+@media(max-width:768px) {
+    .search-big {
+        margin-top: 1em;
+        position: relative;
+
+        input {
+            width: 70%;
+            display: inline-block;
+        }
+
+        button {
+            display: inline-block;
+        }
+    }
+}
+
+@media(max-width:992px) {
+    .homepage-header {
+        height: 17em;
+    }
+}
+
 .header-attribution {
     position: absolute;
     bottom: 0;
