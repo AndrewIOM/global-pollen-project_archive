@@ -147,6 +147,18 @@ namespace OxPollen.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
+        public IActionResult RefreshConnections()
+        {
+            var taxa = _taxonService.GetAll().ToList();
+            foreach (var taxon in taxa)
+            {
+                _taxonService.RefreshConnections(taxon.TaxonId);
+            }
+
+            return Ok();
+        }
+
+        [Authorize(Policy = "AdminOnly")]
         public IActionResult Delete(int id)
         {
             var taxon = _taxonService.GetById(id);

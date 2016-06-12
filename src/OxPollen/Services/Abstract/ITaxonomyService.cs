@@ -13,5 +13,6 @@ namespace OxPollen.Services.Abstract
         IEnumerable<Taxon> Suggest(string search);
         Taxon GetById(int id);
         void RemoveTaxon(int id);
+        void RefreshConnections(int id);
     }
 }

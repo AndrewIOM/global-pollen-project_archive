@@ -140,5 +140,36 @@ namespace OxPollen.Services.Concrete
             if (string.IsNullOrEmpty(input)) return input;
             return input.First().ToString().ToLower() + input.Substring(1).ToLower();
         }
+
+        public void RefreshConnections(int id)
+        {
+            var taxon = _uow.TaxonRepository.GetById(id);
+            if (taxon == null) return;
+
+            string family = "";
+            string genus = "";
+            string species = "";
+            if (taxon.Rank == Taxonomy.Family)
+            {
+                family = taxon.LatinName;
+            } else if (taxon.Rank == Taxonomy.Genus)
+            {
+                genus = taxon.LatinName;
+                family = taxon.ParentTaxa.LatinName;
+            } else
+            {
+                species = taxon.LatinName;
+                genus = taxon.ParentTaxa.LatinName;
+                family = taxon.ParentTaxa.ParentTaxa.LatinName;
+            }
+
+            var gbifId = GbifUtility.GetGbifId(taxon.Rank, family, genus, species).Result;
+            var neotomaId = NeotomaUtility.GetTaxonId(taxon.LatinName).Result;
+
+            taxon.GbifId = gbifId;
+            taxon.NeotomaId = neotomaId;
+            _uow.TaxonRepository.Update(taxon);
+            _uow.SaveChanges();
+        }
     }
 }
