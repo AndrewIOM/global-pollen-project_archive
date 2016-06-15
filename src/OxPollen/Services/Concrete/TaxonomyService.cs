@@ -77,7 +77,7 @@ namespace OxPollen.Services.Concrete
                 species = FirstCharToLower(species);
                 speciesTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus + " " + species && m.Rank == Taxonomy.Species
                     && m.ParentTaxa.LatinName == genus).FirstOrDefault();
-                if (speciesTaxon == null && _backbone.IsValidTaxon(Taxonomy.Species, family, genus, genus + " " + species))
+                if (speciesTaxon == null && _backbone.IsValidTaxon(Taxonomy.Species, family, genus, species))
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
                         familyTaxon != null ? familyTaxon.LatinName : null, genus, species);

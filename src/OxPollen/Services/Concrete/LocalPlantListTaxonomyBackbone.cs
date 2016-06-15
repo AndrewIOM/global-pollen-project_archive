@@ -19,18 +19,20 @@ namespace OxPollen.Services.Concrete
         {
             if (rank == Taxonomy.Family)
             {
-                var match = _context.PlantListTaxa.FirstOrDefault(m => m.LatinName.Equals(family, StringComparison.InvariantCultureIgnoreCase)
-                    && m.Rank == Taxonomy.Family);
-                return match != null;
+                var familyMatch = _context.PlantListTaxa
+                    .Where(m => m.Rank == Taxonomy.Family)
+                    .Where(m => m.LatinName == family).ToList();
+                return familyMatch.Count == 1;
             }
 
             else if (rank == Taxonomy.Genus)
             {
-                var match = _context.PlantListTaxa.Include(m => m.ParentTaxa)
-                    .FirstOrDefault(m => m.LatinName.Equals(genus, StringComparison.InvariantCultureIgnoreCase)
-                        && m.Rank == Taxonomy.Genus
-                        && m.ParentTaxa.LatinName.Equals(family, StringComparison.InvariantCultureIgnoreCase));
-                return match != null;
+                var genusMatch = _context.PlantListTaxa.Where(m => m.Rank == Taxonomy.Genus)
+                    .Include(m => m.ParentTaxa)
+                    .Where(m => m.Status == TaxonomicStatus.Accepted)
+                    .Where(m => m.LatinName == genus)
+                    .Where(m => m.ParentTaxa.LatinName == family).ToList();
+                return genusMatch.Count == 1;
             }
 
             else if (rank == Taxonomy.Species)
