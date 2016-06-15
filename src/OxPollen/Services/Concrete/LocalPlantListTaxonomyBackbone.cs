@@ -35,12 +35,20 @@ namespace OxPollen.Services.Concrete
 
             else if (rank == Taxonomy.Species)
             {
-                var match = _context.PlantListTaxa.Include(m => m.ParentTaxa).ThenInclude(n => n.ParentTaxa)
-                    .FirstOrDefault(m => m.LatinName.Equals(species, StringComparison.InvariantCultureIgnoreCase)
-                        && m.Rank == Taxonomy.Species
-                        && m.ParentTaxa.LatinName.Equals(genus, StringComparison.InvariantCultureIgnoreCase)
-                        && m.ParentTaxa.ParentTaxa.LatinName.Equals(family, StringComparison.InvariantCultureIgnoreCase));
-                return match != null;
+                //Have to split out this section due to bug in EF7 RC1 release
+                var familyMatch = _context.PlantListTaxa.Where(m => m.Rank == Taxonomy.Genus)
+                    .Include(m => m.ParentTaxa)
+                    .Where(m => m.Status == TaxonomicStatus.Accepted)
+                    .Where(m => m.LatinName == genus)
+                    .Where(m => m.ParentTaxa.LatinName == family).ToList();
+                if (familyMatch.Count == 0) return false; //If genus - family link is not valid, return false
+
+                var match = _context.PlantListTaxa.Include(m => m.ParentTaxa)
+                    .Where(m => m.Rank == Taxonomy.Species)
+                    .Where(m => m.Status == TaxonomicStatus.Accepted)
+                    .Where(m => m.LatinName == genus + " " + species)
+                    .Where(m => m.ParentTaxa.LatinName == genus).ToList();
+                return match.Count == 1;
             }
 
             //Catch other taxonomic ranks
