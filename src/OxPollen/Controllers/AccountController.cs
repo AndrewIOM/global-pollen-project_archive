@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using OxPollen.Models;
 using OxPollen.Services;
+using OxPollen.ViewModels;
+using OxPollen.Data.Concrete;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Linq;
-using OxPollen.ViewModels;
-using OxPollen.Data.Concrete;
+using Microsoft.EntityFrameworkCore;
 
 namespace OxPollen.Controllers
 {
@@ -210,7 +210,7 @@ namespace OxPollen.Controllers
                 // If the user does not have an account, then ask the user to create an account.
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
-                var email = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Email);
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
             }
         }
@@ -222,7 +222,7 @@ namespace OxPollen.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
         {
-            if (User.IsSignedIn())
+            if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction(nameof(ManageController.Index), "Manage");
             }
@@ -511,7 +511,7 @@ namespace OxPollen.Controllers
 
         private async Task<AppUser> GetCurrentUserAsync()
         {
-            return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
+            return await _userManager.FindByNameAsync(User.Identity.Name);
         }
 
         private IActionResult RedirectToLocal(string returnUrl)

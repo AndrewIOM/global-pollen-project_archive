@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OxPollen.Data.Concrete;
 using OxPollen.Models;
-using OxPollen.Utilities;
 using OxPollen.ViewModels.Api;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OxPollen.Controllers.Api
 {

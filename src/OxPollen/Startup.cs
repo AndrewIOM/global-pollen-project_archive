@@ -1,33 +1,43 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Data.Entity;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.PlatformAbstractions;
 using OxPollen.Data.Abstract;
 using OxPollen.Data.Concrete;
 using OxPollen.Models;
 using OxPollen.Services;
 using OxPollen.Services.Abstract;
 using OxPollen.Services.Concrete;
-using System;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace OxPollen
 {
     public class Startup
     {
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+        public static void Main(string[] args)
+        {
+            var host = new WebHostBuilder()
+            .UseKestrel()
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .UseIISIntegration()
+            .UseStartup<Startup>()
+            .Build();
 
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+            host.Run();
+        }
+
+        public Startup(IHostingEnvironment env, IHostingEnvironment hostEnv)
         {
             // Setup configuration sources.
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(appEnv.ApplicationBasePath)
+                .SetBasePath(hostEnv.ContentRootPath)
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
@@ -45,10 +55,8 @@ namespace OxPollen
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFramework()
-                .AddSqlServer()
-                .AddDbContext<OxPollenDbContext>(options =>
-                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+            services.AddDbContext<OxPollenDbContext>(options =>
+                options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
 
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<OxPollenDbContext>()
@@ -67,11 +75,7 @@ namespace OxPollen
             });
 
             services.AddMvc();
-            services.AddCors();
-
             services.AddOptions();
-            services.Configure<Options.AuthMessageSenderOptions>(Configuration);
-            services.Configure<Options.AzureOptions>(Configuration);
 
             // DI Services
             services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -85,77 +89,42 @@ namespace OxPollen
             services.AddTransient<IEmailSender, AuthMessageSender>();
         }
 
-        // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.MinimumLevel = LogLevel.Information;
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
-            // Configure the HTTP request pipeline.
-
-            // Add the following to the request pipeline only in development environment.
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage(options =>
-                {
-                    options.EnableAll();
-                });
             }
             else
             {
-                // Add Error handling middleware which catches all application specific errors and
-                // sends the request to the following path or controller action.
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            // Add the platform handler to the request pipeline.
-            app.UseIISPlatformHandler();
-
-            // Add static files to the request pipeline.
             app.UseStaticFiles();
 
-            // Add cookie-based authentication to the request pipeline.
             app.UseIdentity();
-
-            // Add and configure the options for authentication middleware to the request pipeline.
-            // You can add options for middleware as shown below.
-            // For more information see http://go.microsoft.com/fwlink/?LinkID=532715
-            app.UseFacebookAuthentication(options =>
+            app.UseFacebookAuthentication(new FacebookOptions()
             {
-                options.AppId = Configuration["Authentication:Facebook:AppId"];
-                options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                AppId = Configuration["Authentication:Facebook:AppId"],
+                AppSecret = Configuration["Authentication:Facebook:AppSecret"]
             });
-            //app.UseGoogleAuthentication(options =>
-            //{
-            //    options.ClientId = Configuration["Authentication:Google:ClientId"];
-            //    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-            //});
-            app.UseMicrosoftAccountAuthentication(options =>
+            app.UseTwitterAuthentication(new TwitterOptions()
             {
-                options.ClientId = Configuration["Authentication:MicrosoftAccount:ClientId"];
-                options.ClientSecret = Configuration["Authentication:MicrosoftAccount:ClientSecret"];
-            });
-            app.UseTwitterAuthentication(options =>
-            {
-                options.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
-                options.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
+                ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"],
+                ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"]
             });
 
-            // Add MVC to the request pipeline.
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-
-                // Uncomment the following line to add a route for porting Web API 2 controllers.
-                //routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
 
-            //Custom
             EnsureRoles(app, loggerFactory);
             EnsureAdminUser(app);
         }

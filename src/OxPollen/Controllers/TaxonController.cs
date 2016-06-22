@@ -1,14 +1,14 @@
 ﻿using System.Linq;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using OxPollen.Models;
 using OxPollen.ViewModels;
 using OxPollen.Services.Abstract;
 using OxPollen.ViewModels.Taxon;
-using Microsoft.AspNet.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using OxPollen.Data.Concrete;
-using Microsoft.Data.Entity;
 using System.Collections.Generic;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace OxPollen.Controllers
 {
@@ -91,9 +91,9 @@ namespace OxPollen.Controllers
 
         public IActionResult View(int id)
         {
-            if (id == 0) return HttpBadRequest();
+            if (id == 0) return BadRequest();
             var taxon = _taxonService.GetById(id);
-            if (taxon == null) return HttpNotFound();
+            if (taxon == null) return NotFound();
 
             List<Grain> userGrains = taxon.UserGrains;
             List<ReferenceGrain> refGrains = taxon.ReferenceGrains;
@@ -162,7 +162,7 @@ namespace OxPollen.Controllers
         public IActionResult Delete(int id)
         {
             var taxon = _taxonService.GetById(id);
-            if (taxon == null) return HttpBadRequest();
+            if (taxon == null) return BadRequest();
 
             var refCount = taxon.ReferenceGrains.Count();
             var grainCount = taxon.UserGrains.Count();
@@ -171,7 +171,7 @@ namespace OxPollen.Controllers
                 _taxonService.RemoveTaxon(taxon.TaxonId);
                 return RedirectToAction("Taxa", "Admin");
             }
-            return HttpBadRequest();
+            return BadRequest();
         }
 
         public IActionResult Suggest(string searchTerm)

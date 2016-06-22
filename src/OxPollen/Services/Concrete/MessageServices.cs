@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.Extensions.Options;
 using OxPollen.Options;
 using SendGrid;
 using System.Net;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OxPollen.Models
 {
@@ -7,6 +8,7 @@ namespace OxPollen.Models
         public string Title { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
         public virtual Organisation Organisation { get; set; }
 
         public double BountyScore { get; set; }

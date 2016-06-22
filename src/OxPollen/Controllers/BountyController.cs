@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OxPollen.Models;
 using OxPollen.Services.Abstract;
 using OxPollen.ViewModels;

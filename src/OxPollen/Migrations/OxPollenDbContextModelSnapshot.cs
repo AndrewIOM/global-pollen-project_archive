@@ -1,8 +1,8 @@
-using System;
-using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
-using Microsoft.Data.Entity.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using OxPollen.Data.Concrete;
 
 namespace OxPollen.Migrations
@@ -32,9 +32,9 @@ namespace OxPollen.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
-                        .HasAnnotation("Relational:Name", "RoleNameIndex");
+                        .HasName("RoleNameIndex");
 
-                    b.HasAnnotation("Relational:TableName", "AspNetRoles");
+                    b.ToTable("AspNetRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
@@ -51,7 +51,9 @@ namespace OxPollen.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAnnotation("Relational:TableName", "AspNetRoleClaims");
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUserClaim<string>", b =>
@@ -68,7 +70,9 @@ namespace OxPollen.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAnnotation("Relational:TableName", "AspNetUserClaims");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUserLogin<string>", b =>
@@ -84,7 +88,9 @@ namespace OxPollen.Migrations
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasAnnotation("Relational:TableName", "AspNetUserLogins");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole<string>", b =>
@@ -95,7 +101,11 @@ namespace OxPollen.Migrations
 
                     b.HasKey("UserId", "RoleId");
 
-                    b.HasAnnotation("Relational:TableName", "AspNetUserRoles");
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserRoles");
                 });
 
             modelBuilder.Entity("OxPollen.Models.AppUser", b =>
@@ -150,12 +160,14 @@ namespace OxPollen.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasAnnotation("Relational:Name", "EmailIndex");
+                        .HasName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
-                        .HasAnnotation("Relational:Name", "UserNameIndex");
+                        .HasName("UserNameIndex");
 
-                    b.HasAnnotation("Relational:TableName", "AspNetUsers");
+                    b.HasIndex("OrganisationOrganisationId");
+
+                    b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Grain", b =>
@@ -189,6 +201,12 @@ namespace OxPollen.Migrations
                     b.Property<DateTime>("TimeAdded");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdentifiedAsTaxonId");
+
+                    b.HasIndex("SubmittedById");
+
+                    b.ToTable("OxPollen.Models.Grain");
                 });
 
             modelBuilder.Entity("OxPollen.Models.GrainImage", b =>
@@ -219,6 +237,12 @@ namespace OxPollen.Migrations
                     b.Property<int?>("ReferenceGrainReferenceGrainId");
 
                     b.HasKey("GrainImageId");
+
+                    b.HasIndex("GrainId");
+
+                    b.HasIndex("ReferenceGrainReferenceGrainId");
+
+                    b.ToTable("OxPollen.Models.GrainImage");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Identification", b =>
@@ -241,6 +265,12 @@ namespace OxPollen.Migrations
                     b.Property<string>("UserId");
 
                     b.HasKey("IdentificationId");
+
+                    b.HasIndex("GrainId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OxPollen.Models.Identification");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Organisation", b =>
@@ -254,6 +284,8 @@ namespace OxPollen.Migrations
                         .IsRequired();
 
                     b.HasKey("OrganisationId");
+
+                    b.ToTable("OxPollen.Models.Organisation");
                 });
 
             modelBuilder.Entity("OxPollen.Models.PlantListTaxon", b =>
@@ -272,6 +304,10 @@ namespace OxPollen.Migrations
                     b.Property<int>("Status");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentTaxaId");
+
+                    b.ToTable("OxPollen.Models.PlantListTaxon");
                 });
 
             modelBuilder.Entity("OxPollen.Models.ReferenceCollection", b =>
@@ -303,6 +339,10 @@ namespace OxPollen.Migrations
                     b.Property<string>("WebAddress");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OxPollen.Models.ReferenceCollection");
                 });
 
             modelBuilder.Entity("OxPollen.Models.ReferenceGrain", b =>
@@ -322,6 +362,14 @@ namespace OxPollen.Migrations
                     b.Property<DateTime>("TimeAdded");
 
                     b.HasKey("ReferenceGrainId");
+
+                    b.HasIndex("CollectionId");
+
+                    b.HasIndex("SubmittedById");
+
+                    b.HasIndex("TaxonTaxonId");
+
+                    b.ToTable("OxPollen.Models.ReferenceGrain");
                 });
 
             modelBuilder.Entity("OxPollen.Models.Taxon", b =>
@@ -341,6 +389,10 @@ namespace OxPollen.Migrations
                     b.Property<int>("Rank");
 
                     b.HasKey("TaxonId");
+
+                    b.HasIndex("ParentTaxaTaxonId");
+
+                    b.ToTable("OxPollen.Models.Taxon");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>

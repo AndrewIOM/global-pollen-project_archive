@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Security.Principal;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using OxPollen;
 using OxPollen.Models;
 using OxPollen.Services;
@@ -42,7 +42,7 @@ namespace OxPollen.Controllers
         [HttpGet]
         public IActionResult ChangePublicProfile()
         {
-            var currentUser = _userService.GetById(User.GetUserId());
+            var currentUser = _userService.GetById(_userManager.GetUserId(User));
             var model = new ChangePublicProfileViewModel()
             {
                 FirstName = currentUser.FirstName,
@@ -61,7 +61,7 @@ namespace OxPollen.Controllers
                 return View(model);
             }
 
-            var currentUser = _userService.GetById(User.GetUserId());
+            var currentUser = _userService.GetById(_userManager.GetUserId(User));
             currentUser.FirstName = model.FirstName;
             currentUser.Title = model.Title;
             currentUser.LastName = model.LastName;
@@ -244,7 +244,7 @@ namespace OxPollen.Controllers
         {
             // Request a redirect to the external login provider to link a login for the current user
             var redirectUrl = Url.Action("LinkLoginCallback", "Manage");
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, User.GetUserId());
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
             return new ChallengeResult(provider, properties);
         }
 
@@ -258,7 +258,7 @@ namespace OxPollen.Controllers
             {
                 return View("Error");
             }
-            var info = await _signInManager.GetExternalLoginInfoAsync(User.GetUserId());
+            var info = await _signInManager.GetExternalLoginInfoAsync(_userManager.GetUserId(User));
             if (info == null)
             {
                 return RedirectToAction(nameof(ManageLogins), new { Message = ManageMessageId.Error });
@@ -280,7 +280,7 @@ namespace OxPollen.Controllers
 
         private async Task<bool> HasPhoneNumber()
         {
-            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
             if (user != null)
             {
                 return user.PhoneNumber != null;
@@ -302,7 +302,7 @@ namespace OxPollen.Controllers
 
         private async Task<AppUser> GetCurrentUserAsync()
         {
-            return _userService.GetById(User.GetUserId());
+            return _userService.GetById(_userManager.GetUserId(User));
         }
 
         private IActionResult RedirectToLocal(string returnUrl)
