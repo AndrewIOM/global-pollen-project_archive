@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Global Pollen Project</title>
 
-    <environment names="Development,Staging,Production">
-        <!-- Fonts -->
-        <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-        <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
 
+    <environment names="Staging,Production">
+
+    </environment>
+    <environment names="Development">
         <!-- Styles -->
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/main.css" />
@@ -91,7 +94,7 @@
                 </div>
                 <div class="col-md-4 footer-images">
                     <h4>Our Partners</h4>
-                    <a href="http://oxlel.zoo.ox.ac.uk" target="_blank"><img src="~/images/oxlellogo.png" alt="Long Term Ecology Lab" /></a>
+                    <a href="https://oxlel.zoo.ox.ac.uk" target="_blank"><img src="~/images/oxlellogo.png" alt="Long Term Ecology Lab" /></a>
                     <img src="~/images/oxford-logo.png" alt="University of Oxford" />
                 </div>
             </div>
@@ -106,12 +109,31 @@
 
     @* Scripts *@
     <environment names="Development,Staging,Production">
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
+                asp-fallback-src="~/Scripts/bootstrap.min.js"
+                asp-fallback-test="typeof $().emulateTransitionEnd == 'function'">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/respond/1.2.0/respond.js"
+                asp-fallback-src="~/Scripts/respond.js"
+                asp-fallback-test="window.respond">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/7.1.0/bootstrap-slider.min.js"
+                asp-fallback-src="~/lib/bootstrap-slider/bootstrap-slider.js"
+                asp-fallback-test="">
+        </script>
+        <script src="~/js/site.js"></script>
+    </environment>
+    @*<environment names="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/hammer.js/hammer.js"></script>
         <script type="text/javascript" src="~/lib/bootstrap-slider/bootstrap-slider.js"></script>
         <script src="~/js/site.js" asp-file-version="true"></script>
-    </environment>
+    </environment>*@
     @RenderSection("scripts", required: false)
     @Html.Partial("_Analytics")
 </body>
