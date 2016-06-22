@@ -68,6 +68,7 @@ namespace OxPollen
 
             services.AddMvc();
             services.AddCaching();
+            services.AddCors();
 
             services.AddOptions();
             services.Configure<Options.AuthMessageSenderOptions>(Configuration);
@@ -143,6 +144,13 @@ namespace OxPollen
                 options.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
                 options.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
             });
+
+            //Setup CORS
+            app.UseCors(builder =>
+                builder.WithOrigins("http://api.gbif.org", "http://api.neotomadb.org")
+                .AllowAnyHeader()
+            );
+
 
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>
