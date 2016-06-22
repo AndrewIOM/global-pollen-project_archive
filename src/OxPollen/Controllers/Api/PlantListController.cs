@@ -22,8 +22,8 @@ namespace OxPollen.Controllers.Api
         [HttpGet("suggest")]
         public IEnumerable<BackboneTaxon> Suggest(string q, Taxonomy? rank, string parent = null)
         {
-            var result = _context.PlantListTaxa.Include(m => m.ParentTaxa).ThenInclude(m => m.ParentTaxa)
-                .Where(m => m.LatinName.Contains(q)); //TODO Fuzzy matching
+            var result = _context.PlantListTaxa.Include(m => m.ParentTaxa)
+                .Where(m => m.LatinName.StartsWith(q, StringComparison.InvariantCultureIgnoreCase)); //TODO Fuzzy matching
             if (rank.HasValue)
             {
                 result = result.Where(m => m.Rank == rank);
@@ -33,13 +33,14 @@ namespace OxPollen.Controllers.Api
                 result = result.Where(m => m.ParentTaxa.LatinName.Equals(parent, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            var model = result.Select(m => new BackboneTaxon()
+            var list = result.Take(10).ToList();
+            var model = list.Select(m => new BackboneTaxon()
             {
                 Id = m.Id,
                 LatinName = m.LatinName,
                 Rank = m.Rank,
                 Status = m.Status,
-                ParentLatinName = m.ParentTaxa == null ? null : m.ParentTaxa.LatinName
+                ParentLatinName = m.Rank == Taxonomy.Family ? "" : m.ParentTaxa.LatinName
             });
 
             return model;

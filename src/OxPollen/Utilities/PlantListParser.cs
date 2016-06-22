@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Entity.ChangeTracking;
+using Microsoft.Extensions.Logging;
 using OxPollen.Data.Concrete;
 using OxPollen.Models;
 using System;
@@ -46,7 +47,7 @@ namespace OxPollen.Utilities
             }
 
             parsedTaxa.RemoveAt(0); //Remove header row
-            parsedTaxa = parsedTaxa.Where(m => m.TaxonRank == "species").ToList(); //Remove varieties etc.
+            parsedTaxa = parsedTaxa.Skip(1077929).Where(m => m.TaxonRank == "species").ToList(); //Remove varieties etc.
             foreach (var parsedTaxon in parsedTaxa)
             {
                 var taxon = new PlantListTaxon()
@@ -71,7 +72,8 @@ namespace OxPollen.Utilities
                         Status = TaxonomicStatus.Accepted
                     };
                     _context.PlantListTaxa.Add(family);
-                    _context.SaveChanges();
+                    Console.WriteLine("Added family " + parsedTaxon.Family);
+                    //_context.SaveChanges();
                 }
 
                 //Add Genus
@@ -87,19 +89,22 @@ namespace OxPollen.Utilities
                     };
                     _context.PlantListTaxa.Add(genus);
                     genus.ParentTaxa = family;
-                    _context.SaveChanges();
+                    Console.WriteLine("Added genus " + parsedTaxon.Genus);
+                    //_context.SaveChanges();
                 }
 
                 //Add species
                 taxon.ParentTaxa = genus;
-                var existing = _context.PlantListTaxa.FirstOrDefault(m => m.LatinName == parsedTaxon.ScientificName
-                    && m.Rank == Taxonomy.Species);
-                if (existing == null)
-                {
+                //var existing = _context.PlantListTaxa.FirstOrDefault(m => m.LatinName == parsedTaxon.ScientificName
+                //    && m.Rank == Taxonomy.Species);
+                //if (existing == null)
+                //{
                     _context.PlantListTaxa.Add(taxon);
                     taxon.ParentTaxa = genus;
+                    Console.WriteLine("Added species " + taxon.LatinName);
                     _context.SaveChanges();
-                }
+                    Console.WriteLine("Saved new taxa to local plant list");
+                //}
             }
 
         }
