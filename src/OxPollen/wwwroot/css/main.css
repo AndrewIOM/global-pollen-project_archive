@@ -133,6 +133,26 @@ h1, h2, h3, h4, h5, h6 {
   .homepage-header h1 {
     font-size: 2em; } }
 
+.search-big {
+  margin-top: 2em;
+  position: relative; }
+  .search-big input {
+    width: 20em; }
+
+@media (max-width: 768px) {
+  .search-big {
+    margin-top: 1em;
+    position: relative; }
+    .search-big input {
+      width: 70%;
+      display: inline-block; }
+    .search-big button {
+      display: inline-block; } }
+
+@media (max-width: 992px) {
+  .homepage-header {
+    height: 17em; } }
+
 .header-attribution {
   position: absolute;
   bottom: 0;

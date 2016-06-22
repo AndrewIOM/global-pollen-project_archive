@@ -4,6 +4,7 @@ using OxPollen.Models;
 using OxPollen.Data.Abstract;
 using OxPollen.Utilities;
 using System.Linq;
+using System;
 
 namespace OxPollen.Services.Concrete
 {
@@ -76,7 +77,7 @@ namespace OxPollen.Services.Concrete
                 species = FirstCharToLower(species);
                 speciesTaxon = _uow.TaxonRepository.Find(m => m.LatinName == genus + " " + species && m.Rank == Taxonomy.Species
                     && m.ParentTaxa.LatinName == genus).FirstOrDefault();
-                if (speciesTaxon == null && _backbone.IsValidTaxon(Taxonomy.Species, family, genus, genus + " " + species))
+                if (speciesTaxon == null && _backbone.IsValidTaxon(Taxonomy.Species, family, genus, species))
                 {
                     var gbifID = GbifUtility.GetGbifId(Taxonomy.Species,
                         familyTaxon != null ? familyTaxon.LatinName : null, genus, species);
@@ -122,6 +123,12 @@ namespace OxPollen.Services.Concrete
             _uow.SaveChanges();
         }
 
+        public IEnumerable<Taxon> Suggest(string search)
+        {
+            var result = _uow.TaxonRepository.Find(m => m.LatinName.Contains(search));
+            return result;
+        }
+
         private string FirstCharToUpper(string input)
         {
             if (string.IsNullOrEmpty(input)) return input;
@@ -134,5 +141,35 @@ namespace OxPollen.Services.Concrete
             return input.First().ToString().ToLower() + input.Substring(1).ToLower();
         }
 
+        public void RefreshConnections(int id)
+        {
+            var taxon = _uow.TaxonRepository.GetById(id);
+            if (taxon == null) return;
+
+            string family = "";
+            string genus = "";
+            string species = "";
+            if (taxon.Rank == Taxonomy.Family)
+            {
+                family = taxon.LatinName;
+            } else if (taxon.Rank == Taxonomy.Genus)
+            {
+                genus = taxon.LatinName;
+                family = taxon.ParentTaxa.LatinName;
+            } else
+            {
+                species = taxon.LatinName;
+                genus = taxon.ParentTaxa.LatinName;
+                family = taxon.ParentTaxa.ParentTaxa.LatinName;
+            }
+
+            var gbifId = GbifUtility.GetGbifId(taxon.Rank, family, genus, species).Result;
+            var neotomaId = NeotomaUtility.GetTaxonId(taxon.LatinName).Result;
+
+            taxon.GbifId = gbifId;
+            taxon.NeotomaId = neotomaId;
+            _uow.TaxonRepository.Update(taxon);
+            _uow.SaveChanges();
+        }
     }
 }

@@ -81,7 +81,7 @@ namespace OxPollen
             services.AddTransient<IFileStoreService, AzureImageService>();
             services.AddTransient<IReferenceService, ReferenceService>();
             services.AddTransient<ITaxonomyService, TaxonomyService>();
-            services.AddTransient<ITaxonomyBackbone, GbifTaxonomyBackbone>();
+            services.AddTransient<ITaxonomyBackbone, LocalPlantListTaxonomyBackbone>();
             services.AddTransient<IEmailSender, AuthMessageSender>();
         }
 

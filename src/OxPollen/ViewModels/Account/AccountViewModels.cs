@@ -14,6 +14,12 @@ namespace OxPollen.ViewModels
         public string Email { get; set; }
 
         [Required]
+        [EmailAddress]
+        [Compare("Email", ErrorMessage = "The email and confirmation email do not match.")]
+        [Display(Name = "Confirm Email")]
+        public string EmailConfirmation { get; set; }
+
+        [Required]
         [Display(Name = "Title")]
         public string Title { get; set; }
 
@@ -120,6 +126,12 @@ namespace OxPollen.ViewModels
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
+
+        [Required]
+        [EmailAddress]
+        [Compare("Email", ErrorMessage = "The email and confirmation email do not match.")]
+        [Display(Name = "Confirm Email")]
+        public string EmailConfirmation { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

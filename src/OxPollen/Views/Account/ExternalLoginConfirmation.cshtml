@@ -52,6 +52,13 @@
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
     </div>
+    <div class="form-group">
+        <label asp-for="Email" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="EmailConfirmation" class="form-control" />
+            <span asp-validation-for="EmailConfirmation" class="text-danger"></span>
+        </div>
+    </div>
     <hr />
     <h4>Your Organisation</h4>
     <p>Are you a member of a lab group, company or other organisation? Each grain you identify gives you a bounty score. By using a common group name, you can build up your score together. Can your organisation become top identifiers?</p>

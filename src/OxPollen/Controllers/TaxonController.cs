@@ -147,6 +147,18 @@ namespace OxPollen.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
+        public IActionResult RefreshConnections()
+        {
+            var taxa = _taxonService.GetAll().ToList();
+            foreach (var taxon in taxa)
+            {
+                _taxonService.RefreshConnections(taxon.TaxonId);
+            }
+
+            return Ok();
+        }
+
+        [Authorize(Policy = "AdminOnly")]
         public IActionResult Delete(int id)
         {
             var taxon = _taxonService.GetById(id);
@@ -164,7 +176,12 @@ namespace OxPollen.Controllers
 
         public IActionResult Suggest(string searchTerm)
         {
-            var result = _taxonService.GetAll().Where(m => m.LatinName.Contains(searchTerm)).ToList();
+            var result = _taxonService.Suggest(searchTerm).Take(10).Select(m => new TaxonSuggest()
+            {
+                Id = m.TaxonId,
+                Name = m.LatinName,
+                Rank = m.Rank
+            });
             return Ok(result);
         }
 
