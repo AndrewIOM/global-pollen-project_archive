@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
+using Microsoft.Extensions.Caching.Memory;
 using OxPollen.Data.Concrete;
 using OxPollen.Models;
-using OxPollen.Utilities;
 using OxPollen.ViewModels.Api;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OxPollen.Controllers.Api
 {
@@ -14,43 +14,51 @@ namespace OxPollen.Controllers.Api
     public class PlantListController : Controller
     {
         private readonly OxPollenDbContext _context;
-        public PlantListController(OxPollenDbContext context)
+        private readonly IMemoryCache _memoryCache;
+        public PlantListController(OxPollenDbContext context, IMemoryCache memoryCache)
         {
             _context = context;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet("suggest")]
         public IEnumerable<BackboneTaxon> Suggest(string q, Taxonomy? rank, string parent = null)
         {
-            var result = _context.PlantListTaxa.Include(m => m.ParentTaxa)
-                .Where(m => m.LatinName.StartsWith(q, StringComparison.InvariantCultureIgnoreCase)); //TODO Fuzzy matching
-            if (rank.HasValue)
+            if (string.IsNullOrEmpty(q)) return null;
+
+            string cacheKey = "PlantListSuggest-" + q + rank + parent;
+            List<BackboneTaxon> backboneResult;
+
+            if (_memoryCache.TryGetValue(cacheKey, out backboneResult))
             {
-                result = result.Where(m => m.Rank == rank);
-            }
-            if (!string.IsNullOrEmpty(parent))
+                //Use cached copy of result
+                backboneResult = _memoryCache.Get(cacheKey) as List<BackboneTaxon>;
+            } else
             {
-                result = result.Where(m => m.ParentTaxa.LatinName.Equals(parent, StringComparison.InvariantCultureIgnoreCase));
+                //Get from database and convert result to DTO
+                IQueryable<PlantListTaxon> result = _context.PlantListTaxa.Include(m => m.ParentTaxa);
+                if (!string.IsNullOrEmpty(parent)) { result = result.Where(m => m.ParentTaxa.LatinName.Equals(parent, StringComparison.InvariantCultureIgnoreCase)); }
+                if (rank.HasValue) { result = result.Where(m => m.Rank == rank); }
+                result = result.Where(m => m.LatinName.StartsWith(q));
+
+                var list = result.OrderBy(m => m.LatinName).Take(10).ToList();
+                backboneResult = list.Select(m => new BackboneTaxon()
+                {
+                    Id = m.Id,
+                    LatinName = m.LatinName,
+                    Rank = m.Rank,
+                    Status = m.Status,
+                    ParentLatinName = m.Rank == Taxonomy.Family ? "" : m.ParentTaxa.LatinName
+                }).ToList();
+
+                //Cache result
+                _memoryCache.Set(cacheKey, backboneResult,
+                    new MemoryCacheEntryOptions()
+                 .SetAbsoluteExpiration(TimeSpan.FromDays(30)));
             }
 
-            var list = result.Take(10).ToList();
-            var model = list.Select(m => new BackboneTaxon()
-            {
-                Id = m.Id,
-                LatinName = m.LatinName,
-                Rank = m.Rank,
-                Status = m.Status,
-                ParentLatinName = m.Rank == Taxonomy.Family ? "" : m.ParentTaxa.LatinName
-            });
-
-            return model;
+            return backboneResult;
         }
 
-        //// GET api/values/5
-        //[HttpGet("{id}")]
-        //public BackboneTaxon Get(int id)
-        //{
-        //    return _context.PlantListTaxa.FirstOrDefault(m => m.Id == id);
-        //}
     }
 }

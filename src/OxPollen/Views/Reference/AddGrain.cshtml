@@ -44,17 +44,17 @@
     </div>
     <div class="row">
         <div class="col-sm-4">
-            <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="updateList(this, 'Family');" placeholder="Family" />
+            <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="suggest(this, 'Family');" placeholder="Family" />
             <ul class="dropdown-menu autocomplete" id="FamilyList" style="display:none"></ul>
             <span asp-validation-for="Family" class="text-danger"></span>
         </div>
         <div class="col-sm-4">
-            <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="updateList(this, 'Genus');" placeholder="Genus" />
+            <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="suggest(this, 'Genus');" placeholder="Genus" />
             <ul class="dropdown-menu autocomplete" id="GenusList" style="display:none"></ul>
             <span asp-validation-for="Genus" class="text-danger"></span>
         </div>
         <div class="col-sm-4">
-            <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="updateList(this, 'Species');" placeholder="Species" />
+            <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="suggest(this, 'Species');" placeholder="Species" />
             <ul class="dropdown-menu autocomplete" id="SpeciesList" style="display:none"></ul>
             <span asp-validation-for="Species" class="text-danger"></span>
         </div>

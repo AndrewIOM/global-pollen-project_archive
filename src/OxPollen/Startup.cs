@@ -67,7 +67,7 @@ namespace OxPollen
             });
 
             services.AddMvc();
-            services.AddCors();
+            services.AddCaching();
 
             services.AddOptions();
             services.Configure<Options.AuthMessageSenderOptions>(Configuration);
