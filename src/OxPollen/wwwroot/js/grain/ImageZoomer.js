@@ -5,7 +5,7 @@
     var container = $(canvas).parent(); //<div class='zoom-canvas-container>
     var firstImage = $('#zoom-thumbs a img:first');
     image.src = firstImage.attr("src");
-    respondCanvas();
+    firstDraw();
     $(window).resize(respondCanvas);
 
     function respondCanvas() {
@@ -14,10 +14,15 @@
         redraw();
     }
 
-    function redraw() {
+    function firstDraw() {
+        canvas.width = $(container).width(); //max width
+        canvas.height = $(container).height(); //max height
         ctx.fillStyle = '#333333';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        redraw();
+    }
 
+    function redraw() {
         var imgObj = new Image();
         imgObj.onload = function () {
             var renderHeight = imgObj.naturalHeight;
@@ -49,6 +54,8 @@
 
     changeImage = function (src) {
         image.src = src;
+        ctx.fillStyle = '#333333';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         redraw();
     }
 });

@@ -35,34 +35,34 @@
     function respondCanvas() {
         canvas.width = $(container).width(); //max width
         canvas.height = $(container).height(); //max height
+        ctx.fillStyle = '#333333';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         redraw();
     }
 
     function redraw() {
-        ctx.fillStyle = '#333333';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         var imgObj = new Image();
         imgObj.onload = function () {
             var renderHeight = imgObj.naturalHeight;
             var renderWidth = imgObj.naturalWidth;
+            console.log(renderHeight);
+            console.log(renderWidth);
 
             var ratio = imgObj.naturalWidth / imgObj.naturalHeight;
-            if (ratio < 1) { //Portrait
+            console.log(ratio);
                 var scaling = 1;
                 if (renderHeight > canvas.height) {
                     scaling = canvas.height / renderHeight;
                     renderHeight = canvas.height;
                 }
                 renderWidth = renderWidth * scaling;
-            } else { //Landscape
                 var scaling = 1;
                 if (renderWidth > canvas.width) {
                     scaling = canvas.width / renderWidth;
                     renderWidth = canvas.width;
                 }
+
                 renderHeight = renderHeight * scaling;
-            }
 
             var widthOffset = (canvas.width - renderWidth) / 2;
             var heightOffset = (canvas.height - renderHeight) / 2;
