@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OxPollen.Data.Abstract;
@@ -76,7 +75,7 @@ namespace OxPollen
             });
 
             services.AddMvc();
-            services.AddCaching();
+            services.AddMemoryCache();
             services.AddCors();
 
             //Options

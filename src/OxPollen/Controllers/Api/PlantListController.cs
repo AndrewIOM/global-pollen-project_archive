@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using OxPollen.Data.Concrete;
 using OxPollen.Models;
 using OxPollen.ViewModels.Api;
