@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using OxPollen.Models;
 using OxPollen.ViewModels;
 using System;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using OxPollen.Services.Abstract;
 using OxPollen.Utilities;
-using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -51,7 +51,7 @@ namespace OxPollen.Controllers
             if (!string.IsNullOrEmpty(result.ImageFour)) if (!IsBase64String(result.ImageFour)) ModelState.AddModelError("ImageFour", "Image not ecoded in base64");
             if (ModelState.ErrorCount > 0)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             //Populate new Grain
@@ -62,7 +62,7 @@ namespace OxPollen.Controllers
             if (!string.IsNullOrEmpty(result.ImageFour)) filesToUpload.Add(result.ImageFour);
             var uploadedFiles = _uploadService.UploadBase64Image(filesToUpload);
 
-            AppUser currentUser = await UserManager.FindByNameAsync(User.GetUserName());
+            AppUser currentUser = await UserManager.FindByNameAsync(UserManager.GetUserName(User));
             var grain = new Grain()
             {
                 AgeYearsBeforePresent = result.AgeYearsBeforePresent,
@@ -92,9 +92,9 @@ namespace OxPollen.Controllers
             if (record == null) return RedirectToAction("Index");
 
             Identification myIdentification = null;
-            if (User.IsSignedIn())
+            if (User.Identity.IsAuthenticated)
             {
-                myIdentification = _idService.GetByUser(User.GetUserId())
+                myIdentification = _idService.GetByUser(UserManager.GetUserId(User))
                     .FirstOrDefault(m => m.Grain.Id == id);
             }
 
@@ -126,7 +126,7 @@ namespace OxPollen.Controllers
             Identification myIdentification = null;
             if (record != null)
             {
-                myIdentification = _idService.GetByUser(User.GetUserId())
+                myIdentification = _idService.GetByUser(UserManager.GetUserId(User))
                     .FirstOrDefault(m => m.Grain.Id == result.GrainId);
                 if (myIdentification != null) ModelState.AddModelError("User", "You have already identified this grain, sorry!");
             }
@@ -163,7 +163,7 @@ namespace OxPollen.Controllers
             }
 
             //Save identification
-            AppUser currentUser = await UserManager.FindByIdAsync(User.GetUserId());
+            AppUser currentUser = await UserManager.FindByIdAsync(UserManager.GetUserId(User));
             var identification = new Identification()
             {
                 Family = result.Family,
@@ -208,7 +208,7 @@ namespace OxPollen.Controllers
         [Authorize]
         public IActionResult MyGrains()
         {
-            var thisUser = User.GetUserId();
+            var thisUser = UserManager.GetUserId(User);
             var grains = _grainService.GetByUser(thisUser).ToList();
             var model = grains.Select(m => new SimpleGrainViewModel()
             {
@@ -227,11 +227,11 @@ namespace OxPollen.Controllers
         public IActionResult RemoveIdentification(int identificationId)
         {
             //Check Prerequisites
-            if (identificationId == 0) return HttpBadRequest();
+            if (identificationId == 0) return BadRequest();
             var existingId = _idService.GetById(identificationId);
-            if (existingId == null) return HttpNotFound();
-            //TODO Stop removal if identity confirmed: if (existingId.Grain.) return HttpBadRequest();
-            if (existingId.User.Id != User.GetUserId()) return HttpUnauthorized();
+            if (existingId == null) return NotFound();
+            //TODO Stop removal if identity confirmed: if (existingId.Grain.) return BadRequest();
+            if (existingId.User.Id != UserManager.GetUserId(User)) return Unauthorized();
 
             //Execute
             var grainId = existingId.Grain.Id;
@@ -247,16 +247,16 @@ namespace OxPollen.Controllers
         [Authorize]
         public IActionResult Delete(int id)
         {
-            var userId = User.GetUserId();
+            var userId = UserManager.GetUserId(User);
             var grain = _grainService.GetById(id);
-            // if (_idService.HasConfirmedIdentity(grain)) return HttpBadRequest("Can't delete grains with confirmed identity");
+            // if (_idService.HasConfirmedIdentity(grain)) return BadRequest("Can't delete grains with confirmed identity");
 
             if (User.IsInRole("Admin") || grain.SubmittedBy.Id != userId)
             {
                 var deleted = _grainService.MarkDeleted(grain.Id);
                 return RedirectToAction("MyGrains");
             }
-            return HttpBadRequest("Can only delete grains that were submitted by you");
+            return BadRequest("Can only delete grains that were submitted by you");
         }
 
         private bool IsBase64String(string s)

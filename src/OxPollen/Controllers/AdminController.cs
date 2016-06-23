@@ -1,20 +1,19 @@
 ﻿using System.Linq;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using OxPollen.Models;
 using OxPollen.Data.Concrete;
-using Microsoft.Data.Entity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Authorization;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using OxPollen.Services.Abstract;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using System.IO;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using OxPollen.Utilities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace OxPollen.Controllers
 {
@@ -52,7 +51,7 @@ namespace OxPollen.Controllers
         public IActionResult AddDigitiseRole(string userId)
         {
             var user = _context.Users.FirstOrDefault(m => m.Id == userId);
-            if (user == null) return HttpBadRequest();
+            if (user == null) return BadRequest();
 
             var exists = _roleMan.RoleExistsAsync("Digitise").Result;
             if (!exists)
@@ -68,7 +67,7 @@ namespace OxPollen.Controllers
         public IActionResult RemoveDigitiseRole(string userId)
         {
             var user = _context.Users.FirstOrDefault(m => m.Id == userId);
-            if (user == null) return HttpBadRequest();
+            if (user == null) return BadRequest();
 
             var exists = _roleMan.RoleExistsAsync("Digitise").Result;
             if (!exists)
@@ -83,10 +82,10 @@ namespace OxPollen.Controllers
 
         public IActionResult UserAdmin(string id, bool userIsAdmin)
         {
-            if (id == User.GetUserId()) return HttpBadRequest();
+            if (id == _userManager.GetUserId(User)) return BadRequest();
 
             var user = _context.Users.FirstOrDefault(m => m.Id == id);
-            if (user == null) return HttpBadRequest();
+            if (user == null) return BadRequest();
 
             var exists = _roleMan.RoleExistsAsync("Admin").Result;
             if (!exists)
@@ -108,10 +107,10 @@ namespace OxPollen.Controllers
 
         public IActionResult BanUser(string id)
         {
-            if (id == User.GetUserId()) return HttpBadRequest();
+            if (id == _userManager.GetUserId(User)) return BadRequest();
 
             var user = _context.Users.FirstOrDefault(m => m.Id == id);
-            if (user == null) return HttpBadRequest();
+            if (user == null) return BadRequest();
             var exists = _roleMan.RoleExistsAsync("Banned").Result;
             if (!exists)
             {
@@ -125,10 +124,10 @@ namespace OxPollen.Controllers
 
         public IActionResult VerifyEmail(string id)
         {
-            if (id == User.GetUserId()) return HttpBadRequest();
+            if (id == _userManager.GetUserId(User)) return BadRequest();
 
             var user = _context.Users.FirstOrDefault(m => m.Id == id);
-            if (user == null) return HttpBadRequest();
+            if (user == null) return BadRequest();
             user.EmailConfirmed = true;
             _context.Users.Update(user);
             _context.SaveChanges();
@@ -137,10 +136,10 @@ namespace OxPollen.Controllers
 
         public IActionResult UnbanUser(string id)
         {
-            if (id == User.GetUserId()) return HttpBadRequest();
+            if (id == _userManager.GetUserId(User)) return BadRequest();
 
             var user = _context.Users.FirstOrDefault(m => m.Id == id);
-            if (user == null) return HttpBadRequest();
+            if (user == null) return BadRequest();
             var exists = _roleMan.RoleExistsAsync("Banned").Result;
             if (!exists)
             {
@@ -152,24 +151,24 @@ namespace OxPollen.Controllers
             return RedirectToAction("Users");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdatePlantList(ICollection<IFormFile> files)
-        {
-            var uploads = Path.Combine(_environment.WebRootPath, "uploads");
-            foreach (var file in files)
-            {
-                if (file.Length > 0)
-                {
-                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    await file.SaveAsAsync(Path.Combine(uploads, fileName));
+        //[HttpPost]
+        //public async Task<IActionResult> UpdatePlantList(ICollection<IFormFile> files)
+        //{
+        //    var uploads = Path.Combine(_environment.WebRootPath, "uploads");
+        //    foreach (var file in files)
+        //    {
+        //        if (file.Length > 0)
+        //        {
+        //            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+        //            await file.SaveAsAsync(Path.Combine(uploads, fileName));
 
-                    //Seed plant list
-                    var tool = new PlantListParser(fileName, _context);
-                    tool.Refresh();
-                }
-            }
-            return View();
-        }
+        //            //Seed plant list
+        //            var tool = new PlantListParser(fileName, _context);
+        //            tool.Refresh();
+        //        }
+        //    }
+        //    return View();
+        //}
 
     }
 }

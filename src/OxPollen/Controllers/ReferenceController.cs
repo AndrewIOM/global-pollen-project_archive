@@ -1,17 +1,19 @@
-﻿using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using OxPollen.Models;
 using OxPollen.Services;
 using OxPollen.Services.Abstract;
 using OxPollen.ViewModels.Reference;
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 
 namespace OxPollen.Controllers
 {
     public class ReferenceController : Controller
     {
+        public UserManager<AppUser> UserManager { get; set; }
         private IFileStoreService _fileService;
         private IReferenceService _refService;
         private IUserService _userService;
@@ -24,7 +26,8 @@ namespace OxPollen.Controllers
             IUserService userService,
             IEmailSender emailSender,
             ITaxonomyBackbone backbone,
-            ITaxonomyService taxonomyService)
+            ITaxonomyService taxonomyService,
+            IServiceProvider services)
         {
             _fileService = fileService;
             _refService = refService;
@@ -32,6 +35,7 @@ namespace OxPollen.Controllers
             _emailSender = emailSender;
             _backbone = backbone;
             _taxonomyService = taxonomyService;
+            UserManager = services.GetRequiredService<UserManager<AppUser>>();
         }
 
         public IActionResult Index()
@@ -50,7 +54,7 @@ namespace OxPollen.Controllers
         {
             if (id == 0)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
             var model = _refService.GetGrainById(id);
             return View(model);
@@ -60,7 +64,7 @@ namespace OxPollen.Controllers
         public IActionResult RequestAccess()
         {
             var model = new RequestAccessViewModel();
-            var user = _userService.GetById(User.GetUserId());
+            var user = _userService.GetById(UserManager.GetUserId(User));
             if (user != null)
             {
                 model.HasRequestedAccess = user.RequestedDigitisationRights;
@@ -77,8 +81,8 @@ namespace OxPollen.Controllers
         [HttpPost]
         public IActionResult RequestAccess(RequestAccessViewModel result)
         {
-            if (!ModelState.IsValid) return HttpBadRequest();
-            var user = _userService.GetById(User.GetUserId());
+            if (!ModelState.IsValid) return BadRequest();
+            var user = _userService.GetById(UserManager.GetUserId(User));
             user.RequestedDigitisationRights = true;
             _userService.Update(user);
 
@@ -106,7 +110,7 @@ namespace OxPollen.Controllers
                 return View(result);
             }
 
-            result.User = _userService.GetById(User.GetUserId());
+            result.User = _userService.GetById(UserManager.GetUserId(User));
             var saved = _refService.AddCollection(result);
             return RedirectToAction("Collection", new { id = saved.Id });
         }
@@ -118,11 +122,11 @@ namespace OxPollen.Controllers
             var collection = _refService.GetCollectionById(id);
             if (collection == null)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
-            if (collection.User.Id != User.GetUserId())
+            if (collection.User.Id != UserManager.GetUserId(User))
             {
-                return HttpUnauthorized();
+                return Unauthorized();
             }
 
             return View("AddCollection", collection);
@@ -135,11 +139,11 @@ namespace OxPollen.Controllers
             var collection = _refService.GetCollectionById(model.Id);
             if (collection == null)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
-            if (collection.User.Id != User.GetUserId())
+            if (collection.User.Id != UserManager.GetUserId(User))
             {
-                return HttpUnauthorized();
+                return Unauthorized();
             }
 
             if (!ModelState.IsValid)
@@ -166,10 +170,10 @@ namespace OxPollen.Controllers
         {
             if (id == 0)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
             var model = _refService.GetCollectionById(id);
-            if (model.User.Id != User.GetUserId()) return HttpBadRequest();
+            if (model.User.Id != UserManager.GetUserId(User)) return BadRequest();
             return View(new ReferenceGrainViewModel()
             {
                 CollectionId = model.Id
@@ -186,7 +190,7 @@ namespace OxPollen.Controllers
                 ModelState.AddModelError("CollectionId", "The collection specified does not exist.");
             } else
             {
-                if (collection.User.Id != User.GetUserId())
+                if (collection.User.Id != UserManager.GetUserId(User))
                 {
                     ModelState.AddModelError("CollectionId", "You can only add grains to collections you own.");
                 }
@@ -204,7 +208,7 @@ namespace OxPollen.Controllers
 
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             var standardImages = _fileService.UploadBase64Image(result.Images);
@@ -213,7 +217,7 @@ namespace OxPollen.Controllers
             {
                 Collection = collection,
                 Taxon = taxon,
-                SubmittedBy = _userService.GetById(User.GetUserId()),
+                SubmittedBy = _userService.GetById(UserManager.GetUserId(User)),
                 TimeAdded = DateTime.Now,
                 MaxSizeNanoMetres = result.MaxGrainSize.Value,
                 Images = new List<GrainImage>()
@@ -270,8 +274,8 @@ namespace OxPollen.Controllers
         //public IActionResult DeleteCollection(int id)
         //{
         //    var collection = _refService.GetCollectionById(id);
-        //    if (collection == null) return HttpBadRequest();
-        //    if (User.Identity.Name != collection.User.UserName) return HttpBadRequest();
+        //    if (collection == null) return BadRequest();
+        //    if (User.Identity.Name != collection.User.UserName) return BadRequest();
         //    _refService.DeleteCollection(id);
         //    return RedirectToAction("Index");
         //}
@@ -280,8 +284,8 @@ namespace OxPollen.Controllers
         public IActionResult DeleteGrain(int id)
         {
             var grain = _refService.GetGrainById(id);
-            if (grain == null) return HttpBadRequest();
-            if (User.Identity.Name != grain.Collection.User.UserName) return HttpBadRequest();
+            if (grain == null) return BadRequest();
+            if (User.Identity.Name != grain.Collection.User.UserName) return BadRequest();
             _refService.DeleteGrain(id);
             return RedirectToAction("Collection", new { id = grain.Collection.Id });
         }

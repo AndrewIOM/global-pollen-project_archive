@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using OxPollen.ViewModels;
 using OxPollen.Utilities;
 using OxPollen.Services.Abstract;

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Moq;
 using OxPollen.Data.Abstract;
 using OxPollen.Data.Concrete;

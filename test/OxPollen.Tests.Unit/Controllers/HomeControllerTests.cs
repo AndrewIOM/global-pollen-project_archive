@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using OxPollen.Controllers;
 using OxPollen.Models;

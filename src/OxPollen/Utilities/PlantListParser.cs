@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.Entity.ChangeTracking;
-using Microsoft.Extensions.Logging;
-using OxPollen.Data.Concrete;
+﻿using OxPollen.Data.Concrete;
 using OxPollen.Models;
 using System;
 using System.Collections.Generic;

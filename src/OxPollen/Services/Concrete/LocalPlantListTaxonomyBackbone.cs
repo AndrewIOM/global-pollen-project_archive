@@ -1,9 +1,8 @@
 ﻿using OxPollen.Services.Abstract;
-using System;
 using System.Linq;
 using OxPollen.Models;
 using OxPollen.Data.Concrete;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace OxPollen.Services.Concrete
 {
