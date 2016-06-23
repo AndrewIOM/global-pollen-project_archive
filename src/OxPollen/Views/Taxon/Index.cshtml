@@ -90,7 +90,7 @@
                 <div class="img-container">
                     @if (!string.IsNullOrEmpty(taxon.ImageFilename))
                     {
-                        <img src="@taxon.ImageFilename" />
+                        <img src="@taxon.ImageFilename" alt="Pollen from @taxon.LatinName plant @taxon.Rank" />
                     }
                 </div>
                 <div class="taxon-details">

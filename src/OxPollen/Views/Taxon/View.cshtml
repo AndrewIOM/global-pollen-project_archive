@@ -1,7 +1,7 @@
 ﻿@model OxPollen.ViewModels.Taxon.TaxonDetailViewModel
 
 @{
-    ViewBag.Title = Model.LatinName + "(Plant " + Model.Rank + ") - Reference Collection";
+    ViewBag.Title = Model.LatinName + " (" + Model.Rank + ") - Reference Collection";
     ViewData["Description"] = "View reference images for " + Model.LatinName + " pollen, alongside botanical description and geographic range. Use our collections for your pollen identification today.";
 }
 
@@ -12,7 +12,7 @@
 @section homepageHeader {
     <div class="addgrain-section headsection">
         <div class="container">
-            <h2>@ViewBag.Title</h2>
+            <h2>@Model.LatinName</h2>
             <p><strong>@Model.Rank</strong> in the Global Pollen Project Reference Collection</p>
         </div>
     </div>

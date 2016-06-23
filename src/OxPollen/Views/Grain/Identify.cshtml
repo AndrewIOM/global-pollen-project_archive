@@ -7,6 +7,15 @@
     var success = (string)ViewData["Success"];
     var fullyIdentified = string.IsNullOrEmpty(Model.IdentifiedFamily) ||
         string.IsNullOrEmpty(Model.IdentifiedGenus) || string.IsNullOrEmpty(Model.IdentifiedSpecies) ? false : true;
+
+    if (fullyIdentified)
+    {
+        ViewData["Description"] = "A user-submitted grain identified as " + Model.IdentifiedFamily + " " + Model.IdentifiedGenus + " " + Model.IdentifiedSpecies;
+    }
+    else
+    {
+        ViewData["Description"] = "Unidentified pollen grain submitted " + (DateTime.Now - Model.TimeAdded).Days + " days ago. Submit an identification now.";
+    }
 }
 
 @section scripts {

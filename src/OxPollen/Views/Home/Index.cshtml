@@ -30,19 +30,19 @@
 @* Marketing *@
 <div class="row" style="text-align:center">
     <div class="col-sm-4">
-        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen3.png" alt="">
+        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen3.png" alt="Poaceae Grass Pollen Grain">
         <h3><a asp-action="Index" asp-controller="Taxon">Browse Our Collection</a></h3>
         <p>Browse the dynamic and ever expanding reference collection of the Global Pollen Project! Use as a key or as a reference for your own research.</p>
     </div>
     <div class="col-sm-4">
-        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen2.jpg" alt="">
+        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen2.jpg" alt="Betula pollen grain">
         <h3><a asp-action="Help" asp-controller="Grain">Submit Your Pollen Grains</a></h3>
         <p>
             If you are having trouble identifying a pollen grain to family, genus or species level, submit your grain to the Global Pollen Project. Crowd source the identification from others working with pollen across the world.
         </p>
     </div>
     <div class="col-sm-4">
-        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen1.png" alt="">
+        <img class="img-circle img-responsive home-tri-image" src="~/images/pollen1.png" alt="Asteraceae pollen grain">
         <h3><a asp-action="Index" asp-controller="Grain">Add Your Expertise</a></h3>
         <p>Are you a specialist in a particular region or taxon? Help others by providing identifications and earn points on the leader board for your lab group or Institution.</p>
     </div>
@@ -78,7 +78,7 @@
                 <li>
                     <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
                         <div class="img-container">
-                            <img src="@grain.ThumbnailLocation" />
+                            <img src="@grain.ThumbnailLocation" alt="Unidentified pollen grain #@grain.Id" />
                             <div class="ribbon"><span>@grain.Bounty</span></div>
                         </div>
                     </a>
