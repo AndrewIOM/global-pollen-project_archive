@@ -1,6 +1,6 @@
 ﻿//Ensure API call sent only when typing completed
 var typingTimer;
-var doneTypingInterval = 1000;
+var doneTypingInterval = 500;
 
 function suggest(entryBox, rank) {
     clearTimeout(typingTimer);

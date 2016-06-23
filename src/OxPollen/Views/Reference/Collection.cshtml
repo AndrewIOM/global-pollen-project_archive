@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = Model.Name;
     ViewData["Subtitle"] = "Digitised Collection in the Global Pollen Project";
+    ViewData["Description"] = "Interested in plant pollen from " + Model.FocusRegion + "? " + Model.Description; 
+
     var slides = Model.Grains.OrderBy(m => m.Taxon.LatinName).ToList();
 }
 

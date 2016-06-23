@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Grain Details #" + Model.GrainId;
+
     var timeSinceAdd = DateTime.Now - Model.TimeAdded;
     var success = (string)ViewData["Success"];
     var fullyIdentified = string.IsNullOrEmpty(Model.IdentifiedFamily) ||

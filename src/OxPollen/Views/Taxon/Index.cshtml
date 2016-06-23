@@ -2,6 +2,8 @@
 
 @{
     ViewBag.Title = "Reference Collection";
+    ViewData["Description"] = "The Global Pollen Project is a dynamic reference collection for plant pollen. We hold digitised reference slides from an expanding list of institutions, as well as grains identified by the community.";
+
     var rank = Context.Request.Query["rank"];
     string rankFilter;
     if (rank.Count == 0) { rankFilter = "Genus"; } else { rankFilter = rank.FirstOrDefault(); };

@@ -1,7 +1,8 @@
 ﻿@model OxPollen.ViewModels.Taxon.TaxonDetailViewModel
 
 @{
-    ViewBag.Title = Model.LatinName;
+    ViewBag.Title = Model.LatinName + "(Plant " + Model.Rank + ") - Reference Collection";
+    ViewData["Description"] = "View reference images for " + Model.LatinName + " pollen, alongside botanical description and geographic range. Use our collections for your pollen identification today.";
 }
 
 <link rel="stylesheet" href="~/lib/nouislider/distribute/nouislider.min.css"> @* TODO Move this *@
