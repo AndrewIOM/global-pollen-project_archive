@@ -15,6 +15,7 @@ using OxPollen.Services;
 using OxPollen.Services.Abstract;
 using OxPollen.Services.Concrete;
 using System.IO;
+using OxPollen.Options;
 
 namespace OxPollen
 {
@@ -75,7 +76,11 @@ namespace OxPollen
             });
 
             services.AddMvc();
+
+            //Options
             services.AddOptions();
+            services.Configure<AzureOptions>(Configuration);
+            services.Configure<AuthMessageSenderOptions>(Configuration);
 
             // DI Services
             services.AddTransient<IUnitOfWork, UnitOfWork>();

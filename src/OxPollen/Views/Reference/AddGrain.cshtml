@@ -24,7 +24,7 @@
 }
 
 <form id="addGrainForm" name="addGrain" method="post" onsubmit="return uploadFile()" action="">
-    <div asp-validation-summary="ValidationSummary.All" role="alert"></div>
+    <div asp-validation-summary="All" role="alert"></div>
     <div id="validation-errors-box" style="display:none;" class="alert alert-danger" role="alert"></div>
 
     @Html.HiddenFor(n => n.CollectionId)
