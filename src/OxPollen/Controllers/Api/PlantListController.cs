@@ -32,14 +32,15 @@ namespace OxPollen.Controllers.Api
                 result = result.Where(m => m.ParentTaxa.LatinName.Equals(parent, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            var model = result.Select(m => new BackboneTaxon()
+            var list = result.ToList();
+            var model = list.Select(m => new BackboneTaxon()
             {
                 Id = m.Id,
                 LatinName = m.LatinName,
                 Rank = m.Rank,
                 Status = m.Status,
                 ParentLatinName = m.ParentTaxa == null ? null : m.ParentTaxa.LatinName
-            });
+            }).ToList();
 
             return model;
         }
