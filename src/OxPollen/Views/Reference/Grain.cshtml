@@ -105,7 +105,7 @@
                             <a onclick="return changeImage(this);" style="position:absolute;height:5em;">
                                 <img src="@image.FocusLowUrl" hidden="hidden" />
                                 <img src="@image.FocusMedLowUrl" hidden="hidden" />
-                                <img src="@image.FocusMedUrl" style="width:auto; height:5em;display:inline-block" />
+                                <img src="@image.FocusMedUrl" style="width:auto; height:5em;display:inline-block" alt="Digitised side of pollen for the plant @Model.Taxon.Rank @Model.Taxon.LatinName. The physical slide is from the collection @Model.Collection.Name owned by @Model.Collection.OwnedBy at the institution @Model.Collection.Institution." />
                                 <img src="@image.FocusMedHighUrl" hidden="hidden" />
                                 <img src="@image.FocusHighUrl" hidden="hidden" />
                                 <span class="glyphicon glyphicon-eye-open focus-icon"></span>
@@ -113,7 +113,7 @@
                         }
                         else
                         {
-                            <a onclick="return changeImage(this);"><img src="@image.FileName" style="width:auto; height:5em;display:inline-block" /></a>
+                            <a onclick="return changeImage(this);"><img src="@image.FileName" style="width:auto; height:5em;display:inline-block" alt="Digitised side of pollen for the plant @Model.Taxon.Rank @Model.Taxon.LatinName. The physical slide is from the collection @Model.Collection.Name owned by @Model.Collection.OwnedBy at the institution @Model.Collection.Institution." /></a>
                         }
                     }
                 </div>
