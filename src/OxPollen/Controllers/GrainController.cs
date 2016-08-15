@@ -239,11 +239,6 @@ namespace OxPollen.Controllers
             return RedirectToAction("Identify", new { id = grainId });
         }
 
-        public IActionResult Help()
-        {
-            return View();
-        }
-
         [Authorize]
         public IActionResult Delete(int id)
         {

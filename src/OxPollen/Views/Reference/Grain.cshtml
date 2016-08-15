@@ -10,7 +10,7 @@
         promo = "Focus through this slide, just like using a microscope! ";
     }
 
-    ViewData["Description"] = promo + Model.Collection.Institution + "has contributed this "+ Model.Taxon +" pollen reference image to our reference collection. ";
+    ViewData["Description"] = promo + Model.Collection.Institution + "has contributed this " + Model.Taxon + " pollen reference image to our reference collection. ";
     var timeSinceAdd = DateTime.Now - Model.TimeAdded;
 }
 
@@ -95,6 +95,8 @@
                 <div class="zoom-canvas-container">
                     <canvas id="displayCanvas" class="zoom-canvas"></canvas>
                     <div id="focusSlider"></div>
+                    <a id="grain-zoomin" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></a>
+                    <a id="grain-zoomout" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></a>
                 </div>
                 <hr />
                 <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
@@ -121,8 +123,9 @@
         </div>
         <h4>Citation</h4>
         <p>Slide from the <em>'@Model.Collection.Name'</em> collection, which is owned by @Model.Collection.OwnedBy, and located at @Model.Collection.Institution. Obtained from Martin, A.C., & Harvey, W. J. (2016). <em>The Global Pollen Project</em>. Retrieved @DateTime.Now.ToShortDateString(), from http://globalpollenproject.org</p>
-        <p>Image free for non-commercial use: <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br />
-</p>
+        <p>
+            Image free for non-commercial use: <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br />
+        </p>
     </div>
 </div>
 
@@ -142,5 +145,17 @@
         position: absolute;
         top: 7em;
         right: 0;
+    }
+
+    #grain-zoomin {
+        position: absolute;
+        top: 5em;
+        left: 3em;
+    }
+
+    #grain-zoomout {
+        position: absolute;
+        top: 7.5em;
+        left: 3em;
     }
 </style>

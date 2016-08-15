@@ -4,6 +4,7 @@
     var ctx = canvas.getContext('2d');
     trackTransforms(ctx);
     var container = $(canvas).parent(); //<div class='zoom-canvas-container>
+    var currentScaleFactor = 1;
 
     var currentImageSet = $('#zoom-thumbs a:first img');
     var isFocusImage = currentImageSet.length > 1;
@@ -16,6 +17,18 @@
     image.src = firstImage.src;
     respondCanvas();
     $(window).resize(respondCanvas);
+
+    //Setup Zoom Buttons
+    $('#grain-zoomin').click(function () {
+        lastX = canvas.width / 2;
+        lastY = canvas.height / 2;
+        zoom(1);
+    });
+    $('#grain-zoomout').click(function () {
+        lastX = canvas.width / 2;
+        lastY = canvas.height / 2;
+        zoom(-1);
+    });
 
     //Setup Slider
     var slider = document.getElementById('focusSlider');
@@ -52,11 +65,8 @@
         imgObj.onload = function () {
             var renderHeight = imgObj.naturalHeight;
             var renderWidth = imgObj.naturalWidth;
-            console.log(renderHeight);
-            console.log(renderWidth);
 
             var ratio = imgObj.naturalWidth / imgObj.naturalHeight;
-            console.log(ratio);
             var scaling = 1;
             if (renderHeight > canvas.height) {
                 scaling = canvas.height / renderHeight;
@@ -133,13 +143,17 @@
 
     var scaleFactor = 1.1;
     var zoom = function (clicks) {
-        var pt = ctx.transformedPoint(lastX, lastY);
-        ctx.translate(pt.x, pt.y);
-        var factor = Math.pow(scaleFactor, clicks);
-        ctx.scale(factor, factor);
-        ctx.translate(-pt.x, -pt.y);
-        fillCanvas();
-        redraw();
+        //Enforce lower and upper zoom limits
+        if ((currentScaleFactor < 20 && clicks > 0) || (currentScaleFactor > -5 && clicks < 0)) {
+            var pt = ctx.transformedPoint(lastX, lastY);
+            ctx.translate(pt.x, pt.y);
+            var factor = Math.pow(scaleFactor, clicks);
+            currentScaleFactor = currentScaleFactor + clicks;
+            ctx.scale(factor, factor);
+            ctx.translate(-pt.x, -pt.y);
+            fillCanvas();
+            redraw();
+        }
     }
 
     var handleScroll = function (evt) {
