@@ -1,0 +1,13 @@
+﻿<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+        this.page.url = "http://Im.Acm.Pollen.azurewebsites.net" + "@Context.Request.Path";
+        this.page.identifier = "@Context.Request.Path";
+    };
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = '//Im.Acm.Pollen.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>

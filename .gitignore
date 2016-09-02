@@ -210,7 +210,7 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
-/src/OxPollen/wwwroot/user-image-uploads
-/src/OxPollen/wwwroot/lib
-/src/OxPollen/Properties/PublishProfiles
-/src/OxPollen/wwwroot/testdata
+/src/Im.Acm.Pollen/wwwroot/user-image-uploads
+/src/Im.Acm.Pollen/wwwroot/lib
+/src/Im.Acm.Pollen/Properties/PublishProfiles
+/src/Im.Acm.Pollen/wwwroot/testdata

@@ -1,0 +1,161 @@
+﻿@model ReferenceGrain
+
+@{
+    ViewData["Title"] = Model.Taxon.LatinName + " - " + Model.Collection.Name;
+    ViewData["Subtitle"] = "Digitised Reference Slide in the collection: " + Model.Collection.Name;
+
+    var promo = "";
+    if (Model.Images.First().IsFocusImage)
+    {
+        promo = "Focus through this slide, just like using a microscope! ";
+    }
+
+    ViewData["Description"] = promo + Model.Collection.Institution + "has contributed this " + Model.Taxon + " pollen reference image to our reference collection. ";
+    var timeSinceAdd = DateTime.Now - Model.TimeAdded;
+}
+
+@section scripts {
+    <link rel="stylesheet" href="~/lib/nouislider/distribute/nouislider.min.css"> @* TODO Move this *@
+    <script src="~/lib/nouislider/distribute/nouislider.min.js"></script>
+    <script type="text/javascript" src="~/js/reference/GrainImageCanvas.js"></script>
+}
+
+@* Header *@
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>@Model.Taxon.LatinName</h2>
+            <p>@ViewData["Subtitle"]</p>
+        </div>
+    </div>
+    <br />
+}
+
+@* Breadcrumb *@
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+            <li><a asp-action="Index" asp-controller="Reference">Physical Collections</a></li>
+            <li><a href="@Url.Action("Collection", "Reference", new { id = Model.Collection.Id })">@Model.Collection.Name</a></li>
+            <li class="active">Grain #@Model.ReferenceGrainId</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-book"></span> Details</div>
+            <div class="panel-body">
+                <h4>Taxonomy</h4>
+                @{
+                    if (Model.Taxon != null)
+                    {
+                        if (Model.Taxon.Rank == Taxonomy.Species)
+                        {
+                            <label>Family</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.ParentTaxa.ParentTaxa.TaxonId})">@Model.Taxon.ParentTaxa.ParentTaxa.LatinName</a></p>
+                            <label>Genus</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.ParentTaxa.TaxonId})">@Model.Taxon.ParentTaxa.LatinName</a></p>
+                            <label>Species</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.TaxonId})">@Model.Taxon.LatinName</a></p>
+                        }
+                        else if (Model.Taxon.Rank == Taxonomy.Genus)
+                        {
+                            <label>Family</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.ParentTaxa.TaxonId})">@Model.Taxon.ParentTaxa.LatinName</a></p>
+                            <label>Genus</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.TaxonId})">@Model.Taxon.LatinName</a></p>
+                            <label>Species</label>
+                            <p>Unknown</p>
+                        }
+                        else
+                        {
+                            <label>Family</label>
+                            <p><a href="@Url.Action("View", "Taxon", new { id = Model.Taxon.TaxonId})">@Model.Taxon.LatinName</a></p>
+                            <label>Genus</label>
+                            <p>Unknown</p>
+                            <label>Species</label>
+                            <p>Unknown</p>
+                        }
+                    }
+                }
+                <hr />
+                <h4>Additional Details</h4>
+                <label>Maximum Diameter</label>
+                <p>@Model.MaxSizeNanoMetres micrometres</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-picture"></span> Images</div>
+            <div class="panel-body">
+                <div class="zoom-canvas-container">
+                    <canvas id="displayCanvas" class="zoom-canvas"></canvas>
+                    <div id="focusSlider"></div>
+                    <a id="grain-zoomin" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></a>
+                    <a id="grain-zoomout" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></a>
+                </div>
+                <hr />
+                <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
+                    @foreach (var image in Model.Images)
+                    {
+                        @if (image.IsFocusImage)
+                        {
+                            <a onclick="return changeImage(this);" style="position:absolute;height:5em;">
+                                <img src="@image.FocusLowUrl" hidden="hidden" />
+                                <img src="@image.FocusMedLowUrl" hidden="hidden" />
+                                <img src="@image.FocusMedUrl" style="width:auto; height:5em;display:inline-block" alt="Digitised side of pollen for the plant @Model.Taxon.Rank @Model.Taxon.LatinName. The physical slide is from the collection @Model.Collection.Name owned by @Model.Collection.OwnedBy at the institution @Model.Collection.Institution." />
+                                <img src="@image.FocusMedHighUrl" hidden="hidden" />
+                                <img src="@image.FocusHighUrl" hidden="hidden" />
+                                <span class="glyphicon glyphicon-eye-open focus-icon"></span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a onclick="return changeImage(this);"><img src="@image.FileName" style="width:auto; height:5em;display:inline-block" alt="Digitised side of pollen for the plant @Model.Taxon.Rank @Model.Taxon.LatinName. The physical slide is from the collection @Model.Collection.Name owned by @Model.Collection.OwnedBy at the institution @Model.Collection.Institution." /></a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <h4>Citation</h4>
+        <p>Slide from the <em>'@Model.Collection.Name'</em> collection, which is owned by @Model.Collection.OwnedBy, and located at @Model.Collection.Institution. Obtained from Martin, A.C., & Harvey, W. J. (2016). <em>The Global Pollen Project</em>. Retrieved @DateTime.Now.ToShortDateString(), from http://Im.Acm.Pollen.org</p>
+        <p>
+            Image free for non-commercial use: <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br />
+        </p>
+    </div>
+</div>
+
+@* TODO: Move Style *@
+<style>
+    .focus-icon {
+        top: 2.7em;
+        right: 0.2em;
+        position: absolute;
+        background-color: white;
+        padding: 0.1em;
+        font-size: 1.2em;
+    }
+
+    #focusSlider {
+        height: 15em;
+        position: absolute;
+        top: 7em;
+        right: 0;
+    }
+
+    #grain-zoomin {
+        position: absolute;
+        top: 5em;
+        left: 3em;
+    }
+
+    #grain-zoomout {
+        position: absolute;
+        top: 7.5em;
+        left: 3em;
+    }
+</style>

@@ -1,0 +1,66 @@
+@import '_Palette';
+
+.panel {
+    border-radius: 0;
+    padding: 0.5em 1em;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    transition: 1s;
+
+    .panel-heading {
+        border-bottom: 1px solid #eee;
+        font-family: Montserrat;
+        background: none;
+    }
+}
+
+.panel-black {
+    background-color: #272634;
+
+    .panel-heading {
+        color: white;
+        border-color: white;
+    }
+}
+
+.panel-blue {
+    background-color: #2b5797;
+    color: white;
+    .panel-heading {
+        border-color:white;
+        color:white;
+    }
+}
+
+.panel-green {
+    background-color: #1e7145;
+    color: white;
+
+    .panel-heading {
+        border-color: white;
+        color: white;
+    }
+}
+
+
+// Distribution map panel
+#paleo {
+    position: relative;
+}
+
+#paleo-loading {
+    position: absolute;
+    background-color: rgba(220, 200, 220, .5);
+    color: white;
+    padding: 0.3em 1em;
+    left: 33%;
+    width: 33%;
+    text-align: center;
+    top: 33%;
+    transition: 1s;
+    border-radius: 0.2em;
+}
+
+#neotoma-map {
+    margin-bottom:1em;
+}
