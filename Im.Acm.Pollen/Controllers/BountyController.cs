@@ -31,7 +31,7 @@ namespace Im.Acm.Pollen.Controllers
             var topUsers = users.Select(m => new BountyViewModel()
             {
                 Bounty = m.BountyScore,
-                Name = m.FullName()
+                Name = m.FirstName.Substring(0, 1) + ". " + m.LastName
             }).Where(m => m.Bounty > 0).OrderByDescending(m => m.Bounty).Take(5);
 
             var model = new BountyChartsViewModel()

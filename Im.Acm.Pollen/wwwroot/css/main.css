@@ -450,8 +450,9 @@ footer ul {
   color: #fff;
   text-align: center;
   font-weight: bold;
-  line-height: 20px;
-  width: 20px;
+  line-height: 30px;
+  opacity: 0.7;
+  width: 30px;
   display: block;
   background: #83296F;
   position: absolute;
@@ -493,10 +494,10 @@ footer ul {
 .guide-sidebar .nav > .active > a,
 .guide-sidebar .nav > li > a:hover,
 .guide-sidebar .nav > li > a:focus {
-  color: #A93E71;
+  color: #9b538b;
   text-decoration: none;
   background-color: transparent;
-  border-left-color: #A93E71; }
+  border-left-color: #9b538b; }
 
 /* all active links */
 .guide-sidebar .nav > .active > a,

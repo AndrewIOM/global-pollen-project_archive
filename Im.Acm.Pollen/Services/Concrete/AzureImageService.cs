@@ -1,17 +1,16 @@
 ﻿using Im.Acm.Pollen.Services.Abstract;
+using Im.Acm.Pollen.Options;
+using ImageProcessorCore;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Im.Acm.Pollen.Options;
 using Microsoft.Extensions.Logging;
 using System.IO;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
 namespace Im.Acm.Pollen.Services.Concrete
@@ -115,49 +114,32 @@ namespace Im.Acm.Pollen.Services.Concrete
 
         private async Task<string> SaveImage(int size, Stream stream, string saveFilePath)
         {
-            // double newHeight = 0;
-            // double newWidth = 0;
-            // double scale = 0;
+            double newHeight = 0;
+            double newWidth = 0;
+            double scale = 0;
 
-            // Bitmap curImage = new Bitmap(stream);
-            // if (curImage.Height > curImage.Width)
-            // {
-            //     scale = Convert.ToSingle(size) / curImage.Height;
-            // }
-            // else
-            // {
-            //     scale = Convert.ToSingle(size) / curImage.Width;
-            // }
-            // if (scale < 0 || scale > 1) { scale = 1; }
+            Image image = new Image(stream);
+            if (image.Height > image.Width)
+            {
+                scale = Convert.ToSingle(size) / image.Height;
+            }
+            else
+            {
+                scale = Convert.ToSingle(size) / image.Width;
+            }
+            if (scale < 0 || scale > 1) { scale = 1; }
 
-            // newHeight = Math.Floor(Convert.ToSingle(curImage.Height) * scale);
-            // newWidth = Math.Floor(Convert.ToSingle(curImage.Width) * scale);
+            newHeight = Math.Floor(Convert.ToSingle(image.Height) * scale);
+            newWidth = Math.Floor(Convert.ToSingle(image.Width) * scale);
 
-            // Bitmap newImage = new Bitmap(curImage, Convert.ToInt32(newWidth), Convert.ToInt32(newHeight));
-            // Graphics imgDest = Graphics.FromImage(newImage);
-            // imgDest.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            // imgDest.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            // imgDest.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-            // imgDest.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-            // ImageCodecInfo[] info = ImageCodecInfo.GetImageEncoders();
-            // EncoderParameters param = new EncoderParameters(1);
-            // param.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
-            // imgDest.DrawImage(curImage, 0, 0, newImage.Width, newImage.Height);
+            MemoryStream memoryStream = new MemoryStream();
+            image.Resize(image.Width / 2, image.Height / 2).SaveAsPng(memoryStream);
+            memoryStream.Position = 0;
 
-            // CloudBlockBlob blob = _container.GetBlockBlobReference(saveFilePath);
-            // if (await blob.ExistsAsync()) throw new Exception("Blob already exists: " + blob.Uri.AbsoluteUri);
-            // MemoryStream memoryStream = new MemoryStream();
-            // newImage.Save(memoryStream, info[1], param);
-            // blob.Properties.ContentType = "image/png";
-            // memoryStream.Position = 0;
-            // await blob.UploadFromStreamAsync(memoryStream);
-
-            // curImage.Dispose();
-            // newImage.Dispose();
-            // imgDest.Dispose();
-
-            // return blob.Uri.AbsoluteUri;
-            return "fakeUrl";
+            CloudBlockBlob blob = _container.GetBlockBlobReference(saveFilePath);
+            if (await blob.ExistsAsync()) throw new Exception("Blob already exists: " + blob.Uri.AbsoluteUri);
+            await blob.UploadFromStreamAsync(memoryStream);
+            return blob.Uri.AbsoluteUri;
         }
 
     }

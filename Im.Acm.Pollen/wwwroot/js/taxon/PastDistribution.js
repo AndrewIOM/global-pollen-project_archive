@@ -81,18 +81,22 @@ $('document').ready(function () {
     } else {
         //Get NeotomaDB Data
         points = getNeotomaPoints();
+        updatePastDistributionText();
 
         //Slider change event
         slider.noUiSlider.on('slide', function () {
+            updatePastDistributionText();
+            redrawPoints();
+        });
+
+        function updatePastDistributionText() {
             var value = slider.noUiSlider.get();
             yearOldest = value[1] * 1000;
             yearYoungest = value[0] * 1000;
 
             $('#paleo-range-low').text(value[0] + ' thousand');
     	    $('#paleo-range-hi').text(value[1] + ' thousand');
-
-            redrawPoints();
-        });
+        }
     }
 });
 

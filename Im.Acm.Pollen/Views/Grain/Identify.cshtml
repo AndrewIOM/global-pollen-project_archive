@@ -100,9 +100,11 @@
                         <label>Approximate Age</label>
                     </div>
                     <div class="col-md-8">
-                        @Model.Age @if (!Model.Age.HasValue)
+                        @if (!Model.Age.HasValue)
                         {
                             <span>Unknown</span>
+                        } else {
+                            <span>@Model.Age years</span>
                         }
                     </div>
                 </div>

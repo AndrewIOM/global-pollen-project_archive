@@ -3,6 +3,10 @@
 @{
     ViewBag.Title = Model.LatinName + " (" + Model.Rank + ") - Reference Collection";
     ViewData["Description"] = "View reference images for " + Model.LatinName + " pollen, alongside botanical description and geographic range. Use our collections for your pollen identification today.";
+    var queryString = "";
+    if (Model.Rank != Im.Acm.Pollen.Models.Taxonomy.Family) {
+        queryString = "&parent=" + Model.ParentTaxon.LatinName;
+    }
 }
 
 <link rel="stylesheet" href="~/lib/nouislider/distribute/nouislider.min.css"> @* TODO Move this *@
@@ -171,8 +175,8 @@
         <div class="panel panel-green">
             <div class="panel-heading">Taxonomic Status</div>
             <div class="panel-body">
-                <p>This taxon is <strong>confirmed</strong> in our taoxnomic backbone (The Plant List 2014).</p>
-                <p><strong>Reference: </strong> This is some reference...</p>
+                <p id="taxon-status"></p>
+                <!--<p><strong>Reference: </strong> This is some reference...</p>-->
             </div>
         </div>
 
@@ -272,6 +276,24 @@ svg.append("g")
 }
             });
         });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $.ajax({
+            url: "/api/PlantList/Suggest?q=@Model.LatinName&rank=@Model.Rank@queryString",
+            context: document.body
+            }).done(function(data) {
+                console.log(data);
+                var status = "unconfirmed";
+                if (data.length > 0) {
+                    if (data[0].status == 0) {
+                        status = "confirmed"
+                    }
+                }
+                $('#taxon-status').text('This taxon is ' + status + ' in our taoxnomic backbone (The Plant List 2014).');
+        });
+    });
     </script>
 }
 
