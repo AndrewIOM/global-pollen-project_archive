@@ -105,7 +105,7 @@ namespace Im.Acm.Pollen
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsStaging())
             {
                 app.UseDeveloperExceptionPage();
             }
