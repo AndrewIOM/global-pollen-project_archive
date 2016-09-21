@@ -46,7 +46,7 @@ namespace Im.Acm.Pollen
             {
                 // This reads the configuration keys from the secret store.
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
+                //builder.AddUserSecrets();
             }
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
