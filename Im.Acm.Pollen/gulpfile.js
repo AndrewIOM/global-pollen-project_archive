@@ -55,3 +55,4 @@ gulp.task("min:css", function () {
 
 gulp.task("min", ["min:js", "min:css"]);
 gulp.task("styles", ["sass", "min:css"]);
+gulp.task("default", ["clean", "styles", "min"])
