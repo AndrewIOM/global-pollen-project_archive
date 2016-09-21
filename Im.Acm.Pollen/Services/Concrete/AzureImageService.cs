@@ -115,8 +115,8 @@ namespace Im.Acm.Pollen.Services.Concrete
 
         private async Task<string> SaveImage(int size, Stream stream, string saveFilePath)
         {
-            double newHeight = 0;
-            double newWidth = 0;
+            int newHeight = 0;
+            int newWidth = 0;
             double scale = 0;
 
             Image image = new Image(stream);
@@ -130,12 +130,12 @@ namespace Im.Acm.Pollen.Services.Concrete
             }
             if (scale < 0 || scale > 1) { scale = 1; }
 
-            newHeight = Math.Floor(Convert.ToSingle(image.Height) * scale);
-            newWidth = Math.Floor(Convert.ToSingle(image.Width) * scale);
+            newHeight = (int)Math.Floor(Convert.ToSingle(image.Height) * scale);
+            newWidth = (int)Math.Floor(Convert.ToSingle(image.Width) * scale);
 
             MemoryStream memoryStream = new MemoryStream();
             image.Quality = 256;
-            image.Resize(image.Width / 2, image.Height / 2).SaveAsPng(memoryStream);
+            image.Resize(newWidth, newHeight).SaveAsPng(memoryStream);
             memoryStream.Position = 0;
 
             CloudBlockBlob blob = _container.GetBlockBlobReference(saveFilePath);
