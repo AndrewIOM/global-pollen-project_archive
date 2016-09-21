@@ -95,15 +95,6 @@ namespace Im.Acm.Pollen.Services.Concrete
 
         public List<ReferenceCollection> ListCollections()
         {
-            ////Temporay fix to connect reference grains to taxa
-            //var refGrains = _uow.RefGrainRepository.GetAll().ToList();
-            //foreach (var slide in refGrains)
-            //{
-            //    var taxon = _taxonomyService.CreateOrUpdateTaxonomy(slide.Family, slide.Genus, slide.Species);
-            //    slide.Taxon = taxon;
-            //    _uow.RefGrainRepository.Update(slide);
-            //    _uow.SaveChanges();
-            //}
             return _uow.RefCollectionRepository.GetAll().ToList();
         }
     }

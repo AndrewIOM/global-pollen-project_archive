@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ImageProcessorCore.Formats;
 
 namespace Im.Acm.Pollen.Services.Concrete
 {
@@ -133,6 +134,7 @@ namespace Im.Acm.Pollen.Services.Concrete
             newWidth = Math.Floor(Convert.ToSingle(image.Width) * scale);
 
             MemoryStream memoryStream = new MemoryStream();
+            image.Quality = 256;
             image.Resize(image.Width / 2, image.Height / 2).SaveAsPng(memoryStream);
             memoryStream.Position = 0;
 

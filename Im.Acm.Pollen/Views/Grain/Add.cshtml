@@ -83,7 +83,7 @@
                         <br />
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="display:none">
                     <div class="col-md-2">
                         @Html.LabelFor(m => m.Latitude)
                     </div>
@@ -95,7 +95,7 @@
                         <span asp-validation-for="Latitude" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="display:none">
                     <div class="col-md-2">
                         @Html.LabelFor(m => m.Longitude)
                     </div>
@@ -129,6 +129,7 @@
                             <input type="text" class="form-control" asp-for="AgeYearsBeforePresent" placeholder="Age" />
                             <div class="input-group-addon">Years Before Present</div>
                         </div>
+                        <span>NB. Enter 0 for a modern sample</span>
                         <span asp-validation-for="AgeYearsBeforePresent" class="text-danger"></span>
                     </div>
                 </div>

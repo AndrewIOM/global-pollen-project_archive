@@ -12,6 +12,7 @@
 
     ViewData["Description"] = promo + Model.Collection.Institution + "has contributed this " + Model.Taxon + " pollen reference image to our reference collection. ";
     var timeSinceAdd = DateTime.Now - Model.TimeAdded;
+    var displayImagesSetting = Model.Images.Count > 1 ? "auto" : "none";
 }
 
 @section scripts {
@@ -44,11 +45,12 @@
 </div>
 
 <div class="row">
+
     <div class="col-md-3">
+
         <div class="panel panel-default">
-            <div class="panel-heading"><span class="glyphicon glyphicon-book"></span> Details</div>
+            <div class="panel-heading">Taxonomy</div>
             <div class="panel-body">
-                <h4>Taxonomy</h4>
                 @{
                     if (Model.Taxon != null)
                     {
@@ -81,16 +83,20 @@
                         }
                     }
                 }
-                <hr />
-                <h4>Additional Details</h4>
-                <label>Maximum Diameter</label>
-                <p>@Model.MaxSizeNanoMetres micrometres</p>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Traits</div>
+            <div class="panel-body">
+                    <span id="traits-size-mean">@Model.MaxSizeNanoMetres</span><span style="font-size:0.75em;line-height:1em;">Maximum Diameter</span>
             </div>
         </div>
     </div>
-    <div class="col-md-9">
-        <div class="panel panel-default">
-            <div class="panel-heading"><span class="glyphicon glyphicon-picture"></span> Images</div>
+
+            <div class="col-md-9">
+                    <div class="panel panel-default">
+            <div class="panel-heading">Images</div>
             <div class="panel-body">
                 <div class="zoom-canvas-container">
                     <canvas id="displayCanvas" class="zoom-canvas"></canvas>
@@ -98,8 +104,8 @@
                     <a id="grain-zoomin" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></a>
                     <a id="grain-zoomout" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></a>
                 </div>
-                <hr />
-                <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
+                <hr/>
+                <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;display:@displayImagesSetting">
                     @foreach (var image in Model.Images)
                     {
                         @if (image.IsFocusImage)
@@ -119,15 +125,24 @@
                         }
                     }
                 </div>
-            </div>
-        </div>
-        <h4>Citation</h4>
-        <p>Slide from the <em>'@Model.Collection.Name'</em> collection, which is owned by @Model.Collection.OwnedBy, and located at @Model.Collection.Institution. Obtained from Martin, A.C., & Harvey, W. J. (2016). <em>The Global Pollen Project</em>. Retrieved @DateTime.Now.ToString("d"), from http://Im.Acm.Pollen.org</p>
+                </div>
+                </div>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+
+                    <h4>Citation</h4>
+        <p>Slide from the <em>'@Model.Collection.Name'</em> collection, which is owned by @Model.Collection.OwnedBy, and located at @Model.Collection.Institution. Obtained from Martin, A.C., & Harvey, W. J. (2016). <em>The Global Pollen Project</em>. Retrieved @DateTime.Now.ToString("d"), from http://globalpollenproject.org</p>
         <p>
             Image free for non-commercial use: <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br />
         </p>
+
+        </div>
     </div>
-</div>
+
 
 @* TODO: Move Style *@
 <style>

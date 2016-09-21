@@ -1,4 +1,5 @@
 ﻿@model Im.Acm.Pollen.ViewModels.IndexViewModel
+@inject UserManager<AppUser> UserManager
 @using System.Security.Claims
 
 @{
@@ -50,7 +51,7 @@
                 <label>User Name</label>
             </div>
             <div class="col-md-10">
-                @User.GetUserName()
+                @UserManager.GetUserName(User)
             </div>
         </div>
         <div class="row">

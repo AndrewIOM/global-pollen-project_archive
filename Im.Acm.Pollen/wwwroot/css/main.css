@@ -131,6 +131,9 @@ input.form-control, textarea.form-control {
 .breadcrumb {
   border-radius: 0; }
 
+input.form-control {
+  line-height: inherit; }
+
 /* Structure: Pollen Project */
 .homepage-header {
   position: relative;
@@ -208,8 +211,8 @@ h1 {
 
 .numberCircle {
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border: 2px solid black;
   color: black;
   text-align: center;
@@ -217,18 +220,19 @@ h1 {
   display: inline-block; }
 
 .addgrain-section {
-  padding: 0.5em 1em; }
+  padding: 2em 0; }
 
 .headsection {
   background-color: #9b538b;
-  color: white; }
+  color: white;
+  padding: 1em 0; }
 
 #map {
   height: 500px;
   border: 1px solid #000; }
 
 .mapsection {
-  background-color: #C5C4C2; }
+  background-color: #f5f5f5; }
 
 .fileUpload {
   position: relative;
@@ -600,17 +604,32 @@ footer ul {
 /* Global Pollen Project: Colour Palette */
 .panel {
   border-radius: 0;
-  padding: 0.5em 1em;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  transition: 1s; }
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); }
   .panel .panel-heading {
-    border-bottom: 1px solid #eee;
+    border-radius: 0;
+    border-bottom: none;
     font-family: Montserrat;
-    background: none; }
+    background: none;
+    padding: 1em 2em 0.75em 2em; }
+    .panel .panel-heading .btn-default {
+      background: none; }
+  .panel .panel-body {
+    border-top: 1px solid #eee;
+    margin: 0 2em 0.5em 2em;
+    padding: 1em 0; }
+
+.panel-default .panel-heading {
+  background-color: #f5f5f5; }
+
+.panel-white .panel-heading {
+  background-color: white; }
+
+.panel-primary .panel-heading {
+  background-color: #9b538b; }
 
 .panel-black {
-  background-color: #272634; }
+  background-color: black; }
   .panel-black .panel-heading {
     color: white;
     border-color: white; }
@@ -628,6 +647,8 @@ footer ul {
   .panel-green .panel-heading {
     border-color: white;
     color: white; }
+    .panel-green .panel-heading .btn-default {
+      color: white; }
 
 #paleo {
   position: relative; }
@@ -677,6 +698,23 @@ footer ul {
   position: fixed;
   top: 150px;
   width: 228px; }
+
+#traits-size-mean {
+  font-size: 2em;
+  display: block; }
+
+#focusSlider.noUi-target {
+  margin: 0 2em 3em;
+  border-radius: 0;
+  background-color: black; }
+  #focusSlider.noUi-target .noUi-background {
+    background-color: black;
+    box-shadow: none; }
+  #focusSlider.noUi-target .noUi-handle {
+    box-shadow: none;
+    border-radius: 5em;
+    background-color: #808080;
+    border: none; }
 
 .taxon-list-item {
   background-color: #f5f5f5;

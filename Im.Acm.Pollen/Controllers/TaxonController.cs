@@ -27,20 +27,23 @@ namespace Im.Acm.Pollen.Controllers
         {
             var rankFilter = rank.HasValue ? rank.Value : Taxonomy.Genus;
 
-            //Temporary Fix until EF7 RC2 is released. 
+            //Temporary Fix until issue fixed in .net core
             //Can't use multiple ThenIncludes in current build for single joined query...
-            //TODO Currently hardcoded page size of 40
             var allTaxa = _context.Taxa
                 .Include(m => m.ChildTaxa)
-                .Include(m => m.UserGrains).ThenInclude(n => n.Images)
-                .Include(m => m.ReferenceGrains).ThenInclude(n => n.Images)
+                .Include(m => m.UserGrains)
+                .ThenInclude(n => n.Images)
+                .Include(m => m.ReferenceGrains)
+                .ThenInclude(n => n.Images)
                 .OrderBy(m => m.LatinName)
+                .ToList()
                 .Where(m => m.Rank == rankFilter).ToList();
+
             if (!string.IsNullOrEmpty(query)) { allTaxa = allTaxa.Where(m => m.LatinName.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList(); }
-            var page = allTaxa.Skip((p - 1) * 40).Take(40);
+            var page = allTaxa.Skip((p - 1) * 40).Take(40).ToList();
 
             var model = new TaxonIndexViewModel();
-            model.NumberOfPages = (int)Math.Ceiling(allTaxa.Count / 40.0);
+            model.NumberOfPages = (int)Math.Ceiling(allTaxa.Count() / 40.0);
             model.CurrentPage = p;
             model.PageSize = 40;
             model.Query = query;
@@ -85,25 +88,6 @@ namespace Im.Acm.Pollen.Controllers
             }
             return View(model);
         }
-
-        // /// <summary>
-        // /// Search for taxa within the master reference collection
-        // /// </summary>
-        // /// <param name="id"></param>
-        // public List<TaxonViewModel> Search(string latinName, int pageLength, int page) {
-        //     var match = _context.Taxa
-        //         .Include(m => m.UserGrains).ThenInclude(n => n.Images)
-        //         .Include(m => m.ReferenceGrains).ThenInclude(n => n.Images)
-        //         .Include(m => m.ChildTaxa).ThenInclude(n => n.ReferenceGrains).ThenInclude(o => o.Images)
-        //         .Include(m => m.ChildTaxa).ThenInclude(n => n.UserGrains).ThenInclude(o => o.Images)
-        //         .Include(m => m.ChildTaxa).ThenInclude(t => t.ChildTaxa).ThenInclude(n => n.ReferenceGrains).ThenInclude(o => o.Images)
-        //         .Include(m => m.ChildTaxa).ThenInclude(t => t.ChildTaxa).ThenInclude(n => n.UserGrains).ThenInclude(o => o.Images)
-        //         .OrderBy(m => m.LatinName)
-        //         .Where(m => m.LatinName == latinName)
-        //         .ToList();
-                
-
-        // }
 
         public IActionResult View(int id)
         {
@@ -217,11 +201,11 @@ namespace Im.Acm.Pollen.Controllers
                     return taxon.UserGrains.First().Images.First().FileNameThumbnail;
                 }
             }
-            foreach (var child in taxon.ChildTaxa)
-            {
-                var result = GetImageRecursive(child);
-                if (!string.IsNullOrEmpty(result)) return result;
-            }
+                foreach (var child in taxon.ChildTaxa)
+                {
+                    var result = GetImageRecursive(child);
+                    if (!string.IsNullOrEmpty(result)) return result;
+                }
             return null;
         }
 

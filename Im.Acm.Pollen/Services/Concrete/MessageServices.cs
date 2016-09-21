@@ -19,7 +19,7 @@ namespace Im.Acm.Pollen.Services
         {
             var myMessage = new SendGridMessage();
             myMessage.AddTo(email);
-            myMessage.From = new MailAddress("noreply@Im.Acm.Pollen.azurewebsites.net", "Global Pollen Project");
+            myMessage.From = new MailAddress("noreply@globalpollenproject.org", "Global Pollen Project");
             myMessage.Subject = subject;
             myMessage.Text = message;
             myMessage.Html = message;

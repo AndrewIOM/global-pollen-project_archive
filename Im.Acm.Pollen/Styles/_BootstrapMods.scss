@@ -163,3 +163,7 @@ input.form-control, textarea.form-control {
 .breadcrumb {
     border-radius: 0;
 }
+
+input.form-control {
+    line-height: inherit;
+}

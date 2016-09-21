@@ -5,7 +5,12 @@ var yearYoungest = 1000;
 var slider;
 
 //Map
+
+var mapElement = document.getElementById('paleo');
+mapElement.style.display = 'block';
 var width = $('#neotoma-map').closest('div').width();
+mapElement.style.display = 'none';
+
 var height = 250;
 var svg;
 var domPoints;
@@ -76,7 +81,7 @@ $('document').ready(function () {
     });
 
     if (neotomaId == 0) {
-        $('#paleo-loading').text('Past occurrences for this taxon are currently available from Neotoma.');
+        $('#paleo-loading').text('Past occurrences for this taxon are not available from Neotoma.');
         $('#paleo-loading').show();
     } else {
         //Get NeotomaDB Data

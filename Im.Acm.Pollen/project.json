@@ -44,7 +44,7 @@
     "Microsoft.Extensions.PlatformAbstractions": "1.0.0",
     "SendGrid.NetCore": "1.0.0-rtm-00002",
     "WindowsAzure.Storage":"7.2.0",
-    "ImageProcessorCore": "1.0.0-alpha1034"
+    "ImageProcessorCore": "1.0.0-alpha1047"
   },
 
   "tools": {
