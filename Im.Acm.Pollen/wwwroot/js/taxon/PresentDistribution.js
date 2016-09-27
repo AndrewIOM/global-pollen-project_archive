@@ -65,7 +65,8 @@ var populateGbifImages = function (gbifId) {
         for (i = 0; i < data.results.length; i++) {
             console.log(data.results[i]);
             if (data.results[i].type == 'StillImage' && image == '') {
-                image = '<a target="_blank" href="' + data.results[i].references + '"><img src="' + data.results[i].identifier + '" class="img-responsive inset-framed" alt="' + data.results[i].description + '"></a>';
+                var url = "http://api.gbif.org/v1/image?url=" + data.results[i].identifier + "&size=m";
+                image = '<a target="_blank" href="' + data.results[i].references + '"><img src="' + url + '" class="img-responsive inset-framed" alt="' + data.results[i].description + '"></a>';
                 source = '<a href="' + data.results[i].references + '">Image Source</a>';
             }
         }

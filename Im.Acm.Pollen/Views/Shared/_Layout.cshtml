@@ -93,7 +93,7 @@
     </div>
 
     @* Main Content *@
-    <div class="page-content">
+    <div class="page-content @RenderSection("pageContentStyles", required: false)">
         @RenderSection("homepageHeader", required: false)
         <div class="container body-content">
             @RenderBody()

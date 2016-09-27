@@ -135,6 +135,9 @@ input.form-control {
   line-height: inherit; }
 
 /* Structure: Pollen Project */
+.pollen-background {
+  background: url("/images/background.png"); }
+
 .homepage-header {
   position: relative;
   padding: 30px 15px;
