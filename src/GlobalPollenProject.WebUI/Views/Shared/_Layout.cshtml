@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html lang="en-gb">
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Global Pollen Project</title>
+    <meta name="Description" content="@ViewData["Description"]">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Hind" rel="stylesheet">
+
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css"
+              asp-fallback-test-class="hidden"
+              asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+        <link rel="stylesheet" href="~/css/main.css" />
+    </environment>
+    <environment names="Development">
+        <!-- Styles -->
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/main.css" />
+    </environment>
+
+    @* Icons and colours for all platforms *@
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#a8699a">
+    <meta name="apple-mobile-web-app-title" content="Global Pollen Project">
+    <meta name="application-name" content="Global Pollen Project">
+    <meta name="msapplication-TileColor" content="#9f00a7">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#a8699a">
+</head>
+<body>
+    @* Preview Ribbon *@
+    <!--<div class="corner-ribbon top-right sticky blue">Preview</div>-->
+    @* Fixed Navbar *@
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand">
+                    <span class="top">The Global</span>
+                    <span class="bottom">Pollen Project</span>
+                </a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a asp-controller="Home" asp-action="Guide">Guide</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reference Collection<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-action="Index" asp-controller="Taxon"><span class="glyphicon glyphicon-book"></span> Browse All Taxa</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a asp-action="Index" asp-controller="Reference">Physical Collections</a></li>
+                            @if (User.IsInRole("Digitise"))
+                            {
+                                <li><a asp-action="AddCollection" asp-controller="Reference">Add New Collection</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-action="RequestAccess" asp-controller="Reference">Get Started with Digitisation</a></li>
+                            }
+                            @*<li role="separator" class="divider"></li>
+                            <li><a asp-action="Help" asp-controller="Reference">Help</a></li>*@
+                        </ul>
+                    </li>
+                    <li><a asp-controller="Grain" asp-action="Identify"><span class="glyphicon glyphicon-search"></span> Identify</a></li>
+                    <li><a asp-action="Add" asp-controller="Grain"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Submit a Grain!</a></li>
+                    <li><a asp-controller="Bounty" asp-action="Index">Leaderboard</a></li>
+                </ul>
+                @await Html.PartialAsync("_LoginPartial")
+            </div>
+        </div>
+    </div>
+
+    @* Main Content *@
+    <div class="page-content @RenderSection("pageContentStyles", required: false)">
+        @RenderSection("homepageHeader", required: false)
+        <div class="container body-content">
+            @RenderBody()
+        </div>
+        @RenderSection("nocontainerbody", required: false)
+    </div>
+
+    @* Footer *@
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h4>Information</h4>
+                    <ul>
+                        <li><a asp-action="Guide" asp-controller="Home">About the Project</a></li>
+                        <li><a asp-action="Terms" asp-controller="Home">Terms and Conditions</a></li>
+                        <li><a asp-action="Terms" asp-controller="Home">Licensing</a></li>
+                        <li><a href="/Home/Guide#cite">How to Cite</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-5" style="padding-right:4em">
+                    <h4>Contact</h4>
+                    <p>The Global Pollen Project. <a href="http://oxlel.zoo.ox.ac.uk" target="_blank">Long-Term Ecology Lab</a>, Department of Zoology, University of Oxford, OX1 3PS, UK</p>
+                    <a href="mailto:oxpollen@gmail.com"><span class="glyphicon glyphicon-envelope"></span> Email</a>
+                </div>
+                <div class="col-md-4 footer-images">
+                    <h4>Our Partners</h4>
+                    <a href="https://oxlel.zoo.ox.ac.uk" target="_blank"><img src="~/images/oxlellogo.png" alt="Long Term Ecology Lab" /></a>
+                    <img src="~/images/oxford-logo.png" alt="University of Oxford" />
+                </div>
+            </div>
+            <div class="row">
+                <hr />
+                <div class="col-md-12">
+                    <p style="text-align:center;">The Global Pollen Project &copy; 2016 - Andrew C. Martin and William J. Harvey</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    @* Scripts *@
+    <environment names="Development,Staging,Production">
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/bootstrap.min.js"
+                asp-fallback-src="~/Scripts/bootstrap.min.js"
+                asp-fallback-test="typeof $().emulateTransitionEnd == 'function'">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/respond/1.2.0/respond.js"
+                asp-fallback-src="~/Scripts/respond.js"
+                asp-fallback-test="window.respond">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/7.1.0/bootstrap-slider.min.js"
+                asp-fallback-src="~/lib/bootstrap-slider/bootstrap-slider.js"
+                asp-fallback-test="">
+        </script>
+        <script src="~/js/site.js"></script>
+    </environment>
+    @*<environment names="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/hammer.js/hammer.js"></script>
+        <script type="text/javascript" src="~/lib/bootstrap-slider/bootstrap-slider.js"></script>
+        <script src="~/js/site.js" asp-file-version="true"></script>
+    </environment>*@
+    @RenderSection("scripts", required: false)
+    @Html.Partial("_Analytics")
+</body>
+</html>

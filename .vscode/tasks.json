@@ -7,7 +7,7 @@
         {
             "taskName": "build",
             "args": [
-                "${workspaceRoot}/Im.Acm.Pollen/project.json"
+                "${workspaceRoot}/src/GlobalPollenProject.WebUI/project.json"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"

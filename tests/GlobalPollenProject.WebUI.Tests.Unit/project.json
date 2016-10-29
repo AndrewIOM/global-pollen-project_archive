@@ -1,0 +1,28 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "GlobalPollenProject.WebUI Unit Tests Library",
+  "authors": [ "AndrewIOM" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "dependencies": {
+    "xunit": "2.1.0",
+    "Moq": "4.6.38-alpha",
+    "Im.Acm.Pollen": "1.0.0-*",
+    "Microsoft.EntityFrameworkCore.InMemory": "1.0.0"
+  },
+
+  "commands": {
+    "test": "xunit.runner.dnx"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet54",
+        "portable-net45+win8" 
+      ]
+    }
+  }
+}

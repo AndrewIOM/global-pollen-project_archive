@@ -1,0 +1,18 @@
+{
+  "description": "Global Pollen Project: Data Access Layer",
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable",
+    "emitEntryPoint": true
+  },
+  "dependencies":{
+      "NETStandard.Library":"1.6.0",
+      "Microsoft.EntityFrameworkCore": "1.0.0",
+      "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0",
+      "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0",
+      "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0"
+  },
+  "frameworks":{
+      "netstandard1.6":{}
+  }
+ }
