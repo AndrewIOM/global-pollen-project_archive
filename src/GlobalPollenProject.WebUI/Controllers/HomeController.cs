@@ -1,20 +1,9 @@
-﻿using System.Linq;
-using GlobalPollenProject.Core.Interfaces;
-using GlobalPollenProject.Core.Utilities;
-using GlobalPollenProject.Data.Models.Enums;
-using GlobalPollenProject.WebUI.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        public IGrainService _grainService;
-        public HomeController(IGrainService grainService)
-        {
-            _grainService = grainService;
-        }
-
         public IActionResult Terms()
         {
             return View();
@@ -22,19 +11,19 @@ namespace GlobalPollenProject.WebUI.Controllers
 
         public IActionResult Index()
         {
-            var result = _grainService.GetUnidentifiedGrains(Taxonomy.Genus)
-                .OrderByDescending(m => BountyUtility.Calculate(m)).Take(12).ToList();
+            // var result = _grainService.GetUnidentifiedGrains(Taxonomy.Genus)
+            //     .OrderByDescending(m => BountyUtility.Calculate(m)).Take(12).ToList();
             
-            var model = result.Select(m => new SimpleGrainViewModel()
-                {
-                    Bounty = BountyUtility.Calculate(m),
-                    Id = m.Id,
-                    ImageLocation = m.Images != null ? m.Images.First().FileName : "",
-                    ThumbnailLocation = m.Images != null ? m.Images.First().FileNameThumbnail : "",
-                    TimeAdded = m.TimeAdded
-                }).ToList();
-
-            return View(model);
+            // var model = result.Select(m => new SimpleGrainViewModel()
+            //     {
+            //         Bounty = BountyUtility.Calculate(m),
+            //         Id = m.Id,
+            //         ImageLocation = m.Images != null ? m.Images.First().FileName : "",
+            //         ThumbnailLocation = m.Images != null ? m.Images.First().FileNameThumbnail : "",
+            //         TimeAdded = m.TimeAdded
+            //     }).ToList();
+            return View();
+            //return View(model);
         }
 
         public IActionResult Guide()

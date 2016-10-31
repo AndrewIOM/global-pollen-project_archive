@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using GlobalPollenProject.Data.Models;
-using GlobalPollenProject.Data.Models.Enums;
+using GlobalPollenProject.Core.Models;
 
 namespace GlobalPollenProject.Core.Interfaces
 {

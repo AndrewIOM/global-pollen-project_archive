@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GlobalPollenProject.Core.Interfaces;
-using GlobalPollenProject.Data.Interfaces;
-using GlobalPollenProject.Data.Models;
+using GlobalPollenProject.Core.Models;
 
-namespace Im.Acm.Pollen.Services.Concrete
+namespace GlobalPollenProject.Core
 {
     public class UserService : IUserService
     {

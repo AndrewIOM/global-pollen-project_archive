@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GlobalPollenProject.Data.Infrastructure;
-using GlobalPollenProject.Data.Models;
-using GlobalPollenProject.Data.Models.Enums;
+using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.Core.Models;
 
 namespace GlobalPollenProject.Core.Utilities
 {
@@ -14,13 +13,13 @@ namespace GlobalPollenProject.Core.Utilities
     public class PlantListParser
     {
         private string _filePath;
-        private PollenDbContext _context;
+        private IUnitOfWork _uow;
 
-        public PlantListParser(string filePath, PollenDbContext context)
+        public PlantListParser(string filePath, IUnitOfWork uow)
         {
             //TODO check file is CSV
             _filePath = filePath;
-            _context = context;
+            _uow = uow;
         }
 
         public void Refresh()
@@ -59,8 +58,7 @@ namespace GlobalPollenProject.Core.Utilities
                 if (taxon.Rank != Taxonomy.Species) continue; //Ignore varieties etc.
 
                 //Add family
-                var family = _context.PlantListTaxa.FirstOrDefault(m => m.LatinName == parsedTaxon.Family
-                    && m.Rank == Taxonomy.Family);
+                var family = _uow.TaxonBackboneRepository.Find(m => m.LatinName == parsedTaxon.Family && m.Rank == Taxonomy.Family).FirstOrDefault();
                 if (family == null)
                 {
                     family = new PlantListTaxon()
@@ -69,14 +67,13 @@ namespace GlobalPollenProject.Core.Utilities
                         Rank = Taxonomy.Family,
                         Status = TaxonomicStatus.Accepted
                     };
-                    _context.PlantListTaxa.Add(family);
+                    _uow.TaxonBackboneRepository.Add(family);
                     Console.WriteLine("Added family " + parsedTaxon.Family);
                     //_context.SaveChanges();
                 }
 
                 //Add Genus
-                var genus = _context.PlantListTaxa.FirstOrDefault(m => m.LatinName == parsedTaxon.Genus
-                    && m.Rank == Taxonomy.Genus);
+                var genus = _uow.TaxonBackboneRepository.Find(m => m.LatinName == parsedTaxon.Genus && m.Rank == Taxonomy.Genus).FirstOrDefault();
                 if (genus == null)
                 {
                     genus = new PlantListTaxon()
@@ -85,7 +82,7 @@ namespace GlobalPollenProject.Core.Utilities
                         Rank = Taxonomy.Genus,
                         Status = TaxonomicStatus.Accepted
                     };
-                    _context.PlantListTaxa.Add(genus);
+                    _uow.TaxonBackboneRepository.Add(genus);
                     genus.ParentTaxa = family;
                     Console.WriteLine("Added genus " + parsedTaxon.Genus);
                     //_context.SaveChanges();
@@ -93,16 +90,15 @@ namespace GlobalPollenProject.Core.Utilities
 
                 //Add species
                 taxon.ParentTaxa = genus;
-                //var existing = _context.PlantListTaxa.FirstOrDefault(m => m.LatinName == parsedTaxon.ScientificName
-                //    && m.Rank == Taxonomy.Species);
-                //if (existing == null)
-                //{
-                    _context.PlantListTaxa.Add(taxon);
+                var existing = _uow.TaxonBackboneRepository.Find(m => m.LatinName == parsedTaxon.ScientificName && m.Rank == Taxonomy.Species).FirstOrDefault();
+                if (existing == null)
+                {
+                    _uow.TaxonBackboneRepository.Add(taxon);
                     taxon.ParentTaxa = genus;
                     Console.WriteLine("Added species " + taxon.LatinName);
-                    _context.SaveChanges();
+                    _uow.SaveChanges();
                     Console.WriteLine("Saved new taxa to local plant list");
-                //}
+                }
             }
 
         }

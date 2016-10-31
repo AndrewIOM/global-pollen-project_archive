@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using GlobalPollenProject.Data.Models.Enums;
-using GlobalPollenProject.Core.Models;
+﻿using GlobalPollenProject.Core.Models;
 
 namespace GlobalPollenProject.Core.Interfaces
 {
     public interface ITaxonomyBackbone
     {
         bool IsValidTaxon(Taxonomy rank, string family, string genus, string species);
-        List<BackboneTaxon> Suggest(string name, Taxonomy? rank, string parent = null);
+        // List<BackboneTaxon> Suggest(string name, Taxonomy? rank, string parent = null);
     }
 }

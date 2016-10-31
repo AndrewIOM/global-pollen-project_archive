@@ -1,5 +1,5 @@
-﻿using GlobalPollenProject.Data.Interfaces;
-using GlobalPollenProject.Data.Models;
+﻿using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

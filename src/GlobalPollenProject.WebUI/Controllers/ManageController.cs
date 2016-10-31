@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using GlobalPollenProject.Core;
 using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.Core.Models;
+using GlobalPollenProject.Data;
 using GlobalPollenProject.Data.Infrastructure;
-using GlobalPollenProject.Data.Models;
 using GlobalPollenProject.WebUI.Models.Manage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -298,6 +298,7 @@ namespace GlobalPollenProject.WebUI.Controllers
 
         private async Task<AppUser> GetCurrentUserAsync()
         {
+            await Task.Delay(1); //REMOVE
             return _userService.GetById(_userManager.GetUserId(User));
         }
 

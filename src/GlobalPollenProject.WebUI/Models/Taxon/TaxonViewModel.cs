@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GlobalPollenProject.App.Models;
 
 namespace GlobalPollenProject.WebUI.Models.Taxon
 {
@@ -6,7 +7,7 @@ namespace GlobalPollenProject.WebUI.Models.Taxon
     {
         public int Id { get; set; }
         public string LatinName { get; set; }
-        public Taxonomy Rank { get; set; }
+        public Rank Rank { get; set; }
         public string ImageFilename { get; set; }
         public int UserSubmissionsConfirmedCount { get; set; }
         public int ReferenceGrainsCount { get; set; }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using GlobalPollenProject.Data.Interfaces;
-using GlobalPollenProject.Data.Models;
+using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GlobalPollenProject.Data.Infrastructure

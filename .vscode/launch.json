@@ -17,9 +17,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceRoot}/Im.Acm.Pollen/bin/Debug/netcoreapp1.0/Im.Acm.Pollen.dll",
+            "program": "${workspaceRoot}/src/GlobalPollenProject.WebUI/bin/Debug/netcoreapp1.0/GlobalPollenProject.WebUI.dll",
             "args": [],
-            "cwd": "${workspaceRoot}/Im.Acm.Pollen",
+            "cwd": "${workspaceRoot}/src/GlobalPollenProject.WebUI",
             "stopAtEntry": false,
             "launchBrowser": {
                 "enabled": true,

@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Linq;
-using GlobalPollenProject.Data.Models;
 using GlobalPollenProject.Data.Infrastructure;
 using GlobalPollenProject.WebUI.Models;
-using GlobalPollenProject.Core;
+using GlobalPollenProject.Core.Models;
+using GlobalPollenProject.Data;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {

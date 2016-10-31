@@ -1,5 +1,5 @@
-﻿using GlobalPollenProject.Data.Interfaces;
-using GlobalPollenProject.Data.Models;
+﻿using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.Core.Models;
 using System;
 
 namespace GlobalPollenProject.Data.Infrastructure
@@ -20,6 +20,7 @@ namespace GlobalPollenProject.Data.Infrastructure
         private IRepository<Identification> idRepo = null;
         private IRepository<ReferenceCollection> refCollectionRepo = null;
         private IRepository<ReferenceGrain> refGrainRepo = null;
+        private IRepository<PlantListTaxon> backboneRepo = null;
 
         public IUserRepository UserRepository
         {
@@ -63,6 +64,17 @@ namespace GlobalPollenProject.Data.Infrastructure
                     taxonRepo = new TaxonRepository(_context);
                 }
                 return taxonRepo;
+            }
+        }
+        public IRepository<PlantListTaxon> TaxonBackboneRepository
+        {
+            get
+            {
+                if (backboneRepo == null)
+                {
+                    backboneRepo = new BackboneTaxonRepository(_context);
+                }
+                return backboneRepo;
             }
         }
         public IRepository<GrainImage> ImageRepository

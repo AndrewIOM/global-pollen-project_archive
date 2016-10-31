@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GlobalPollenProject.App.Models;
 
 namespace GlobalPollenProject.WebUI.Models.Taxon
 {
@@ -8,7 +9,7 @@ namespace GlobalPollenProject.WebUI.Models.Taxon
 
         //Filtering
         public string Query { get; set; }
-        public Taxonomy Rank { get; set; }
+        public Rank Rank { get; set; }
 
         //Paging
         public int CurrentPage { get; set; }

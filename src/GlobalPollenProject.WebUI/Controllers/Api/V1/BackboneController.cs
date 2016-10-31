@@ -2,25 +2,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using GlobalPollenProject.Core.Interfaces;
-using GlobalPollenProject.Core.Models;
-using GlobalPollenProject.Data.Models.Enums;
+using GlobalPollenProject.App.Models;
+using GlobalPollenProject.App.Interfaces;
 
 namespace GlobalPollenProject.WebUI.Controllers.Api.V1
 {
     [Route("api/[controller]")]
     public class BackboneController : Controller
     {
-        private readonly ITaxonomyBackbone _backbone;
+        private readonly ITaxonomyService _taxonomyAppService;
         private readonly IMemoryCache _memoryCache;
-        public BackboneController(ITaxonomyBackbone backbone, IMemoryCache memoryCache)
+        public BackboneController(ITaxonomyService taxonomyAppService, IMemoryCache memoryCache)
         {
-            _backbone = backbone;
+            _taxonomyAppService = taxonomyAppService;
             _memoryCache = memoryCache;
         }
 
         [HttpGet("suggest")]
-        public IEnumerable<BackboneTaxon> Suggest(string q, Taxonomy? rank, string parent = null)
+        public IEnumerable<BackboneTaxon> Suggest(string q, Rank? rank, string parent = null)
         {
             if (string.IsNullOrEmpty(q)) return null;
 
@@ -34,7 +33,7 @@ namespace GlobalPollenProject.WebUI.Controllers.Api.V1
             } else
             {
                 //Retrieve new result and cache
-                backboneResult = _backbone.Suggest(q, rank, parent);
+                backboneResult = _taxonomyAppService.Search(q, rank, parent);
                 _memoryCache.Set(cacheKey, backboneResult,
                     new MemoryCacheEntryOptions()
                  .SetAbsoluteExpiration(TimeSpan.FromDays(30)));

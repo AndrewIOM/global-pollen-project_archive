@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using GlobalPollenProject.Data.Models;
-using GlobalPollenProject.Data.Models.Enums;
 using GlobalPollenProject.Core.Models;
 
 namespace GlobalPollenProject.Core.Interfaces
@@ -9,7 +7,7 @@ namespace GlobalPollenProject.Core.Interfaces
     {
         void Add(Grain newRecord);
         IEnumerable<Grain> GetUnidentifiedGrains(Taxonomy rank);
-        IEnumerable<Grain> Search(GrainSearchFilter filter);
+        // IEnumerable<Grain> Search(GrainSearchFilter filter);
         Grain GetById(int id);
         IEnumerable<Grain> GetByUser(string userId);
         Grain MarkDeleted(int id);

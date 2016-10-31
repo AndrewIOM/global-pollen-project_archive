@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GlobalPollenProject.Core.Interfaces;
 using GlobalPollenProject.Core.Models;
-using GlobalPollenProject.Core.Utilities;
-using GlobalPollenProject.Data.Interfaces;
-using GlobalPollenProject.Data.Models;
-using GlobalPollenProject.Data.Models.Enums;
 
-namespace Im.Acm.Pollen.Services.Concrete
+namespace GlobalPollenProject.Core
 {
     public class GrainService : IGrainService
     {
@@ -53,39 +48,40 @@ namespace Im.Acm.Pollen.Services.Concrete
             return result;
         }
 
-        public IEnumerable<Grain> Search(GrainSearchFilter filter)
-        {
-            var result = _uow.GrainRepository.GetAll();
+        // public IEnumerable<Grain> Search(GrainSearchFilter filter)
+        // {
+            // var result = _uow.GrainRepository.GetAll();
 
-            //Filter
-            result = result.Where(m => m.IdentifiedAs != null ? m.IdentifiedAs.Rank < filter.UnidentifiedRank : true);
-            result = result.Where(m => m.Latitude >= filter.LatitudeLow && m.Latitude <= filter.LatitudeHigh);
-            result = result.Where(m => m.Longitude >= filter.LongitudeLow && m.Longitude <= filter.LongitudeHigh);
+            // //Filter
+            // result = result.Where(m => m.IdentifiedAs != null ? m.IdentifiedAs.Rank < filter.UnidentifiedRank : true);
+            // result = result.Where(m => m.Latitude >= filter.LatitudeLow && m.Latitude <= filter.LatitudeHigh);
+            // result = result.Where(m => m.Longitude >= filter.LongitudeLow && m.Longitude <= filter.LongitudeHigh);
 
-            //Sort
-            if (filter.Sort == GrainSort.Bounty)
-            {
-                if (filter.Descending)
-                {
-                    result = result.OrderByDescending(m => BountyUtility.Calculate(m));
-                } else
-                {
-                    result = result.OrderBy(m => BountyUtility.Calculate(m));
-                }
-            } else if (filter.Sort == GrainSort.Date)
-            {
-                if (filter.Descending)
-                {
-                    result = result.OrderByDescending(m => m.TimeAdded);
-                }
-                else
-                {
-                    result = result.OrderBy(m => m.TimeAdded);
-                }
-            }
+            // //Sort
+            // if (filter.Sort == GrainSort.Bounty)
+            // {
+            //     if (filter.Descending)
+            //     {
+            //         result = result.OrderByDescending(m => BountyUtility.Calculate(m));
+            //     } else
+            //     {
+            //         result = result.OrderBy(m => BountyUtility.Calculate(m));
+            //     }
+            // } else if (filter.Sort == GrainSort.Date)
+            // {
+            //     if (filter.Descending)
+            //     {
+            //         result = result.OrderByDescending(m => m.TimeAdded);
+            //     }
+            //     else
+            //     {
+            //         result = result.OrderBy(m => m.TimeAdded);
+            //     }
+            // }
 
-            return result.ToList();
-        }
+            // return result.ToList();
+        //     throw new NotImplementedException();
+        // }
 
         public void Update(Grain grain)
         {

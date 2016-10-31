@@ -9,6 +9,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http.Features;
 using System.IO;
+using GlobalPollenProject.Data.Infrastructure;
+using GlobalPollenProject.Core.Models;
+using GlobalPollenProject.Core.Options;
+using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.Core;
+using GlobalPollenProject.App.Interfaces;
+using GlobalPollenProject.App;
+using GlobalPollenProject.WebUI.Services;
+using GlobalPollenProject.Core.Backbone;
+using GlobalPollenProject.Data;
 
 namespace GlobalPollenProject.WebUI
 {
@@ -88,7 +98,7 @@ namespace GlobalPollenProject.WebUI
             services.AddTransient<IIdentificationService, IdentificationService>();
             services.AddTransient<IGrainService, GrainService>();
             services.AddTransient<IReferenceService, ReferenceService>();
-            services.AddTransient<ITaxonomyService, TaxonomyService>();
+            services.AddTransient<Core.Interfaces.ITaxonomyService, Core.TaxonomyService>();
 
             services.AddTransient<IFileStoreService, AzureImageService>();
             services.AddTransient<ITaxonomyBackbone, PlantListTaxonomyBackbone>();

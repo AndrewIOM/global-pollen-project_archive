@@ -2,11 +2,9 @@
 using System.Linq;
 using GlobalPollenProject.Core.Interfaces;
 using GlobalPollenProject.Core.Utilities;
-using GlobalPollenProject.Data.Interfaces;
-using GlobalPollenProject.Data.Models;
-using GlobalPollenProject.Data.Models.Enums;
+using GlobalPollenProject.Core.Models;
 
-namespace Im.Acm.Pollen.Services.Concrete
+namespace GlobalPollenProject.Core
 {
     public class TaxonomyService : ITaxonomyService
     {

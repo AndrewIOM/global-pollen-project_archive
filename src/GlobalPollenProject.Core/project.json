@@ -1,21 +1,13 @@
 {
-  "description": "Global Pollen Project: Business Layer",
+  "description": "Global Pollen Project Core",
   "version": "1.0.0-*",
-  "buildOptions": {
-    "debugType": "portable",
-    "emitEntryPoint": true
-  },
   "dependencies":{
         "NETStandard.Library":"1.6.0",
-        "GlobalPollenProject.Data": {
-                "target":"project"
-            },
-            "SendGrid.NetCore": "1.0.0-rtm-00002",
-    "WindowsAzure.Storage":"7.2.0",
-    "ImageProcessorCore": "1.0.0-alpha1047"
+        "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
+        "Newtonsoft.Json": "9.0.1"
   },
   "frameworks":{
-      "netstandard1.6":{
+      "netstandard1.6": {
               "imports": [
         "dnxcore50",
         "portable-net451+win8"

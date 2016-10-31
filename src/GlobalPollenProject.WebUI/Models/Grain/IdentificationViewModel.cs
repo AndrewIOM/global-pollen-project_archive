@@ -1,30 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using GlobalPollenProject.Data.Models;
+using GlobalPollenProject.App.Models;
 
 namespace GlobalPollenProject.WebUI.Models
 {
-    public class IdentificationViewModel : IValidatableObject
+    public class IdentificationFormViewModel : IValidatableObject
     {
-        public int GrainId { get; set; }
-        public DateTime TimeAdded { get; set; }
-        public string IdentifiedFamily { get; set; }
-        public string IdentifiedGenus { get; set; }
-        public string IdentifiedSpecies { get; set; }
-        public List<string> ImageUrls { get; set; }
-        public double ImageScale { get; set; }
-        public double? Age { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public List<Identification> Identifications { get; set; }
+        public UnknownGrain Grain { get; set; }
 
         //Identification Form
         public bool AlreadyIdentifiedByUser { get; set; }
-        public Identification UserIdentification { get; set; }
+        public IdentificationDto UserIdentification { get; set; }
 
         [Required]
-        public Taxonomy TaxonomicResolution { get; set; }
+        public Rank TaxonomicResolution { get; set; }
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "The name must be alphabetic only.")]
         public string Family { get; set; }
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "The name must be alphabetic only.")]
@@ -39,7 +28,7 @@ namespace GlobalPollenProject.WebUI.Models
             {
                 yield return new ValidationResult("Family is required", new[] { "Family" });
             }
-            if (TaxonomicResolution == Taxonomy.Family)
+            if (TaxonomicResolution == Rank.Family)
             {
                 if (!string.IsNullOrEmpty(Genus))
                 {
@@ -50,7 +39,7 @@ namespace GlobalPollenProject.WebUI.Models
                     yield return new ValidationResult("You specified a Species name for a Family ID. Check and resubmit.", new[] { "Species" });
                 }
             }
-            else if (TaxonomicResolution == Taxonomy.Genus)
+            else if (TaxonomicResolution == Rank.Genus)
             {
                 if (string.IsNullOrEmpty(Genus))
                 {
@@ -61,7 +50,7 @@ namespace GlobalPollenProject.WebUI.Models
                     yield return new ValidationResult("Species names are not valid when identifying to Genus level.", new[] { "Species" });
                 }
             }
-            else if (TaxonomicResolution == Taxonomy.Species)
+            else if (TaxonomicResolution == Rank.Species)
             {
                 if (string.IsNullOrEmpty(Genus))
                 {

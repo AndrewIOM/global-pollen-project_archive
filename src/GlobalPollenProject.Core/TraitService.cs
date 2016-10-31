@@ -1,8 +1,7 @@
 using System.Linq;
 using GlobalPollenProject.Core.Interfaces;
-using GlobalPollenProject.Data.Interfaces;
 
-namespace Im.Acm.Pollen.Services.Concrete
+namespace GlobalPollenProject.Core
 {
     public class TraitService : ITraitService
     {

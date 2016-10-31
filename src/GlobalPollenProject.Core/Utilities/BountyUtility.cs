@@ -1,5 +1,5 @@
 ﻿using System;
-using GlobalPollenProject.Data.Models;
+using GlobalPollenProject.Core.Models;
 
 namespace GlobalPollenProject.Core.Utilities
 {

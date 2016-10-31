@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GlobalPollenProject.Core.Interfaces;
-using GlobalPollenProject.Data.Interfaces;
-using GlobalPollenProject.Data.Models;
+using GlobalPollenProject.Core.Models;
 
-namespace Im.Acm.Pollen.Services.Concrete
+namespace GlobalPollenProject.Core
 {
     public class ReferenceService : IReferenceService
     {
@@ -23,6 +22,51 @@ namespace Im.Acm.Pollen.Services.Concrete
 
         public ReferenceGrain AddGrain(ReferenceGrain grain)
         {
+            // var standardImages = await _fileService.UploadBase64Image(result.Images);
+            // var taxon = _taxonomyService.CreateOrUpdateTaxonomy(result.Family, result.Genus, result.Species);
+            // var toSave = new ReferenceGrain()
+            // {
+            //     Collection = collection,
+            //     Taxon = taxon,
+            //     SubmittedBy = _userService.GetById(UserManager.GetUserId(User)),
+            //     TimeAdded = DateTime.Now,
+            //     MaxSizeNanoMetres = result.MaxGrainSize.Value,
+            //     Images = new List<GrainImage>()
+            // };
+
+            // foreach (var file in standardImages)
+            // {
+            //     toSave.Images.Add(new GrainImage()
+            //     {
+            //         FileName = file.Url,
+            //         FileNameThumbnail = file.ThumbnailUrl,
+            //         IsFocusImage = false
+            //     });
+            // }
+
+            // foreach (var image in result.FocusImages)
+            // {
+            //     var low = await _fileService.UploadBase64Image(image.FocusLowUrl);
+            //     var medLow = await _fileService.UploadBase64Image(image.FocusMedLowUrl);
+            //     var med = await _fileService.UploadBase64Image(image.FocusMedUrl);
+            //     var medHigh = await _fileService.UploadBase64Image(image.FocusMedHighUrl);
+            //     var high = await _fileService.UploadBase64Image(image.FocusHighUrl);
+            //     toSave.Images.Add(new GrainImage()
+            //     {
+            //         FileName = med.Url,
+            //         FileNameThumbnail = med.ThumbnailUrl,
+            //         IsFocusImage = true,
+            //         FocusLowUrl = low.Url,
+            //         FocusMedLowUrl = medLow.Url,
+            //         FocusMedUrl = med.Url,
+            //         FocusMedHighUrl = medHigh.Url,
+            //         FocusHighUrl = high.Url
+            //     });
+            // }
+
+            // var saved = _refService.AddGrain(toSave);
+
+
             _uow.RefGrainRepository.Add(grain);
             _uow.SaveChanges();
             return _uow.RefGrainRepository.GetAll().OrderBy(i => i.ReferenceGrainId).Last();

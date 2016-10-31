@@ -5,15 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using System.Net.Http.Headers;
 using GlobalPollenProject.Data.Infrastructure;
-using GlobalPollenProject.Data.Models;
 using GlobalPollenProject.Core.Interfaces;
-using GlobalPollenProject.Core.Utilities;
+using GlobalPollenProject.Core.Models;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
@@ -151,25 +145,25 @@ namespace GlobalPollenProject.WebUI.Controllers
             return RedirectToAction("Users");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdatePlantList(ICollection<IFormFile> files)
-        {
-           var uploads = Path.Combine(_environment.WebRootPath, "uploads");
-           foreach (var file in files)
-           {
-               if (file.Length > 0)
-               {
-                   var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                   var fileStream = new FileStream(Path.Combine(uploads, fileName), FileMode.Create);
-                   await file.CopyToAsync(fileStream);
+        // [HttpPost]
+        // public async Task<IActionResult> UpdatePlantList(ICollection<IFormFile> files)
+        // {
+        //    var uploads = Path.Combine(_environment.WebRootPath, "uploads");
+        //    foreach (var file in files)
+        //    {
+        //        if (file.Length > 0)
+        //        {
+        //            var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+        //            var fileStream = new FileStream(Path.Combine(uploads, fileName), FileMode.Create);
+        //            await file.CopyToAsync(fileStream);
 
-                   //Seed plant list
-                   var tool = new PlantListParser(Path.Combine(uploads, fileName), _context);
-                   tool.Refresh();
-               }
-           }
-           return View();
-        }
+        //            //Seed plant list
+        //            var tool = new PlantListParser(Path.Combine(uploads, fileName), _context);
+        //            tool.Refresh();
+        //        }
+        //    }
+        //    return View();
+        // }
 
     }
 }
