@@ -1,24 +1,20 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http.Features;
 using System.IO;
 using GlobalPollenProject.Data.Infrastructure;
-using GlobalPollenProject.Core.Models;
-using GlobalPollenProject.Core.Options;
-using GlobalPollenProject.Core.Interfaces;
 using GlobalPollenProject.Core;
+using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.Infrastructure.Options;
 using GlobalPollenProject.App.Interfaces;
-using GlobalPollenProject.App;
-using GlobalPollenProject.WebUI.Services;
-using GlobalPollenProject.Core.Backbone;
-using GlobalPollenProject.Data;
+using GlobalPollenProject.App.Services;
+using GlobalPollenProject.Infrastructure.Storage;
+using GlobalPollenProject.Infrastructure;
 
 namespace GlobalPollenProject.WebUI
 {
@@ -62,7 +58,7 @@ namespace GlobalPollenProject.WebUI
             services.AddDbContext<PollenDbContext>(options =>
                 options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
 
-            services.AddIdentity<AppUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<PollenDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -83,26 +79,26 @@ namespace GlobalPollenProject.WebUI
             services.AddMemoryCache();
             services.AddCors();
 
-            //Options
             services.AddOptions();
-            services.Configure<AzureOptions>(Configuration);
-            services.Configure<AuthMessageSenderOptions>(Configuration);
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = 99999999999;
             });
 
-            // DI Services
+            // Infrastructure: Database
+            services.Configure<AzureOptions>(Configuration);
+            services.Configure<AuthMessageSenderOptions>(Configuration);
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IIdentificationService, IdentificationService>();
-            services.AddTransient<IGrainService, GrainService>();
-            services.AddTransient<IReferenceService, ReferenceService>();
-            services.AddTransient<Core.Interfaces.ITaxonomyService, Core.TaxonomyService>();
 
-            services.AddTransient<IFileStoreService, AzureImageService>();
-            services.AddTransient<ITaxonomyBackbone, PlantListTaxonomyBackbone>();
-            services.AddTransient<IEmailSender, AuthMessageSender>();
+            // Infrastructure: Other
+            services.AddTransient<IImageProcessor, AzureImageProcessor>();
+            services.AddTransient<IEmailSender, SendgridEmailSender>();
+
+            // App Services
+            services.AddTransient<IDigitisationService, DigitisationService>();
+            services.AddTransient<IIdentificationService, IdentificationService>();
+            services.AddTransient<ITaxonomyService, TaxonomyService>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -146,62 +142,6 @@ namespace GlobalPollenProject.WebUI
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            EnsureRoles(app, loggerFactory);
-            EnsureAdminUser(app);
-        }
-
-        private void EnsureRoles(IApplicationBuilder app, ILoggerFactory loggerFactory)
-        {
-            ILogger logger = loggerFactory.CreateLogger<Startup>();
-            RoleManager<IdentityRole> roleManager = app.ApplicationServices.GetService<RoleManager<IdentityRole>>();
-
-            string[] roleNames = { "Admin", "Digitise", "Banned" };
-            foreach (string roleName in roleNames)
-            {
-                bool roleExists = roleManager.RoleExistsAsync(roleName).Result;
-                if (!roleExists)
-                {
-                    logger.LogInformation(string.Format("!roleExists for roleName {0}", roleName));
-                    IdentityRole identityRole = new IdentityRole(roleName);
-                    IdentityResult identityResult = roleManager.CreateAsync(identityRole).Result;
-                }
-            }
-        }
-
-        private void EnsureAdminUser(IApplicationBuilder app)
-        {
-            UserManager<AppUser> userManager = app.ApplicationServices.GetService<UserManager<AppUser>>();
-            var context = app.ApplicationServices.GetService<PollenDbContext>();
-
-            var organisation = context.Organisations.FirstOrDefaultAsync(m => m.Name == "Im.Acm.Pollen Admin").Result;
-            if (organisation == null)
-            {
-                organisation = new Organisation()
-                {
-                    CountryCode = "GB",
-                    Name = "Im.Acm.Pollen Admin"
-                };
-                context.Organisations.Add(organisation);
-                context.SaveChanges();
-            }
-
-            var user = userManager.FindByNameAsync(Configuration["Account:Admin:DefaultAdminUserName"]).Result;
-            if (user == null)
-            {
-                user = new AppUser()
-                {
-                    UserName = Configuration["Account:Admin:DefaultAdminUserName"],
-                    FirstName = "Im.Acm.Pollen",
-                    LastName = "Admin",
-                    Title = "Mx",
-                    Organisation = organisation,
-                    EmailConfirmed = true,
-                    Email = Configuration["Account:Admin:DefaultAdminUserName"]
-                };
-                userManager.CreateAsync(user, Configuration["Account:Admin:DefaultAdminPassword"]).Wait();
-                userManager.AddToRoleAsync(user, "Admin");
-            }
         }
     }
 }

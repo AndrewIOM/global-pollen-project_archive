@@ -4,7 +4,7 @@ namespace GlobalPollenProject.App.Models
 {
     public class UnknownGrain {
         public int Id { get; set; }
-        public double Bounty { get; set; }
+        public double Score { get; set; }
         public string ThumbnailUri { get; set; }
         public DateTime TimeAdded { get; set; }
         public double Latitude { get; set; }

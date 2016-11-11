@@ -1,5 +1,5 @@
 using System;
-using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.App.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GlobalPollenProject.WebUI.Controllers.Api.V1
@@ -8,8 +8,8 @@ namespace GlobalPollenProject.WebUI.Controllers.Api.V1
     [Route( "api/v{version:apiVersion}/[controller]" )]
     public class CollectionController : Controller
     {
-        private readonly IReferenceService _service;
-        public CollectionController(IReferenceService service) {
+        private readonly IDigitisationService _service;
+        public CollectionController(IDigitisationService service) {
             _service = service;
         }
 

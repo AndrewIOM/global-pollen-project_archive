@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System;
+﻿using GlobalPollenProject.App.Interfaces;
+using GlobalPollenProject.App.Models;
+using GlobalPollenProject.WebUI.Extensions;
 using GlobalPollenProject.WebUI.Models;
 using GlobalPollenProject.WebUI.Models.Grain;
-using GlobalPollenProject.App.Interfaces;
-using GlobalPollenProject.App.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
@@ -36,7 +37,12 @@ namespace GlobalPollenProject.WebUI.Controllers
                 return BadRequest(ModelState);
             }
 
-            _appService.UploadUnknownGrain(result);
+            var serviceResult = _appService.UploadUnknownGrain(result);
+            if (!serviceResult.IsValid)
+            {
+                ModelState.AddServiceErrors(serviceResult.Messages);
+                return BadRequest(ModelState);
+            }
 
             return Ok();
         }
@@ -44,12 +50,17 @@ namespace GlobalPollenProject.WebUI.Controllers
         [HttpGet]
         public IActionResult Identify(int id)
         {
-            var grain = _appService.GetUnknownGrain(id);
-            if (grain == null) return RedirectToAction("Index");
+            var result = _appService.GetUnknownGrain(id);
+            if (!result.IsValid)
+            {
+                ModelState.AddServiceErrors(result.Messages);
+                //return NotFound();
+                return RedirectToAction("Index");
+            }
 
             var viewModel = new IdentificationFormViewModel() 
             {
-                Grain = grain
+                Grain = result.Result
             };
             return View(viewModel);
         }
@@ -58,63 +69,54 @@ namespace GlobalPollenProject.WebUI.Controllers
         [HttpPost]
         public IActionResult Identify(IdentificationFormViewModel result)
         {
-            var grain = _appService.GetUnknownGrain(result.Grain.Id);
-            // Identification myIdentification = null;
-            // if (record != null)
-            // {
-            //     myIdentification = _idService.GetByUser(UserManager.GetUserId(User))
-            //         .FirstOrDefault(m => m.Grain.Id == result.GrainId);
-            //     if (myIdentification != null) ModelState.AddModelError("User", "You have already identified this grain, sorry!");
-            // }
-            // if (!_taxonomy.IsValidTaxon(result.TaxonomicResolution, result.Family, result.Genus, result.Species))
-            // {
-            //     ModelState.AddModelError("Family", "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again");
-            // }
-
-            if (ModelState.ErrorCount > 0)
+            var grainResult = _appService.GetUnknownGrain(result.Grain.Id);
+            if (!grainResult.IsValid)
             {
-                var viewModel = new IdentificationFormViewModel() 
-                {
-                    Grain = grain
-                };
-                return View(viewModel);
+                ModelState.AddServiceErrors(grainResult.Messages);
+                return RedirectToAction("Index");
+            }
+
+            var idResult = _appService.IdentifyAs(result.Grain.Id, result.Family, result.Genus, result.Species);
+            if (!idResult.IsValid)
+            {
+                ModelState.AddServiceErrors(idResult.Messages);
+                return View(result);
             }
 
             ViewData["Success"] = "Thank you! Your identification has been registered.";
-            return RedirectToAction("Identify", new { id = grain.Id });
+            return RedirectToAction("Identify", new { id = grainResult.Result.Id });
         }
 
-        public IActionResult Index(GrainSearchFilter filter = null)
+        public IActionResult Index(int pageSize = 20, int page = 1, GrainSearchFilter filter = null)
         {
             if (filter == null) filter = new GrainSearchFilter();
-            var grains = _appService.GetUnknownGrains(filter);
+            var grains = _appService.GetUnknownGrains(filter, pageSize, page);
 
             var model = new FilteredGrainsViewModel()
             {
                 Filters = filter,
-                Grains = grains
+                Grains = grains.Result
             };
 
             return View(model);
         }
 
         [Authorize]
-        public IActionResult MyGrains()
+        public IActionResult MyGrains(int pageSize = 40, int page = 1)
         {
-            var grains = _appService.GetMyUnknownGrains();
+            var grains = _appService.GetMyUnknownGrains(pageSize, page);
             return View(grains);
         }
 
         [Authorize]
         public IActionResult RemoveIdentification(int grainId)
         {
-            //Check Prerequisites
-            // if (existingId == null) return NotFound();
-            // //TODO Stop removal if identity confirmed: if (existingId.Grain.) return BadRequest();
-            // if (existingId.User.Id != UserManager.GetUserId(User)) return Unauthorized();
-            
-            // var grainId = existingId.Grain.Id;
-            _appService.RemoveIdentification(grainId);
+            var result = _appService.RemoveIdentification(grainId);
+            if (!result.IsValid)
+            {
+                ModelState.AddServiceErrors(result.Messages);
+                return BadRequest(ModelState);
+            }
             return RedirectToAction("Identify", new { id = grainId });
         }
 

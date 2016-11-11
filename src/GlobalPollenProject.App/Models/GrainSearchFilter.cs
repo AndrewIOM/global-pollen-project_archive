@@ -1,5 +1,4 @@
-﻿using GlobalPollenProject.Core.Models;
-
+﻿
 namespace GlobalPollenProject.App.Models
 {
     public class GrainSearchFilter
@@ -15,7 +14,7 @@ namespace GlobalPollenProject.App.Models
         public double LongitudeLow { get; set; }
 
         //Filter by ID Level
-        public Taxonomy UnidentifiedRank { get; set; }
+        public Rank UnidentifiedRank { get; set; }
 
         public GrainSearchFilter()
         {
@@ -25,7 +24,7 @@ namespace GlobalPollenProject.App.Models
             LatitudeLow = -90;
             LongitudeHigh = 180;
             LongitudeLow = -180;
-            UnidentifiedRank = Taxonomy.Genus;
+            UnidentifiedRank = Rank.Genus;
         }
     }
 }

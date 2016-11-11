@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using GlobalPollenProject.Core.Models;
 
 namespace GlobalPollenProject.App.Models
 {
@@ -10,7 +9,7 @@ namespace GlobalPollenProject.App.Models
         public int? CollectionId { get; set; }
 
         [Required]
-        public Taxonomy Rank { get; set; }
+        public Rank Rank { get; set; }
         public string Family { get; set; }
         public string Genus { get; set; }
         public string Species { get; set; }
@@ -64,7 +63,7 @@ namespace GlobalPollenProject.App.Models
             {
                 yield return new ValidationResult("Family is required", new[] { "Family" });
             }
-            if (Rank == Taxonomy.Family)
+            if (Rank == Rank.Family)
             {
                 if (!string.IsNullOrEmpty(Genus))
                 {
@@ -75,7 +74,7 @@ namespace GlobalPollenProject.App.Models
                     yield return new ValidationResult("You specified a Species name for a Family. Check and resubmit.", new[] { "Species" });
                 }
             }
-            else if (Rank == Taxonomy.Genus)
+            else if (Rank == Rank.Genus)
             {
                 if (string.IsNullOrEmpty(Genus))
                 {
@@ -86,7 +85,7 @@ namespace GlobalPollenProject.App.Models
                     yield return new ValidationResult("You specified a Species name for a Family. Check and resubmit.", new[] { "Species" });
                 }
             }
-            else if (Rank == Taxonomy.Species)
+            else if (Rank == Rank.Species)
             {
                 if (string.IsNullOrEmpty(Genus))
                 {

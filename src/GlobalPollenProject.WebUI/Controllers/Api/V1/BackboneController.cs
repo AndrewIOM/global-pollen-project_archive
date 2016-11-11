@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Interfaces;
+using GlobalPollenProject.App.Models;
 
 namespace GlobalPollenProject.WebUI.Controllers.Api.V1
 {
@@ -19,7 +19,7 @@ namespace GlobalPollenProject.WebUI.Controllers.Api.V1
         }
 
         [HttpGet("suggest")]
-        public IEnumerable<BackboneTaxon> Suggest(string q, Rank? rank, string parent = null)
+        public IEnumerable<BackboneTaxon> Suggest(string q, Rank? rank, int p, int pageSize, string parent = null)
         {
             if (string.IsNullOrEmpty(q)) return null;
 
@@ -33,7 +33,7 @@ namespace GlobalPollenProject.WebUI.Controllers.Api.V1
             } else
             {
                 //Retrieve new result and cache
-                backboneResult = _taxonomyAppService.Search(q, rank, parent);
+                backboneResult = _taxonomyAppService.SearchBackbone(q, p, pageSize, rank, parent).Result;
                 _memoryCache.Set(cacheKey, backboneResult,
                     new MemoryCacheEntryOptions()
                  .SetAbsoluteExpiration(TimeSpan.FromDays(30)));

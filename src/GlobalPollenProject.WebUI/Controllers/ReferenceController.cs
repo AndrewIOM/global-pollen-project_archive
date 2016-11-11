@@ -1,35 +1,32 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
-using GlobalPollenProject.App.Interfaces;
+﻿using GlobalPollenProject.App.Interfaces;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.WebUI.Models.Reference;
-using GlobalPollenProject.Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using GlobalPollenProject.WebUI.Extensions;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
     public class ReferenceController : Controller
     {
         private readonly IDigitisationService _digitiseAppService;
-        public UserManager<AppUser> UserManager { get; set; }
-        public ReferenceController(IDigitisationService digitiseAppService, IServiceProvider services)
+        private readonly IUserService _userAppService;
+        public ReferenceController(IDigitisationService digitiseAppService, IUserService userAppService)
         {
             _digitiseAppService = digitiseAppService;
-            UserManager = services.GetRequiredService<UserManager<AppUser>>();
+            _userAppService = userAppService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int p = 1, int pageSize = 40)
         {
-            var model = _digitiseAppService.GetCollections();
+            var model = _digitiseAppService.GetCollections(p, pageSize).Result;
             return View(model);
         }
 
         public IActionResult Collection(int id)
         {
-            var model = _digitiseAppService.GetCollection(id);
+            var model = _digitiseAppService.GetCollection(id).Result;
             return View(model);
         }
 
@@ -39,7 +36,7 @@ namespace GlobalPollenProject.WebUI.Controllers
             {
                 return BadRequest();
             }
-            var model = _digitiseAppService.GetSlide(id);
+            var model = _digitiseAppService.GetSlide(id).Result;
             return View(model);
         }
 
@@ -47,13 +44,8 @@ namespace GlobalPollenProject.WebUI.Controllers
         public IActionResult RequestAccess()
         {
             var model = new RequestAccessViewModel();
-            model.HasRequestedAccess = _digitiseAppService.HasDigitisationRights();
+            model.HasRequestedAccess = _digitiseAppService.HasDigitisationRights().Result;
             return View(model);
-        }
-
-        public IActionResult Help()
-        {
-            return View();
         }
 
         [Authorize]
@@ -69,7 +61,7 @@ namespace GlobalPollenProject.WebUI.Controllers
         [Authorize(Roles = "Digitise")]
         public IActionResult AddCollection()
         {
-            var model = new ReferenceCollection();
+            var model = new DigitisedCollection();
             return View(model);
         }
 
@@ -82,100 +74,80 @@ namespace GlobalPollenProject.WebUI.Controllers
                 return View(result);
             }
 
-            _digitiseAppService.CreateCollection(result);
-            //return RedirectToAction("Collection", new { id = saved.Id });
-            throw new NotImplementedException();
+            var serviceResult = _digitiseAppService.CreateCollection(result);
+            if (!serviceResult.IsValid)
+            {
+                ModelState.AddServiceErrors(serviceResult.Messages);
+                return View(result);
+            }
+
+            var collectionId = serviceResult.Result.Id;
+            return RedirectToAction("Collection", new { id = collectionId });
         }
 
         [HttpGet]
         [Authorize(Roles = "Digitise")]
-        public IActionResult EditCollection(int id)
+        public async Task<IActionResult> EditCollection(int id)
         {
-            var collection = _digitiseAppService.GetCollection(id);
-            if (collection == null)
-            {
-                return BadRequest();
-            }
-            // if (collection.User.Id != UserManager.GetUserId(User))
-            // {
-            //     return Unauthorized();
-            // }
-
+            var collection = _digitiseAppService.GetCollection(id).Result;
+            if (collection == null) return BadRequest();
+            var currentUser = await _userAppService.GetUser(User.Identity.Name);
+            if (collection.UserId != currentUser.Result.Id) return Unauthorized();
             return View("AddCollection", collection);
         }
 
         [HttpPost]
         [Authorize(Roles = "Digitise")]
-        public IActionResult EditCollection(DigitisedCollection result)
+        public async Task<IActionResult> EditCollection(DigitisedCollection result)
         {
-            // var collection = _digitiseAppService.GetCollection(result.Id);
-            // if (collection == null)
-            // {
-            //     return BadRequest();
-            // }
-            // if (collection.User.Id != UserManager.GetUserId(User))
-            // {
-            //     return Unauthorized();
-            // }
+            var collection = _digitiseAppService.GetCollection(result.Id).Result;
+            if (collection == null) return BadRequest();
+            var currentUser = await _userAppService.GetUser(User.Identity.Name);
+            if (collection.UserId != currentUser.Result.Id) return Unauthorized();
 
             if (!ModelState.IsValid)
             {
                 return View("AddCollection", result);
             }
 
-            // collection.CountryCode = model.CountryCode;
-            // collection.Description = model.Description;
-            // collection.FocusRegion = model.FocusRegion;
-            // collection.Institution = model.Institution;
-            // collection.OwnedBy = model.OwnedBy;
-            // collection.Name = model.Name;
-            // collection.WebAddress = model.WebAddress;
-            // collection.ContactEmail = model.ContactEmail;
-            _digitiseAppService.UpdateCollectionMetadata(result);
-            //return RedirectToAction("Collection", new { id = result.Id });
-            throw new NotImplementedException();
+            var serviceResult = _digitiseAppService.UpdateCollectionMetadata(result);
+            if (!serviceResult.IsValid)
+            {
+                ModelState.AddServiceErrors(serviceResult.Messages);
+                return View(result);
+            }
+
+            return RedirectToAction("Collection", new { id = result.Id });
         }
 
         [HttpGet]
         [Authorize(Roles = "Digitise")]
-        public IActionResult AddGrain(int id)
+        public async Task<IActionResult> AddSlide(int id)
         {
             if (id == 0)
             {
                 return BadRequest();
             }
             var collection = _digitiseAppService.GetCollection(id);
-            // if (model.User.Id != UserManager.GetUserId(User)) return BadRequest();
+            var currentUser = await _userAppService.GetUser(User.Identity.Name);
+            if (collection.Result.UserId != currentUser.Result.Id) return Unauthorized();
             return View(new AddDigitisedSlide()
             {
-                //CollectionId = model.Id
+                CollectionId = collection.Result.Id
             });
         }
 
         [HttpPost]
         [Authorize(Roles = "Digitise")]
-        public async Task<IActionResult> AddGrain(AddDigitisedSlide result)
+        public async Task<IActionResult> AddSlide(AddDigitisedSlide result)
         {
-            var collection = _digitiseAppService.GetCollection(result.CollectionId.Value);
-            if (collection == null)
-            {
-                ModelState.AddModelError("CollectionId", "The collection specified does not exist.");
-            } else
-            {
-                // if (collection.User.Id != UserManager.GetUserId(User))
-                // {
-                //     ModelState.AddModelError("CollectionId", "You can only add grains to collections you own.");
-                // }
-            }
+            var collection = _digitiseAppService.GetCollection(result.CollectionId.Value).Result;
+            if (collection == null) return NotFound();
 
-            // if (!_backbone.IsValidTaxon(result.Rank, result.Family, result.Genus, result.Species))
-            // {
-            //     ModelState.AddModelError("TaxonomicBackbone", "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again");
-            // }
-
-            foreach (var image in result.Images)
+            var currentUser = await _userAppService.GetUser(User.Identity.Name);
+            if (collection.UserId != currentUser.Result.Id)
             {
-                if (!string.IsNullOrEmpty(image)) if (!IsBase64String(image)) ModelState.AddModelError("Images", "There was an encoding error when uploading your image. Please try a different image, or report the problem.");
+                ModelState.AddModelError(null, "You can only add grains to collections you own.");
             }
 
             if (!ModelState.IsValid)
@@ -183,63 +155,32 @@ namespace GlobalPollenProject.WebUI.Controllers
                 return BadRequest(ModelState);
             }
 
-            //_digitiseAppService.AddSlide(collection.Id, result);
+            var serviceResult = _digitiseAppService.AddSlide(collection.Id, result);
+            if (!serviceResult.IsValid)
+            {
+                ModelState.AddServiceErrors(serviceResult.Messages);
+                return BadRequest(ModelState);
+            }
 
             return Ok();
         }
 
         [Authorize(Roles = "Digitise")]
-        public IActionResult DeleteGrain(int id)
+        public IActionResult DeleteSlide(int id)
         {
-            var slide = new DigitisedSlide();
-            _digitiseAppService.RemoveSlide(slide);
-            // var grain = _refService.GetGrainById(id);
-            // if (grain == null) return BadRequest();
-            // if (User.Identity.Name != grain.Collection.User.UserName) return BadRequest();
-            // _refService.DeleteGrain(id);
-            // return RedirectToAction("Collection", new { id = grain.Collection.Id });
-            throw new NotImplementedException();
-        }
+            var slide = _digitiseAppService.GetSlide(id);
+            if (!slide.IsValid) return BadRequest();
+            //if (User.Identity.Name != slide.Result) return BadRequest();
+            // Must own the collection the slide is in...
 
-        private bool IsBase64String(string s)
-        {
-            try
+            var serviceResult = _digitiseAppService.RemoveSlide(id);
+            if (!serviceResult.IsValid)
             {
-                byte[] data = Convert.FromBase64String(s);
-                return (s.Replace(" ", "").Length % 4 == 0);
+                ModelState.AddServiceErrors(serviceResult.Messages);
+                return BadRequest(ModelState);
             }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private string GetName(Taxonomy rank, ReferenceGrain grain)
-        {
-            string species = null;
-            string genus = null;
-            string family = null;
-            if (grain.Taxon != null)
-            {
-                if (grain.Taxon.Rank == Taxonomy.Species)
-                {
-                    species = grain.Taxon.LatinName;
-                    genus = grain.Taxon.ParentTaxa.LatinName;
-                    family = grain.Taxon.ParentTaxa.ParentTaxa.LatinName;
-                }
-                else if (grain.Taxon.Rank == Taxonomy.Genus)
-                {
-                    genus = grain.Taxon.LatinName;
-                    family = grain.Taxon.ParentTaxa.LatinName;
-                }
-                else
-                {
-                    family = grain.Taxon.LatinName;
-                }
-            }
-            if (rank == Taxonomy.Species) return species;
-            if (rank == Taxonomy.Genus) return genus;
-            return family;
+            return RedirectToAction("Collection", new { id = 1 }); //grain.Collection.Id }); 
+            // TODO fix this
         }
 
     }

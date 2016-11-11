@@ -1,9 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GlobalPollenProject.App.Interfaces;
+using GlobalPollenProject.App.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
     public class HomeController : Controller
     {
+        private IIdentificationService _idService;
+
+        public HomeController(IIdentificationService idService)
+        {
+            _idService = idService;
+        }
+
         public IActionResult Terms()
         {
             return View();
@@ -11,19 +20,10 @@ namespace GlobalPollenProject.WebUI.Controllers
 
         public IActionResult Index()
         {
-            // var result = _grainService.GetUnidentifiedGrains(Taxonomy.Genus)
-            //     .OrderByDescending(m => BountyUtility.Calculate(m)).Take(12).ToList();
-            
-            // var model = result.Select(m => new SimpleGrainViewModel()
-            //     {
-            //         Bounty = BountyUtility.Calculate(m),
-            //         Id = m.Id,
-            //         ImageLocation = m.Images != null ? m.Images.First().FileName : "",
-            //         ThumbnailLocation = m.Images != null ? m.Images.First().FileNameThumbnail : "",
-            //         TimeAdded = m.TimeAdded
-            //     }).ToList();
-            return View();
-            //return View(model);
+            // TODO Get 12 only and sort by most wanted (requires paged App Services)
+            var searchCriteria = new GrainSearchFilter();
+            var model = _idService.GetUnknownGrains(searchCriteria, 12, 1);
+            return View(model);
         }
 
         public IActionResult Guide()

@@ -2,15 +2,15 @@
 
 namespace GlobalPollenProject.WebUI.Models
 {
-    public class BountyViewModel
+    public class ScoreViewModel
     {
         public string Name { get; set; }
-        public double Bounty { get; set; }
+        public double Score { get; set; }
     }
 
-    public class BountyChartsViewModel
+    public class LeaderboardViewModel
     {
-        public List<BountyViewModel> TopOrgs { get; set; }
-        public List<BountyViewModel> TopIndividuals { get; set; }
+        public List<ScoreViewModel> TopOrgs { get; set; }
+        public List<ScoreViewModel> TopIndividuals { get; set; }
     }
 }
