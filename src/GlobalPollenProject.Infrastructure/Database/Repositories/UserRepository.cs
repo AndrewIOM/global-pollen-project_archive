@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalPollenProject.Core;
+using GlobalPollenProject.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace GlobalPollenProject.Data.Infrastructure
 {
@@ -15,27 +17,32 @@ namespace GlobalPollenProject.Data.Infrastructure
 
         public void Add(User entity)
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
         }
 
         public void Delete(User entity)
         {
-            throw new NotImplementedException();
+            _context.Remove(entity);
         }
 
         public void Edit(User entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
         }
 
-        public IQueryable<User> FindBy(Expression<Func<User, bool>> predicate)
+        public PagedResult<User> FindBy(Expression<Func<User, bool>> predicate, int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            return _context.Users.Include(m => m.Organisation).Where(predicate).ToPagedList(pageNumber, pageSize);
         }
 
-        public IQueryable<User> GetAll()
+        public User FirstOrDefault(Expression<Func<User, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return _context.Users.Include(m => m.Organisation).FirstOrDefault(predicate);
+        }
+
+        public PagedResult<User> GetAll(int pageNumber, int pageSize)
+        {
+            return _context.Users.Include(m => m.Organisation).ToPagedList(pageNumber, pageSize);
         }
     }
 }

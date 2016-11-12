@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using GlobalPollenProject.App.Interfaces;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
+using GlobalPollenProject.Core.Interfaces;
 
 namespace GlobalPollenProject.App.Services
 {
     public class IdentificationService : IIdentificationService
     {
+        private readonly IUnitOfWork _uow;
+        public IdentificationService(IUnitOfWork uow)
+        {
+            _uow = uow;
+        }
+
         public AppServiceResult<List<UnknownGrain>> GetMyUnknownGrains(int pageSize, int page)
         {
             throw new NotImplementedException();

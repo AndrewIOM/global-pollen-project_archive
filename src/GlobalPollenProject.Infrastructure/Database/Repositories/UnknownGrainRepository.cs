@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalPollenProject.Core;
+using GlobalPollenProject.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace GlobalPollenProject.Data.Infrastructure
 {
@@ -15,27 +17,43 @@ namespace GlobalPollenProject.Data.Infrastructure
 
         public void Add(UnknownGrain entity)
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
         }
 
         public void Delete(UnknownGrain entity)
         {
-            throw new NotImplementedException();
+            _context.Remove(entity);
         }
 
         public void Edit(UnknownGrain entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
         }
 
-        public IQueryable<UnknownGrain> FindBy(Expression<Func<UnknownGrain, bool>> predicate)
+        public PagedResult<UnknownGrain> FindBy(Expression<Func<UnknownGrain, bool>> predicate, int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            return _context.UnknownGrains
+                .Include(m => m.SubmittedBy)
+                .Include(m => m.Identifications).ThenInclude(n => n.User)
+                .Include(m => m.Images).Where(predicate)
+                .ToPagedList(pageNumber, pageSize);
         }
 
-        public IQueryable<UnknownGrain> GetAll()
+        public UnknownGrain FirstOrDefault(Expression<Func<UnknownGrain, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return _context.UnknownGrains
+                .Include(m => m.SubmittedBy)
+                .Include(m => m.Identifications).ThenInclude(n => n.User)
+                .Include(m => m.Images).FirstOrDefault(predicate);
+        }
+
+        public PagedResult<UnknownGrain> GetAll(int pageNumber, int pageSize)
+        {
+            return _context.UnknownGrains
+                .Include(m => m.SubmittedBy)
+                .Include(m => m.Identifications).ThenInclude(n => n.User)
+                .Include(m => m.Images)
+                .ToPagedList(pageNumber, pageSize);
         }
     }
 }

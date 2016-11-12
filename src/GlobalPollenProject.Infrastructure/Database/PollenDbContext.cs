@@ -11,6 +11,10 @@ namespace GlobalPollenProject.Data.Infrastructure
         public DbSet<Taxon> Taxa { get; set; }
         public DbSet<KewBackboneTaxon> BackboneTaxa { get; set; }
 
+        public PollenDbContext(DbContextOptions<PollenDbContext> options)
+            : base(options)
+        { }
+
         // protected override void OnModelCreating(ModelBuilder builder)
         // {
         //     foreach (var entity in builder.Model.GetEntityTypes())

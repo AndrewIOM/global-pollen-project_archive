@@ -8,6 +8,7 @@ using GlobalPollenProject.WebUI.Extensions;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
+    [ApiVersionNeutral]
     public class ReferenceController : Controller
     {
         private readonly IDigitisationService _digitiseAppService;

@@ -2,6 +2,7 @@
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
+    [ApiVersionNeutral]
     public class StatisticsController : Controller
     {
         // private readonly IGrainService _grainService;

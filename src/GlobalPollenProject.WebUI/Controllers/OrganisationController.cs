@@ -2,6 +2,7 @@
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
+    [ApiVersionNeutral]
     public class OrganisationController : Controller
     {
 

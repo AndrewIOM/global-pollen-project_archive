@@ -3,21 +3,35 @@ using System.Collections.Generic;
 using GlobalPollenProject.App.Interfaces;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
+using GlobalPollenProject.Core;
 using GlobalPollenProject.Core.Interfaces;
+using static GlobalPollenProject.App.Validation.AppServiceResultBase;
 
 namespace GlobalPollenProject.App.Services
 {
     public class DigitisationService : IDigitisationService
     {
         private readonly IUnitOfWork _uow;
-        public DigitisationService(IUnitOfWork uow)
+        private readonly IExternalDatabaseLinker _databaseLinker;
+        public DigitisationService(IUnitOfWork uow, IExternalDatabaseLinker databaseLinker)
         {
             _uow = uow;
+            _databaseLinker = databaseLinker;
         }
 
         public AppServiceResult AddSlide(int collectionId, AddDigitisedSlide newSlide)
         {
             throw new NotImplementedException();
+
+            var result = new AppServiceResult();
+
+            var taxonFactory = Taxon.GetFactory(_uow.TaxonRepository, _uow.BackboneCoreService, _databaseLinker);
+            var taxon = taxonFactory.TryCreateTaxon(newSlide.Family, newSlide.Genus, newSlide.Species);
+            if (taxon == null)
+            {
+                result.Messages.Add(new AppServiceMessage(null, "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again", AppServiceMessageType.Error));
+                return result;
+            }
 
             // if (!_backbone.IsValidTaxon(result.Rank, result.Family, result.Genus, result.Species))
             // {

@@ -6,6 +6,7 @@ using GlobalPollenProject.WebUI.Models.Taxon;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
+    [ApiVersionNeutral]
     public class TaxonController : Controller
     {
         private readonly ITaxonomyService _taxonService;

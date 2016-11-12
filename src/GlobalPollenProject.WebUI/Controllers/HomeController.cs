@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
+    [ApiVersionNeutral]
     public class HomeController : Controller
     {
         private IIdentificationService _idService;

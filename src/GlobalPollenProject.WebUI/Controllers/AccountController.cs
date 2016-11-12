@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace GlobalPollenProject.WebUI.Controllers
 {
     [Authorize]
+    [ApiVersionNeutral]
     public class AccountController : Controller
     {
         private readonly IUserService _userService;

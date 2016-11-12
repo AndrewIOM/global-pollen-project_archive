@@ -35,7 +35,7 @@ namespace GlobalPollenProject.Core.Factories
 
 //Get family taxon
             family = FirstCharToUpper(family);
-            familyTaxon = _taxonRepo.FindBy(m => m.LatinName == family && m.Rank == Rank.Family).FirstOrDefault();
+            familyTaxon = _taxonRepo.FirstOrDefault(m => m.LatinName == family && m.Rank == Rank.Family);
             if (familyTaxon == null && _backbone.IsValidTaxon(Rank.Family, family, null, null))
             {
                 familyTaxon = _taxonCreate(family, Rank.Family, null);
@@ -48,8 +48,8 @@ namespace GlobalPollenProject.Core.Factories
             if (!string.IsNullOrEmpty(genus))
             {
                 genus = FirstCharToUpper(genus);
-                genusTaxon = _taxonRepo.FindBy(m => m.LatinName == genus
-                    && m.Rank == Rank.Genus && m.ParentTaxon.LatinName == family).FirstOrDefault();
+                genusTaxon = _taxonRepo.FirstOrDefault(m => m.LatinName == genus
+                    && m.Rank == Rank.Genus && m.ParentTaxon.LatinName == family);
                 if (genusTaxon == null && _backbone.IsValidTaxon(Rank.Genus, family, genus, null))
                 {
                     genusTaxon = _taxonCreate(genus, Rank.Genus, familyTaxon);
@@ -62,8 +62,8 @@ namespace GlobalPollenProject.Core.Factories
             if (!string.IsNullOrEmpty(species) && !string.IsNullOrEmpty(genus))
             {
                 species = FirstCharToLower(species);
-                speciesTaxon = _taxonRepo.FindBy(m => m.LatinName == genus + " " + species && m.Rank == Rank.Species
-                    && m.ParentTaxon.LatinName == genus).FirstOrDefault();
+                speciesTaxon = _taxonRepo.FirstOrDefault(m => m.LatinName == genus + " " + species && m.Rank == Rank.Species
+                    && m.ParentTaxon.LatinName == genus);
                 if (speciesTaxon == null && _backbone.IsValidTaxon(Rank.Species, family, genus, species))
                 {
                     speciesTaxon = _taxonCreate(genus + " " + species, Rank.Species, genusTaxon);

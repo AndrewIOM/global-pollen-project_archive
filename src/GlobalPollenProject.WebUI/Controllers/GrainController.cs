@@ -9,6 +9,7 @@ using System;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
+    [ApiVersionNeutral]
     public class GrainController : Controller
     {
         private IIdentificationService _appService;

@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using GlobalPollenProject.Core;
+using GlobalPollenProject.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace GlobalPollenProject.Data.Infrastructure
 {
@@ -15,27 +17,35 @@ namespace GlobalPollenProject.Data.Infrastructure
 
         public void Add(ReferenceCollection entity)
         {
-            throw new NotImplementedException();
+            _context.ReferenceCollections.Add(entity);
         }
 
         public void Delete(ReferenceCollection entity)
         {
-            throw new NotImplementedException();
+            _context.ReferenceCollections.Remove(entity);
         }
 
         public void Edit(ReferenceCollection entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
         }
 
-        public IQueryable<ReferenceCollection> FindBy(Expression<Func<ReferenceCollection, bool>> predicate)
+        public PagedResult<ReferenceCollection> FindBy(Expression<Func<ReferenceCollection, bool>> predicate, int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            return _context.ReferenceCollections.Include(m => m.Slides)
+                .ThenInclude(n => n.Images).Where(predicate).ToPagedList(pageNumber, pageSize);
         }
 
-        public IQueryable<ReferenceCollection> GetAll()
+        public ReferenceCollection FirstOrDefault(Expression<Func<ReferenceCollection, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return _context.ReferenceCollections.Include(m => m.Slides)
+                .ThenInclude(n => n.Images).FirstOrDefault(predicate);
+        }
+
+        public PagedResult<ReferenceCollection> GetAll(int pageNumber, int pageSize)
+        {
+            return _context.ReferenceCollections.Include(m => m.Slides)
+                .ThenInclude(n => n.Images).ToPagedList(pageNumber, pageSize);
         }
     }
 }

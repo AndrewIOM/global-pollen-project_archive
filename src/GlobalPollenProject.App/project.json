@@ -3,7 +3,6 @@
   "dependencies":{
       "NETStandard.Library":"1.6.0",
       "AutoMapper": "5.1.1",
-      "Sakura.AspNet.PagedList": "1.0.0-rc2",
       "GlobalPollenProject.Core": {
           "target": "project"
         }
