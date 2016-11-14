@@ -1,4 +1,4 @@
-﻿@model List<Im.Acm.Pollen.ViewModels.SimpleGrainViewModel>
+﻿@model List<GlobalPollenProject.App.Models.UnknownGrain>
 
 @{
     ViewData["Title"] = "Home";
@@ -60,7 +60,7 @@
 </div>
 <hr />
 
-@* About Im.Acm.Pollen *@
+@* About the Global Pollen Project *@
 <div class="row">
     <div class="col-sm-5">
         <h3>How It Works</h3>
@@ -78,8 +78,8 @@
                 <li>
                     <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
                         <div class="img-container">
-                            <img src="@grain.ThumbnailLocation" alt="Unidentified pollen grain #@grain.Id" />
-                            <div class="ribbon"><span>@grain.Bounty</span></div>
+                            <img src="@grain.ThumbnailUri" alt="Unidentified pollen grain #@grain.Id" />
+                            <div class="ribbon"><span>@grain.Score</span></div>
                         </div>
                     </a>
                 </li>

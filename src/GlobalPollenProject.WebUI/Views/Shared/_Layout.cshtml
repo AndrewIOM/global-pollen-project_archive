@@ -83,9 +83,9 @@
                             <li><a asp-action="Help" asp-controller="Reference">Help</a></li>*@
                         </ul>
                     </li>
-                    <li><a asp-controller="Grain" asp-action="Identify"><span class="glyphicon glyphicon-search"></span> Identify</a></li>
+                    <li><a asp-controller="Grain" asp-action="Index"><span class="glyphicon glyphicon-search"></span> Identify</a></li>
                     <li><a asp-action="Add" asp-controller="Grain"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Submit a Grain!</a></li>
-                    <li><a asp-controller="Bounty" asp-action="Index">Leaderboard</a></li>
+                    <li><a asp-controller="Leaderboard" asp-action="Index">Leaderboard</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>

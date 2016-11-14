@@ -5,6 +5,8 @@ namespace GlobalPollenProject.Core
 {
     public class Identification : IEntity
     {
+        private Identification() {}
+
         public Identification(string family, 
             string genus, 
             string species,

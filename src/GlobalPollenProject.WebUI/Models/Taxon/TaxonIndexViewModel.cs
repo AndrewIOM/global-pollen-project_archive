@@ -5,7 +5,7 @@ namespace GlobalPollenProject.WebUI.Models.Taxon
 {
     public class TaxonIndexViewModel
     {
-        public List<TaxonViewModel> Taxa { get; set; }
+        public List<PollenProjectTaxon> Taxa { get; set; }
 
         //Filtering
         public string Query { get; set; }
@@ -18,7 +18,7 @@ namespace GlobalPollenProject.WebUI.Models.Taxon
 
         public TaxonIndexViewModel()
         {
-            Taxa = new List<TaxonViewModel>();
+            Taxa = new List<PollenProjectTaxon>();
         }
     }
 }

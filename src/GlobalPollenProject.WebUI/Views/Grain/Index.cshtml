@@ -1,4 +1,5 @@
-﻿@model Im.Acm.Pollen.ViewModels.Grain.FilteredGrainsViewModel
+﻿@model GlobalPollenProject.WebUI.Models.Grain.FilteredGrainsViewModel
+@using GlobalPollenProject.App.Models
 
 @{
     ViewBag.Title = "Identify Pollen Grains";
@@ -40,8 +41,8 @@
                     <li>
                         <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
                             <div class="img-container">
-                                <img src="@grain.ThumbnailLocation" />
-                                <div class="ribbon"><span>@grain.Bounty</span></div>
+                                <img src="@grain.ThumbnailUri" />
+                                <div class="ribbon"><span>@grain.Score</span></div>
                                 <span class="Latitude">@grain.Latitude</span>
                                 <span class="Longitude">@grain.Longitude</span>
                             </div>

@@ -23,7 +23,7 @@ namespace GlobalPollenProject.WebUI.Controllers
         {
             // TODO Get 12 only and sort by most wanted (requires paged App Services)
             var searchCriteria = new GrainSearchFilter();
-            var model = _idService.GetUnknownGrains(searchCriteria, 12, 1);
+            var model = _idService.GetUnknownGrains(searchCriteria, 12, 1).Result;
             return View(model);
         }
 

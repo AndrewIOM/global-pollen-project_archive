@@ -1,4 +1,5 @@
-﻿@model Im.Acm.Pollen.ViewModels.Taxon.TaxonIndexViewModel
+﻿@model GlobalPollenProject.WebUI.Models.Taxon.TaxonIndexViewModel
+@using GlobalPollenProject.App.Models
 
 @{
     ViewBag.Title = "Reference Collection";
@@ -49,9 +50,9 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="filterMenu">
-                        <li><a href="@Url.Action("Index", new { rank = Taxonomy.Species })">Species</a></li>
-                        <li><a href="@Url.Action("Index", new { rank = Taxonomy.Genus })">Genus</a></li>
-                        <li><a href="@Url.Action("Index", new { rank = Taxonomy.Family })">Family</a></li>
+                        <li><a href="@Url.Action("Index", new { rank = Rank.Species })">Species</a></li>
+                        <li><a href="@Url.Action("Index", new { rank = Rank.Genus })">Genus</a></li>
+                        <li><a href="@Url.Action("Index", new { rank = Rank.Family })">Family</a></li>
                     </ul>
                 </div>
             </div>
@@ -100,17 +101,17 @@
                     <ul class="list-inline">
                         <li><span class="glyphicon glyphicon-user"></span>  @taxon.UserSubmissionsConfirmedCount</li>
                         <li><span class="glyphicon glyphicon-globe"></span> @taxon.ReferenceGrainsCount</li>
-                        <li><span class="glyphicon glyphicon-th-list"></span> @taxon.Children.Count</li>
+                        <li><span class="glyphicon glyphicon-th-list"></span> @taxon.SubTaxa.Count</li>
                     </ul>
                 </div>
-                @if (taxon.Children.Count > 0)
+                @if (taxon.SubTaxa.Count > 0)
                 {
                     <div class="taxon-toggle">
                         <a class="subtaxa-button" role="button" data-toggle="collapse" data-parent="#accordion" href="#taxon-@taxon.Id" aria-expanded="false" aria-controls="taxon-@taxon.Id"><span class="glyphicon glyphicon-th-list"></span></a>
                     </div>
                 }
                 <ul id="taxon-@taxon.Id" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                    @foreach (var subTaxa in taxon.Children.OrderBy(m => m.LatinName))
+                    @foreach (var subTaxa in taxon.SubTaxa.OrderBy(m => m.LatinName))
                     {
                         <li>
                             <a href="@Url.Action("View", "Taxon", new { id = subTaxa.Id})">@subTaxa.LatinName</a>

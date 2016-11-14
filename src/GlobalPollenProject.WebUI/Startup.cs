@@ -15,6 +15,10 @@ using GlobalPollenProject.App.Interfaces;
 using GlobalPollenProject.App.Services;
 using GlobalPollenProject.Infrastructure.Storage;
 using GlobalPollenProject.Infrastructure;
+using GlobalPollenProject.Infrastructure.Communication;
+using Microsoft.AspNetCore.Identity;
+using GlobalPollenProject.WebUI.Services;
+using GlobalPollenProject.Core.Services;
 
 namespace GlobalPollenProject.WebUI
 {
@@ -34,19 +38,11 @@ namespace GlobalPollenProject.WebUI
 
         public Startup(IHostingEnvironment env, IHostingEnvironment hostEnv)
         {
-            // Setup configuration sources.
-
             var builder = new ConfigurationBuilder()
                 .SetBasePath(hostEnv.ContentRootPath)
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
-            if (env.IsDevelopment())
-            {
-                // This reads the configuration keys from the secret store.
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                //builder.AddUserSecrets();
-            }
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -89,16 +85,22 @@ namespace GlobalPollenProject.WebUI
             services.Configure<AzureOptions>(Configuration);
             services.Configure<AuthMessageSenderOptions>(Configuration);
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IExternalDatabaseLinker, ExternalDatabaseLinker>();
 
             // Infrastructure: Other
             services.AddTransient<IImageProcessor, AzureImageProcessor>();
             services.AddTransient<IEmailSender, SendgridEmailSender>();
+
+            // Domain Services
+            services.AddTransient<INameConfirmationAlgorithm, SimpleNameConfirmationAlgorithm>();
 
             // App Services
             services.AddTransient<IDigitisationService, DigitisationService>();
             services.AddTransient<IIdentificationService, IdentificationService>();
             services.AddTransient<ITaxonomyService, TaxonomyService>();
             services.AddTransient<IUserService, UserService>();
+
+            services.AddTransient<IUserResolverService, NetCoreUserResolverService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -142,6 +144,58 @@ namespace GlobalPollenProject.WebUI
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            EnsureRoles(app, loggerFactory);
+            EnsureAdminUser(app);
+        }
+
+        private void EnsureRoles(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        {
+            ILogger logger = loggerFactory.CreateLogger<Startup>();
+            RoleManager<IdentityRole> roleManager = app.ApplicationServices.GetService<RoleManager<IdentityRole>>();
+
+            string[] roleNames = { "Admin", "Digitise", "Banned" };
+            foreach (string roleName in roleNames)
+            {
+                bool roleExists = roleManager.RoleExistsAsync(roleName).Result;
+                if (!roleExists)
+                {
+                    logger.LogInformation(string.Format("!roleExists for roleName {0}", roleName));
+                    IdentityRole identityRole = new IdentityRole(roleName);
+                    IdentityResult identityResult = roleManager.CreateAsync(identityRole).Result;
+                }
+            }
+        }
+
+        private void EnsureAdminUser(IApplicationBuilder app)
+        {
+            UserManager<User> userManager = app.ApplicationServices.GetService<UserManager<User>>();
+            var context = app.ApplicationServices.GetService<PollenDbContext>();
+
+            // var organisation = context.Organisations.FirstOrDefaultAsync(m => m.Name == "Im.Acm.Pollen Admin").Result;
+            // if (organisation == null)
+            // {
+            //     organisation = new Organisation()
+            //     {
+            //         CountryCode = "GB",
+            //         Name = "Global Pollen Project Admin"
+            //     };
+            //     context.Organisations.Add(organisation);
+            //     context.SaveChanges();
+            // }
+
+            var user = userManager.FindByNameAsync(Configuration["Account:Admin:DefaultAdminUserName"]).Result;
+            if (user == null)
+            {
+                user = new User("Mx", "GPP", "Admin")
+                {
+                    UserName = Configuration["Account:Admin:DefaultAdminUserName"],
+                    EmailConfirmed = true,
+                    Email = Configuration["Account:Admin:DefaultAdminUserName"]
+                };
+                userManager.CreateAsync(user, Configuration["Account:Admin:DefaultAdminPassword"]).Wait();
+                userManager.AddToRoleAsync(user, "Admin");
+            }
         }
     }
 }

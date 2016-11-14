@@ -6,6 +6,7 @@ using GlobalPollenProject.WebUI.Models.Grain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using System.Threading.Tasks;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
@@ -18,16 +19,30 @@ namespace GlobalPollenProject.WebUI.Controllers
             _appService = appService;
         }
 
+        public IActionResult Index(int pageSize = 20, int page = 1, GrainSearchFilter filter = null)
+        {
+            if (filter == null) filter = new GrainSearchFilter();
+            var grains = _appService.GetUnknownGrains(filter, pageSize, page);
+
+            var model = new FilteredGrainsViewModel()
+            {
+                Filters = filter,
+                Grains = grains.Result
+            };
+
+            return View(model);
+        }
+
         [Authorize]
         public IActionResult Add()
         {
-            var model = new UnknownGrain();
+            var model = new AddUnknownGrain();
             return View(model);
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Add(AddUnknownGrain result)
+        public async Task<IActionResult> Add(AddUnknownGrain result)
         {
             if (!string.IsNullOrEmpty(result.ImageOne)) if (!IsBase64String(result.ImageOne)) ModelState.AddModelError("ImageOne", "Image not ecoded in base64");
             if (!string.IsNullOrEmpty(result.ImageTwo)) if (!IsBase64String(result.ImageTwo)) ModelState.AddModelError("ImageTwo", "Image not ecoded in base64");
@@ -38,13 +53,12 @@ namespace GlobalPollenProject.WebUI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var serviceResult = _appService.UploadUnknownGrain(result);
+            var serviceResult = await _appService.UploadUnknownGrain(result);
             if (!serviceResult.IsValid)
             {
                 ModelState.AddServiceErrors(serviceResult.Messages);
                 return BadRequest(ModelState);
             }
-
             return Ok();
         }
 
@@ -68,7 +82,7 @@ namespace GlobalPollenProject.WebUI.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Identify(IdentificationFormViewModel result)
+        public async Task<IActionResult> Identify(IdentificationFormViewModel result)
         {
             var grainResult = _appService.GetUnknownGrain(result.Grain.Id);
             if (!grainResult.IsValid)
@@ -77,7 +91,7 @@ namespace GlobalPollenProject.WebUI.Controllers
                 return RedirectToAction("Index");
             }
 
-            var idResult = _appService.IdentifyAs(result.Grain.Id, result.Family, result.Genus, result.Species);
+            var idResult = await _appService.IdentifyAs(result.Grain.Id, result.Family, result.Genus, result.Species);
             if (!idResult.IsValid)
             {
                 ModelState.AddServiceErrors(idResult.Messages);
@@ -88,31 +102,17 @@ namespace GlobalPollenProject.WebUI.Controllers
             return RedirectToAction("Identify", new { id = grainResult.Result.Id });
         }
 
-        public IActionResult Index(int pageSize = 20, int page = 1, GrainSearchFilter filter = null)
+        [Authorize]
+        public async Task<IActionResult> MyGrains(int pageSize = 40, int page = 1)
         {
-            if (filter == null) filter = new GrainSearchFilter();
-            var grains = _appService.GetUnknownGrains(filter, pageSize, page);
-
-            var model = new FilteredGrainsViewModel()
-            {
-                Filters = filter,
-                Grains = grains.Result
-            };
-
-            return View(model);
+            var grains = await _appService.GetMyUnknownGrains(pageSize, page);
+            return View(grains.Result);
         }
 
         [Authorize]
-        public IActionResult MyGrains(int pageSize = 40, int page = 1)
+        public async Task<IActionResult> RemoveIdentification(int grainId)
         {
-            var grains = _appService.GetMyUnknownGrains(pageSize, page);
-            return View(grains);
-        }
-
-        [Authorize]
-        public IActionResult RemoveIdentification(int grainId)
-        {
-            var result = _appService.RemoveIdentification(grainId);
+            var result = await _appService.RemoveIdentification(grainId);
             if (!result.IsValid)
             {
                 ModelState.AddServiceErrors(result.Messages);

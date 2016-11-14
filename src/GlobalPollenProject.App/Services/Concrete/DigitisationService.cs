@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using GlobalPollenProject.App.Interfaces;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
-using GlobalPollenProject.Core;
 using GlobalPollenProject.Core.Interfaces;
-using static GlobalPollenProject.App.Validation.AppServiceResultBase;
 
 namespace GlobalPollenProject.App.Services
 {
@@ -23,15 +21,15 @@ namespace GlobalPollenProject.App.Services
         {
             throw new NotImplementedException();
 
-            var result = new AppServiceResult();
+            // var result = new AppServiceResult();
 
-            var taxonFactory = Taxon.GetFactory(_uow.TaxonRepository, _uow.BackboneCoreService, _databaseLinker);
-            var taxon = taxonFactory.TryCreateTaxon(newSlide.Family, newSlide.Genus, newSlide.Species);
-            if (taxon == null)
-            {
-                result.Messages.Add(new AppServiceMessage(null, "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again", AppServiceMessageType.Error));
-                return result;
-            }
+            // var taxonFactory = Taxon.GetFactory(_uow.TaxonRepository, _uow.BackboneCoreService, _databaseLinker);
+            // var taxon = taxonFactory.TryCreateTaxon(newSlide.Family, newSlide.Genus, newSlide.Species);
+            // if (taxon == null)
+            // {
+            //     result.Messages.Add(new AppServiceMessage(null, "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again", AppServiceMessageType.Error));
+            //     return result;
+            // }
 
             // if (!_backbone.IsValidTaxon(result.Rank, result.Family, result.Genus, result.Species))
             // {

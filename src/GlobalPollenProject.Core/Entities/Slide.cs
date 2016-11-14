@@ -6,6 +6,7 @@ namespace GlobalPollenProject.Core
 {
     public class ReferenceSlide : IEntity
     {
+        private ReferenceSlide() {}
         public ReferenceSlide(
             ReferenceCollection belongsTo, 
             List<Image> images,

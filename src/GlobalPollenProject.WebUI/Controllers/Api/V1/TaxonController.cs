@@ -1,6 +1,4 @@
-using GlobalPollenProject.App.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace GlobalPollenProject.WebUI.Controllers.Api.V1
 {
@@ -8,8 +6,8 @@ namespace GlobalPollenProject.WebUI.Controllers.Api.V1
     [Route( "api/v{version:apiVersion}/[controller]" )]
     public class TaxonController : Controller
     {
-        private readonly ITaxonomyService _taxonomyAppService;
-        private readonly IMemoryCache _memoryCache;
+        // private readonly ITaxonomyService _taxonomyAppService;
+        // private readonly IMemoryCache _memoryCache;
 
         public TaxonController() {
             

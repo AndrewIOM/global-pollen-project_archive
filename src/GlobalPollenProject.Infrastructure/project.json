@@ -7,7 +7,7 @@
       "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0",
       "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
-      "ChyImageProcessorCore":"1.0.0-alpha1031",
+      "ImageSharp": "1.0.0-alpha-000067",
       "WindowsAzure.Storage":"7.2.1",
       "GlobalPollenProject.Core": {
           "target": "project"

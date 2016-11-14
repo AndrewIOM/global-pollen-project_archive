@@ -6,6 +6,7 @@ namespace GlobalPollenProject.Core
 {
     public class User : IdentityUser, IEntity
     {
+        private User() {}
         public User(string title, string firstName, string lastName)
         {
             Title = title;

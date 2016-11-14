@@ -2,14 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using GlobalPollenProject.Data.Infrastructure;
 
 namespace GlobalPollenProject.Infrastructure.Migrations
 {
     [DbContext(typeof(PollenDbContext))]
-    partial class PollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161112142707_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")

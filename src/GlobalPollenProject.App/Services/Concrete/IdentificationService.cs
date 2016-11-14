@@ -1,38 +1,112 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GlobalPollenProject.App.Interfaces;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
 using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.App.Mapping;
+using GlobalPollenProject.Core.Imagery;
+using System.Threading.Tasks;
 
 namespace GlobalPollenProject.App.Services
 {
     public class IdentificationService : IIdentificationService
     {
         private readonly IUnitOfWork _uow;
-        public IdentificationService(IUnitOfWork uow)
+        private INameConfirmationAlgorithm _nameAlgorithm;
+        private IImageProcessor _imageProcessor;
+        private IUserService _userService;
+
+        public IdentificationService(IUnitOfWork uow, 
+            INameConfirmationAlgorithm nameAlgorithm, 
+            IImageProcessor imageProcessor, 
+            IUserService userService)
         {
             _uow = uow;
+            _nameAlgorithm = nameAlgorithm;
+            _imageProcessor = imageProcessor;
+            _userService = userService;
         }
 
-        public AppServiceResult<List<UnknownGrain>> GetMyUnknownGrains(int pageSize, int page)
+        public async Task<AppServiceResult<List<UnknownGrain>>> GetMyUnknownGrains(int pageSize, int page)
         {
-            throw new NotImplementedException();
+            var result = new AppServiceResult<List<UnknownGrain>>();
+
+            // Service Validation
+            var user = await _userService.GetCurrentUser();
+            if (!user.IsValid)
+            {
+                result.AddMessage(null, "No user is currently logged in.", AppServiceMessageType.Error);
+                return result;
+            }
+
+            // Fetch and convert to DTO
+            var domainResult = _uow.UnknownGrainRepository.FindBy(m => m.SubmittedBy.Id == user.Result.Id, page, pageSize);
+            var dtoResult = domainResult.Results.Select(m => m.ToDto(_nameAlgorithm)).ToList();
+            result.AddResult(dtoResult);
+            return result;
         }
 
         public AppServiceResult<UnknownGrain> GetUnknownGrain(int grainId)
         {
-            throw new NotImplementedException();
+            var result = new AppServiceResult<UnknownGrain>();
+
+            var domainResult = _uow.UnknownGrainRepository.FirstOrDefault(m => m.Id == grainId);
+            if (domainResult == null)
+            {
+                result.AddMessage("Id", "The specified grain does not exist", AppServiceMessageType.Error);
+                return result;
+            }
+
+            var dtoResult = domainResult.ToDto(_nameAlgorithm);
+            result.AddResult(dtoResult);
+            return result;
         }
 
         public AppServiceResult<List<UnknownGrain>> GetUnknownGrains(GrainSearchFilter criteria, int pageSize, int page)
         {
-            throw new NotImplementedException();
+            // TODO Implement criteria
+
+            var domainResult = _uow.UnknownGrainRepository.GetAll(page, pageSize);
+            var dtoResult = domainResult.Results.Select(m => m.ToDto(_nameAlgorithm)).ToList();
+            var result = new AppServiceResult<List<UnknownGrain>>(dtoResult);
+            return result;
         }
 
-        public AppServiceResult IdentifyAs(int grainId, string family, string genus, string species)
+        public async Task<AppServiceResult> IdentifyAs(int grainId, string family, string genus, string species)
         {
-            throw new NotImplementedException();
+            var result = new AppServiceResult();
+
+            var currentUser = await _userService.GetCurrentUser();
+            if (!currentUser.IsValid)
+            {
+                result.AddMessage(null, "You must be logged in to identify a grain", AppServiceMessageType.Error);
+                return result;
+            }
+
+            var grain = _uow.UnknownGrainRepository.FirstOrDefault(m => m.Id == grainId);
+            if (grain == null)
+            {
+                result.AddMessage(null, "Grain specified does not exist", AppServiceMessageType.Error);
+                return result;
+            }
+
+            var domainUser = currentUser.Result.ToDomainModel();
+            try
+            {
+                grain.IdentifyAs(domainUser, family, genus, species);
+            } catch (Exception e)
+            {
+                result.AddMessage(null, e.Message, AppServiceMessageType.Error);
+                return result;
+            }
+
+            // ID was successful
+            _uow.UnknownGrainRepository.Edit(grain);
+            _uow.SaveChanges();
+            return result;
+
             // Identification myIdentification = null;
             // if (record != null)
             // {
@@ -47,26 +121,130 @@ namespace GlobalPollenProject.App.Services
 
         }
 
-        public AppServiceResult RemoveIdentification(int grainId)
+        public async Task<AppServiceResult> RemoveIdentification(int grainId)
         {
-            //Check Prerequisites
-            // if (existingId == null) return NotFound();
-            // //TODO Stop removal if identity confirmed: if (existingId.Grain.) return BadRequest();
-            // if (existingId.User.Id != UserManager.GetUserId(User)) return Unauthorized();
+            var result = new AppServiceResult();
+
+            // Validation
+            var grain = _uow.UnknownGrainRepository.FirstOrDefault(m => m.Id == grainId);
+            if (grain == null)
+            {
+                result.AddMessage(null, "Grain specified does not exist", AppServiceMessageType.Error);
+                return result;
+            }
+            var currentUser = await _userService.GetCurrentUser();
+            if (!currentUser.IsValid)
+            {
+                result.AddMessage(null, "You must be logged in to identify a grain", AppServiceMessageType.Error);
+                return result;
+            }
+            if (currentUser.Result.Id != grain.SubmittedBy.Id)
+            {
+                result.AddMessage(null, "You did not submit this grain", AppServiceMessageType.Error);
+                return result;
+            }
+
+            // Delete the ID
+            var domainUser = currentUser.Result.ToDomainModel();
+            grain.RemoveIdentification(domainUser);
+            _uow.UnknownGrainRepository.Edit(grain);
+            _uow.SaveChanges();
             
-            // var grainId = existingId.Grain.Id;
-
-            throw new NotImplementedException();
+            return result;
         }
 
-        public AppServiceResult RemoveUnknownGrain(int grainId)
+        public async Task<AppServiceResult> RemoveUnknownGrain(int grainId)
         {
-            throw new NotImplementedException();
+            var result = new AppServiceResult();
+
+            // Validation
+            var grain = _uow.UnknownGrainRepository.FirstOrDefault(m => m.Id == grainId);
+            if (grain == null)
+            {
+                result.AddMessage(null, "Grain specified does not exist", AppServiceMessageType.Error);
+                return result;
+            }
+            var currentUser = await _userService.GetCurrentUser();
+            if (!currentUser.IsValid)
+            {
+                result.AddMessage(null, "You must be logged in to identify a grain", AppServiceMessageType.Error);
+                return result;
+            }
+            if (currentUser.Result.Id != grain.SubmittedBy.Id)
+            {
+                result.AddMessage(null, "You did not submit this grain", AppServiceMessageType.Error);
+                return result;
+            }
+            var grainName = grain.GetConfirmedIdentity(_nameAlgorithm);
+            if (grainName.Count > 0)
+            {
+                // It has some identity. Thus we can't remove it.
+                result.AddMessage(null, "The grain has a confirmed identity and cannot be removed", AppServiceMessageType.Error);
+                return result;
+            }
+
+            _uow.UnknownGrainRepository.Delete(grain);
+            _uow.SaveChanges();
+            result.AddMessage("", "Grain was successfully deleted", AppServiceMessageType.Info);
+            return result;
+
         }
 
-        public AppServiceResult UploadUnknownGrain(AddUnknownGrain grain)
+        public async Task<AppServiceResult> UploadUnknownGrain(AddUnknownGrain grain)
         {
-            throw new NotImplementedException();
+            var result = new AppServiceResult();
+
+            var loggedInUser = await _userService.GetCurrentUser();
+            if (loggedInUser.Result == null)
+            {
+                result.AddMessage(null, "You must be logged in to upload an unknown grain", AppServiceMessageType.Error);
+                return result;
+            }
+
+            var imageFactory = Core.Image.GetFactory(_imageProcessor);
+            var dtoImages = new string[] {grain.ImageOne, grain.ImageTwo, grain.ImageThree, grain.ImageFour}.Where(m => !string.IsNullOrEmpty(m)).ToList();
+            if (dtoImages.Count == 0)
+            {
+                result.AddMessage("ImageOne", "No images uploaded", AppServiceMessageType.Error);
+                return result;
+            }
+
+            var base64Images = new List<Base64Image>();
+            foreach (var dtoImage in dtoImages)
+            {
+                var base64image = Base64Image.TryCreateBase64Image(dtoImage);
+                if (base64image == null)
+                {
+                    result.AddMessage("", "An image could not be parsed", AppServiceMessageType.Error);
+                    return result;
+                }
+                base64Images.Add(base64image);
+            }
+
+            // Upload images
+            var domainImages = new List<Core.Image>();
+            foreach (var image in base64Images)
+            {
+                try
+                {
+                    var saved = await _imageProcessor.Upload(image);
+                    var domainImage = await imageFactory.TryCreateImage(image);
+                    domainImages.Add(domainImage);
+                } catch (Exception)
+                {
+                    result.AddMessage("", "An internal error occured while saving your image.", AppServiceMessageType.Error);
+                    return result;
+                }
+            }
+
+            // Save new grain
+            var user = loggedInUser.Result.ToDomainModel();
+            var domainGrain = new Core.UnknownGrain(user, domainImages, grain.Latitude.Value, 
+                grain.Longitude.Value, grain.ImagesScale.Value, grain.AgeYearsBeforePresent);
+            _uow.UnknownGrainRepository.Add(domainGrain);
+            _uow.SaveChanges();
+            return new AppServiceResult();
         }
+
     }
 }

@@ -4,9 +4,16 @@ namespace GlobalPollenProject.App.Validation
 {
     public class AppServiceResult<TModel> : AppServiceResultBase
     {
+        public AppServiceResult() { }
+
+        public AppServiceResult(TModel result)
+        {
+            this.Result = result;
+        }
+
         public TModel Result { get; private set; }
 
-        internal void AddResult(TModel result)
+        public void AddResult(TModel result)
         {
             Result = result;
         }
@@ -25,7 +32,7 @@ namespace GlobalPollenProject.App.Validation
         private List<AppServiceMessage> _messages;
         public bool IsValid { get; private set; }
 
-        public void AddError(string key, string errorMessage, AppServiceMessageType type)
+        public void AddMessage(string key, string errorMessage, AppServiceMessageType type)
         {
             var message = new AppServiceMessage(key, errorMessage, type);
             _messages.Add(message);

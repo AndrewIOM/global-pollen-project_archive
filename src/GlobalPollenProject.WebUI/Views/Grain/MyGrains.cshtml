@@ -1,4 +1,4 @@
-﻿@model List<Im.Acm.Pollen.ViewModels.SimpleGrainViewModel>
+﻿@model List<GlobalPollenProject.App.Models.UnknownGrain>
 @{
     ViewBag.Title = "My Grains";
 }
@@ -34,13 +34,13 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    var status = !string.IsNullOrEmpty(item.ConfirmedFamily) ||
-                    !string.IsNullOrEmpty(item.ConfirmedGenus) ||
-                    !string.IsNullOrEmpty(item.ConfirmedSpecies) ? "Identified" : "Unidentified";
+                    var status = !string.IsNullOrEmpty(item.Status.ConfirmedFamily) ||
+                    !string.IsNullOrEmpty(item.Status.ConfirmedGenus) ||
+                    !string.IsNullOrEmpty(item.Status.ConfirmedSpecies) ? "Identified" : "Unidentified";
 
                     <tr>
                         <td>@item.Id</td>
-                        <td><img src="@item.ImageLocation" style="width:5em;height:auto" /></td>
+                        <td><img src="@item.ThumbnailUri" style="width:5em;height:auto" /></td>
                         <td>@item.TimeAdded</td>
                         <td>
                             @status

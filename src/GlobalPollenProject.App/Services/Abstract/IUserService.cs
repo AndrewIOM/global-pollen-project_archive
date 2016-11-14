@@ -11,7 +11,7 @@ namespace GlobalPollenProject.App.Interfaces
         Task<AppServiceResult> Login(LoginDetails user);
         Task<AppServiceResult> Logout();
         Task<AppServiceResult<AppUser>> RegisterForAccount(NewAppUser user);
-        Task<AppServiceResult<AppUser>> GetUser(string name);
+        Task<AppServiceResult<AppUser>> GetCurrentUser();
         Task<AppServiceResult> RequestValidationEmail(string userId, string code);
         AppServiceResult RequestPasswordReset(AppUser user);
         AppServiceResult UpdatePublicProfile(AppUser user, PublicProfile profile); // TODO remove PublicProfile, use AppUser instead?

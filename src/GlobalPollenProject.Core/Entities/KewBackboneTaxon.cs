@@ -5,8 +5,7 @@ namespace GlobalPollenProject.Core
 {
     public class KewBackboneTaxon : IBackboneTaxon, IEntity
     {
-        private KewBackboneTaxon()
-        {}
+        private KewBackboneTaxon() {}
 
         public int Id { get; private set; }
         public bool IsDeleted { get; set; }

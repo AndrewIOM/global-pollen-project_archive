@@ -6,6 +6,7 @@ namespace GlobalPollenProject.Core
 {
     public class ReferenceCollection : IEntity
     {
+        private ReferenceCollection() {}
         public ReferenceCollection(User createdBy)
         {
             this.Owner = createdBy;

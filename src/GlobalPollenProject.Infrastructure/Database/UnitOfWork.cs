@@ -1,6 +1,7 @@
 using GlobalPollenProject.Core.Interfaces;
 using GlobalPollenProject.Core;
 using System;
+using GlobalPollenProject.Core.Services;
 
 namespace GlobalPollenProject.Data.Infrastructure
 {
@@ -23,13 +24,12 @@ namespace GlobalPollenProject.Data.Infrastructure
         {
             get
             {
-                throw new NotImplementedException();
-                // if (_backboneCoreService == null)
-                // {
-                //     if (_backboneRepo == null) _backboneRepo = new KewBackboneTaxonRepository(_context);
-                //     _backboneCoreService = new LocalKewTaxonomyBackbone(_backboneRepo);
-                // }
-                // return _backboneCoreService;
+                if (_backboneCoreService == null)
+                {
+                    if (_backboneRepo == null) _backboneRepo = new KewBackboneTaxonRepository(_context);
+                    _backboneCoreService = new LocalKewTaxonomyBackbone(_backboneRepo);
+                }
+                return _backboneCoreService;
             }
         }
 

@@ -15,28 +15,37 @@ namespace GlobalPollenProject.App.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly IUserResolverService _userResolver;
 
-        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender)
+        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender, IUserResolverService resolver)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _userResolver = resolver;
         }
 
         public async Task<AppServiceResult> Login(LoginDetails user)
         {
             var result = new AppServiceResult();
             var existing = await _userManager.FindByNameAsync(user.Email);
-            if (existing != null)
+            if (existing == null)
             {
-                if (!await _userManager.IsEmailConfirmedAsync(existing))
-                {
-                    result.AddError(string.Empty, "You must have a confirmed email to log in.", AppServiceMessageType.Error);
-                    return result;
-                }
+                result.AddMessage(string.Empty, "Log in failed.", AppServiceMessageType.Error);
+                return result;
+            }
+
+            if (!await _userManager.IsEmailConfirmedAsync(existing))
+            {
+                result.AddMessage(string.Empty, "You must have a confirmed email to log in.", AppServiceMessageType.Error);
+                return result;
             }
 
             var signInResult = await _signInManager.PasswordSignInAsync(user.Email, user.Password, user.RememberMe, lockoutOnFailure: false);
+            if (!signInResult.Succeeded)
+            {
+                result.AddMessage(string.Empty, "Log in failed.", AppServiceMessageType.Error);
+            }
             return result;
         }
 
@@ -58,7 +67,7 @@ namespace GlobalPollenProject.App.Services
             {
                 foreach (var error in registrationResult.Errors)
                 {
-                    result.AddError(error.Code, error.Description, AppServiceMessageType.Error);
+                    result.AddMessage(error.Code, error.Description, AppServiceMessageType.Error);
                     return result;
                 }
             }
@@ -102,7 +111,7 @@ namespace GlobalPollenProject.App.Services
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                result.AddError("", "Cannot send validation email.", AppServiceMessageType.Error);
+                result.AddMessage("", "Cannot send validation email.", AppServiceMessageType.Error);
                 return result;
             }
 
@@ -111,7 +120,7 @@ namespace GlobalPollenProject.App.Services
             {
                 foreach (var error in emailResult.Errors)
                 {
-                    result.AddError(error.Code, error.Description, AppServiceMessageType.Error);
+                    result.AddMessage(error.Code, error.Description, AppServiceMessageType.Error);
                     return result;
                 }
             }
@@ -167,6 +176,21 @@ namespace GlobalPollenProject.App.Services
             // currentUser.FirstName = model.FirstName;
             // currentUser.Title = model.Title;
             // currentUser.LastName = model.LastName;
+        }
+
+        public async Task<AppServiceResult<AppUser>> GetCurrentUser()
+        {
+            var result = new AppServiceResult<AppUser>();
+
+            var currentUser = _userResolver.GetCurrentUserName();
+            var dtoUser = await GetUser(currentUser);
+            if (!dtoUser.IsValid)
+            {
+                result.AddMessage("", "There is no logged in user", AppServiceMessageType.Error);
+                return result;
+            }
+            result.AddResult(dtoUser.Result);
+            return result;
         }
     }
 }

@@ -7,6 +7,7 @@ namespace GlobalPollenProject.Core
 {
     public class Taxon : IEntity
     {
+        private Taxon() {}
         private Taxon(string latinName, Rank rank, Taxon parentTaxon) 
         {
             this.LatinName = latinName;

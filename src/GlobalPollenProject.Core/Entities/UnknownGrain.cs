@@ -7,6 +7,7 @@ namespace GlobalPollenProject.Core
 {
     public class UnknownGrain : IEntity
     {
+        private UnknownGrain() {}
         private readonly List<Identification> _identifications;
         private readonly List<Image> _images;
 
@@ -23,6 +24,7 @@ namespace GlobalPollenProject.Core
             _identifications = new List<Identification>();
             this.SubmittedBy = submittedBy;
             this.TimeAdded = DateTime.UtcNow;
+            this.LockedScore = null;
 
             // Metadata
             this.Latitude = latitude;
@@ -38,6 +40,7 @@ namespace GlobalPollenProject.Core
         public User SubmittedBy { get; private set; }
         public List<Identification> Identifications { get { return _identifications; } }
         public List<Image> Images { get { return _images; }}
+        public double? LockedScore { get; set; }
 
         // Metadata
         public double Latitude { get; private set; }
@@ -90,6 +93,22 @@ namespace GlobalPollenProject.Core
         {
             var result = algorithm.ConfirmName(this);
             return result;
+        }
+
+        public double CalculateScore()
+        {
+            if (this.LockedScore.HasValue)
+            {
+                return this.LockedScore.Value;
+            }
+
+            int daysSinceSubmission = (DateTime.Now - this.TimeAdded).Days;
+
+            if (daysSinceSubmission == 0) return 6;
+            if (daysSinceSubmission == 1) return 3;
+            if (daysSinceSubmission == 2) return 2;
+            if (daysSinceSubmission == 3) return 1;
+            return 0.4 + (daysSinceSubmission * 0.2);
         }
 
     }

@@ -92,7 +92,7 @@ namespace GlobalPollenProject.WebUI.Controllers
         {
             var collection = _digitiseAppService.GetCollection(id).Result;
             if (collection == null) return BadRequest();
-            var currentUser = await _userAppService.GetUser(User.Identity.Name);
+            var currentUser = await _userAppService.GetCurrentUser();
             if (collection.UserId != currentUser.Result.Id) return Unauthorized();
             return View("AddCollection", collection);
         }
@@ -103,7 +103,7 @@ namespace GlobalPollenProject.WebUI.Controllers
         {
             var collection = _digitiseAppService.GetCollection(result.Id).Result;
             if (collection == null) return BadRequest();
-            var currentUser = await _userAppService.GetUser(User.Identity.Name);
+            var currentUser = await _userAppService.GetCurrentUser();
             if (collection.UserId != currentUser.Result.Id) return Unauthorized();
 
             if (!ModelState.IsValid)
@@ -130,7 +130,7 @@ namespace GlobalPollenProject.WebUI.Controllers
                 return BadRequest();
             }
             var collection = _digitiseAppService.GetCollection(id);
-            var currentUser = await _userAppService.GetUser(User.Identity.Name);
+            var currentUser = await _userAppService.GetCurrentUser();
             if (collection.Result.UserId != currentUser.Result.Id) return Unauthorized();
             return View(new AddDigitisedSlide()
             {
@@ -145,7 +145,7 @@ namespace GlobalPollenProject.WebUI.Controllers
             var collection = _digitiseAppService.GetCollection(result.CollectionId.Value).Result;
             if (collection == null) return NotFound();
 
-            var currentUser = await _userAppService.GetUser(User.Identity.Name);
+            var currentUser = await _userAppService.GetCurrentUser();
             if (collection.UserId != currentUser.Result.Id)
             {
                 ModelState.AddModelError(null, "You can only add grains to collections you own.");

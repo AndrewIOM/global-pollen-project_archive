@@ -5,6 +5,7 @@ namespace GlobalPollenProject.Core
 {
     public class Organisation : IEntity
     {
+        private Organisation() {}
         public Organisation(string name)
         {
             this.Name = name;

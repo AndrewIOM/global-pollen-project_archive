@@ -7,6 +7,7 @@ namespace GlobalPollenProject.Core
 {
     public class Image : IEntity
     {
+        private Image() {}
         private Image(Uri image, Uri thumbnail, List<Uri> stack = null) 
         {
             this.FileName = image.AbsoluteUri;

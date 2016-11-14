@@ -17,7 +17,17 @@ namespace GlobalPollenProject.WebUI.Controllers
 
         public IActionResult Index(Rank? rank, int p = 1, int s = 40, string query = null)
         {
-            var model = _taxonService.ListGPPTaxa(s, p).Result;
+            Rank r = rank.HasValue ? rank.Value : Rank.Genus;
+            var serviceResult = _taxonService.ListGPPTaxa(s, p).Result;
+            var model = new TaxonIndexViewModel()
+            {
+                CurrentPage = p,
+                NumberOfPages = 10,
+                PageSize = s,
+                Query = query,
+                Rank = r,
+                Taxa = serviceResult
+            };
             return View(model);
         }
 

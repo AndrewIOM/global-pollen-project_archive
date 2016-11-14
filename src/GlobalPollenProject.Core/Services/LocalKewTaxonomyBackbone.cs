@@ -5,9 +5,9 @@ namespace GlobalPollenProject.Core.Services
 {
     public class LocalKewTaxonomyBackbone : ITaxonomyBackbone
     {
-        private readonly IRepository<IBackboneTaxon> _taxonRepo;
+        private readonly IRepository<KewBackboneTaxon> _taxonRepo;
 
-        public LocalKewTaxonomyBackbone(IRepository<IBackboneTaxon> taxonRepo)
+        public LocalKewTaxonomyBackbone(IRepository<KewBackboneTaxon> taxonRepo)
         {
             _taxonRepo = taxonRepo;
         }
