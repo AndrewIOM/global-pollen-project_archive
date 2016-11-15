@@ -81,44 +81,38 @@ namespace GlobalPollenProject.App.Services
             var currentUser = await _userService.GetCurrentUser();
             if (!currentUser.IsValid)
             {
-                result.AddMessage(null, "You must be logged in to identify a grain", AppServiceMessageType.Error);
+                result.AddMessage("", "You must be logged in to identify a grain", AppServiceMessageType.Error);
                 return result;
             }
 
             var grain = _uow.UnknownGrainRepository.FirstOrDefault(m => m.Id == grainId);
             if (grain == null)
             {
-                result.AddMessage(null, "Grain specified does not exist", AppServiceMessageType.Error);
+                result.AddMessage("", "Grain specified does not exist", AppServiceMessageType.Error);
+                return result;
+            }
+
+            var currentId = grain.Identifications.FirstOrDefault(m => m.User.Id == currentUser.Result.Id);
+            if (currentId != null)
+            {
+                result.AddMessage("", "You must remove your previous ID before submitting a new one", AppServiceMessageType.Error);
                 return result;
             }
 
             var domainUser = currentUser.Result.ToDomainModel();
-            try
+            var idFactory = Core.Identification.GetFactory(_uow.BackboneCoreService);
+            var id = idFactory.TryCreateIdentification(family, genus, species, domainUser);
+            if (id == null)
             {
-                grain.IdentifyAs(domainUser, family, genus, species);
-            } catch (Exception e)
-            {
-                result.AddMessage(null, e.Message, AppServiceMessageType.Error);
+                result.AddMessage("", "The specied taxon did not match in our taxonomic backbone. Check the name and try again.", AppServiceMessageType.Error);
                 return result;
             }
 
             // ID was successful
+            grain.IdentifyAs(id);
             _uow.UnknownGrainRepository.Edit(grain);
             _uow.SaveChanges();
             return result;
-
-            // Identification myIdentification = null;
-            // if (record != null)
-            // {
-            //     myIdentification = _idService.GetByUser(UserManager.GetUserId(User))
-            //         .FirstOrDefault(m => m.Grain.Id == result.GrainId);
-            //     if (myIdentification != null) ModelState.AddModelError("User", "You have already identified this grain, sorry!");
-            // }
-            // if (!_taxonomy.IsValidTaxon(result.TaxonomicResolution, result.Family, result.Genus, result.Species))
-            // {
-            //     ModelState.AddModelError("Family", "The taxon specified was not matched by our taxonomic backbone. Check your spellings and try again");
-            // }
-
         }
 
         public async Task<AppServiceResult> RemoveIdentification(int grainId)
@@ -136,11 +130,6 @@ namespace GlobalPollenProject.App.Services
             if (!currentUser.IsValid)
             {
                 result.AddMessage(null, "You must be logged in to identify a grain", AppServiceMessageType.Error);
-                return result;
-            }
-            if (currentUser.Result.Id != grain.SubmittedBy.Id)
-            {
-                result.AddMessage(null, "You did not submit this grain", AppServiceMessageType.Error);
                 return result;
             }
 

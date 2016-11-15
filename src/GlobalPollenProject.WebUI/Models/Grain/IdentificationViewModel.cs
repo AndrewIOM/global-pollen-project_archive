@@ -7,9 +7,8 @@ namespace GlobalPollenProject.WebUI.Models
     public class IdentificationFormViewModel : IValidatableObject
     {
         public UnknownGrain Grain { get; set; }
-
+        
         //Identification Form
-        public bool AlreadyIdentifiedByUser { get; set; }
         public IdentificationDto UserIdentification { get; set; }
 
         [Required]

@@ -1,21 +1,22 @@
-﻿@model Im.Acm.Pollen.ViewModels.IdentificationViewModel
+﻿@using GlobalPollenProject.App.Models
+@model GlobalPollenProject.WebUI.Models.IdentificationFormViewModel
 
 @{
-    ViewBag.Title = "Grain Details #" + Model.GrainId;
+    ViewBag.Title = "Grain Details #" + Model.Grain.Id;
 
-    var timeSinceAdd = DateTime.Now - Model.TimeAdded;
+    var timeSinceAdd = DateTime.Now - Model.Grain.TimeAdded;
     var success = (string)ViewData["Success"];
-    var fullyIdentified = string.IsNullOrEmpty(Model.IdentifiedFamily) ||
-        string.IsNullOrEmpty(Model.IdentifiedGenus) || string.IsNullOrEmpty(Model.IdentifiedSpecies) ? false : true;
+    var fullyIdentified = string.IsNullOrEmpty(Model.Grain.Status.ConfirmedFamily) ||
+        string.IsNullOrEmpty(Model.Grain.Status.ConfirmedGenus) || string.IsNullOrEmpty(Model.Grain.Status.ConfirmedSpecies) ? false : true;
 
-    if (fullyIdentified)
+    <!--if (fullyIdentified)
     {
         ViewData["Description"] = "A user-submitted grain identified as " + Model.IdentifiedFamily + " " + Model.IdentifiedGenus + " " + Model.IdentifiedSpecies;
     }
     else
     {
         ViewData["Description"] = "Unidentified pollen grain submitted " + (DateTime.Now - Model.TimeAdded).Days + " days ago. Submit an identification now.";
-    }
+    }-->
 }
 
 @section scripts {
@@ -26,15 +27,14 @@
 @section homepageHeader {
     <div class="addgrain-section headsection">
         <div class="container">
-            <h2>Pollen Grain #@Model.GrainId</h2>
-            @if (!string.IsNullOrEmpty(Model.IdentifiedFamily))
-            { <p>Family: @Model.IdentifiedFamily</p> }
-            @if (!string.IsNullOrEmpty(Model.IdentifiedGenus))
-            { <p>Genus: @Model.IdentifiedGenus</p> }
-            @if (!string.IsNullOrEmpty(Model.IdentifiedSpecies))
-            { <p>Species: @Model.IdentifiedSpecies</p> }
-            @if (string.IsNullOrEmpty(Model.IdentifiedFamily) && string.IsNullOrEmpty(Model.IdentifiedGenus
-                                                                                            ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
+            <h2>Pollen Grain #@Model.Grain.Id</h2>
+            @if (!string.IsNullOrEmpty(Model.Grain.Status.ConfirmedFamily))
+            { <p>Family: @Model.Grain.Status.ConfirmedFamily</p> }
+            @if (!string.IsNullOrEmpty(Model.Grain.Status.ConfirmedGenus))
+            { <p>Genus: @Model.Grain.Status.ConfirmedGenus</p> }
+            @if (!string.IsNullOrEmpty(Model.Grain.Status.ConfirmedSpecies))
+            { <p>Species: @Model.Grain.Status.ConfirmedSpecies</p> }
+            @if (string.IsNullOrEmpty(Model.Grain.Status.ConfirmedFamily) && string.IsNullOrEmpty(Model.Grain.Status.ConfirmedGenus) && string.IsNullOrEmpty(Model.Grain.Status.ConfirmedSpecies))
             {
                 <p>Unidentified</p>
             }
@@ -54,7 +54,7 @@
         <ol class="breadcrumb">
             <li><a asp-action="Index" asp-controller="Home">Home</a></li>
             <li><a asp-action="Index" asp-controller="Grain">Pollen Records</a></li>
-            <li class="active">User Grain #@Model.GrainId</li>
+            <li class="active">User Grain #@Model.Grain.Id</li>
         </ol>
     </div>
 </div>
@@ -71,9 +71,9 @@
                 </div>
                 <hr />
                 <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
-                    @foreach (var image in Model.ImageUrls)
+                    @foreach (var image in Model.Grain.Images)
                     {
-                        <a><img src="@image" onclick="return changeImage(this.src);" style="width:auto; height:5em;display:inline-block" /></a>
+                        <a><img src="@image.ImageUrls[0]" onclick="return changeImage(this.src);" style="width:auto; height:5em;display:inline-block" /></a>
                     }
                 </div>
             </div>
@@ -92,7 +92,7 @@
                         <label>Maximum Diameter of Grain</label>
                     </div>
                     <div class="col-md-8">
-                        @Model.ImageScale micrometres
+                        @Model.Grain.MaxDiameter micrometres
                     </div>
                 </div>
                 <div class="row">
@@ -100,11 +100,11 @@
                         <label>Approximate Age</label>
                     </div>
                     <div class="col-md-8">
-                        @if (!Model.Age.HasValue)
+                        @if (!Model.Grain.Age.HasValue)
                         {
                             <span>Unknown</span>
                         } else {
-                            <span>@Model.Age years</span>
+                            <span>@Model.Grain.Age years</span>
                         }
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                         <hr />
                         <label>Location</label>
                         <img style="text-align: left; margin-right: auto; display: block; max-width: 100%" alt="Pollen Location"
-                             src="http://maps.google.com/maps/api/staticmap?center=@Model.Latitude,@Model.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Latitude,@Model.Longitude&amp&amp;amp;sensor=false">
+                             src="http://maps.google.com/maps/api/staticmap?center=@Model.Grain.Latitude,@Model.Grain.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Grain.Latitude,@Model.Grain.Longitude&amp&amp;amp;sensor=false">
                     </div>
                 </div>
                 <hr />
@@ -150,19 +150,19 @@
             <div class="panel-body">
                 @if (User.Identity.IsAuthenticated)
             {
-                    @if (Model.AlreadyIdentifiedByUser)
+                    @if (Model.UserIdentification != null)
                 {
                         <p>You identified this grain as <strong>@Model.UserIdentification.Family @Model.UserIdentification.Genus @Model.UserIdentification.Species</strong> on @Model.UserIdentification.Time</p>
                         <p>Thank you for your identification.</p>
-                        <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
+                        <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {grainId = Model.Grain.Id })" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
                     }
                     else
                     {
                         <h4>Can you identify this grain?</h4>
                         @using (Html.BeginForm("Identify", "Grain", FormMethod.Post, new { @class = "form" }))
                     {
-                            @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
-                            @Html.HiddenFor(m => m.GrainId)
+                            @Html.ValidationSummary()
+                            @Html.HiddenFor(m => m.Grain.Id)
                             <div class="row">
                                 <div class="col-md-12">
                                     <p>
@@ -211,7 +211,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <h4>Current Identifications</h4>
-                        @if (Model.Identifications.Count == 0)
+                        @if (Model.Grain.Status.Identifications.Count == 0)
                         {
                             <p>None</p>
                         }
@@ -226,16 +226,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var id in Model.Identifications)
+                                    @foreach (var id in Model.Grain.Status.Identifications)
                 {
-                    var hello = id.User.UserName == User.Identity.Name ? "myid" : "";
+                    var hello = "";@*id.User.UserName == User.Identity.Name ? "myid" : "";*@
                                         <tr class="@hello">
                                             <td>@id.Rank</td>
-                                            @if (id.Rank == Taxonomy.Family)
+                                            @if (id.Rank == Rank.Family)
                                             {
                                                 <td>@id.Family</td>
                                             }
-                                            else if (id.Rank == Taxonomy.Genus)
+                                            else if (id.Rank == Rank.Genus)
                                             {
                                                 <td>@id.Genus</td>
                                             }

@@ -1,4 +1,5 @@
 using System;
+using GlobalPollenProject.Core.Factories;
 using GlobalPollenProject.Core.Interfaces;
 
 namespace GlobalPollenProject.Core
@@ -7,7 +8,7 @@ namespace GlobalPollenProject.Core
     {
         private Identification() {}
 
-        public Identification(string family, 
+        private Identification(string family, 
             string genus, 
             string species,
             Rank rank,
@@ -19,6 +20,11 @@ namespace GlobalPollenProject.Core
             Species = species;
             Rank = rank;
             User = madeBy;
+        }
+
+        public static IdentificationFactory GetFactory(ITaxonomyBackbone backbone)
+        {
+            return new IdentificationFactory((f,g,s,r,u) => new Identification(g,g,s,r,u), backbone);
         }
 
         public int Id { get; set; }

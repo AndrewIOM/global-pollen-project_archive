@@ -1,4 +1,3 @@
-using System;
 using GlobalPollenProject.Core.Interfaces;
 
 namespace GlobalPollenProject.Core.Services
@@ -14,7 +13,23 @@ namespace GlobalPollenProject.Core.Services
 
         public bool IsValidTaxon(Rank rank, string family, string genus, string species)
         {
-            throw new NotImplementedException();
+            KewBackboneTaxon match;
+            if (rank == Rank.Family)
+            {
+                match = _taxonRepo.FirstOrDefault(m => m.LatinName == family && m.Rank == Rank.Family);
+            }
+            else if (rank == Rank.Genus)
+            {
+                match = _taxonRepo.FirstOrDefault(m => m.LatinName == genus && m.Rank == Rank.Genus && m.ParentTaxa.LatinName == family);
+            } 
+            else
+            {
+                match = _taxonRepo.FirstOrDefault(m => m.LatinName == species && m.Rank == Rank.Species
+                    && m.ParentTaxa.LatinName == genus && m.ParentTaxa.ParentTaxa.LatinName == family);
+            }
+
+            if (match == null) return false;
+            return true;
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
@@ -69,13 +70,15 @@ namespace GlobalPollenProject.WebUI.Controllers
             if (!result.IsValid)
             {
                 ModelState.AddServiceErrors(result.Messages);
-                //return NotFound();
-                return RedirectToAction("Index");
+                return NotFound();
+                //return RedirectToAction("Index");
             }
 
+            var previousId = result.Result.Status.Identifications.FirstOrDefault(m => m.SubmittedBy == User.Identity.Name);
             var viewModel = new IdentificationFormViewModel() 
             {
-                Grain = result.Result
+                Grain = result.Result,
+                UserIdentification = previousId
             };
             return View(viewModel);
         }
@@ -90,6 +93,7 @@ namespace GlobalPollenProject.WebUI.Controllers
                 ModelState.AddServiceErrors(grainResult.Messages);
                 return RedirectToAction("Index");
             }
+            result.Grain = grainResult.Result;
 
             var idResult = await _appService.IdentifyAs(result.Grain.Id, result.Family, result.Genus, result.Species);
             if (!idResult.IsValid)

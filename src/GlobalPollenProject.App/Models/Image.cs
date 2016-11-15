@@ -4,6 +4,7 @@ namespace GlobalPollenProject.App.Models
 {
     public class Image
     {
-        public List<string> ImageUrls { get; private set; }
+        public List<string> ImageUrls { get; set; }
+        public string ThumbnailUrl { get; set; }
     }
 }

@@ -7,18 +7,22 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GlobalPollenProject.App.Services
 {
     public class UserService : IUserService
     {
+        private readonly IUnitOfWork _uow;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly IUserResolverService _userResolver;
 
-        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSender emailSender, IUserResolverService resolver)
+        public UserService(IUnitOfWork uow, UserManager<User> userManager, 
+            SignInManager<User> signInManager, IEmailSender emailSender, IUserResolverService resolver)
         {
+            _uow = uow;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -95,6 +99,7 @@ namespace GlobalPollenProject.App.Services
             var user = await _userManager.FindByNameAsync(name);
             var appUser = new AppUser()
             {
+                Id = user.Id,
                 Title = user.Title,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -149,19 +154,27 @@ namespace GlobalPollenProject.App.Services
 
         public AppServiceResult<List<Club>> ListClubsByScore(int count)
         {
-            throw new NotImplementedException();
-        }
-
-        public AppServiceResult<List<AppUser>> ListUsersByScore(int count)
-        {
-            throw new NotImplementedException();
+            // TODO Clean up method call with repository extension
+            var clubs = _uow.UserRepository.GetAll(1,9999).Results
+                .GroupBy(m => m.Organisation.Name).Select(n => new Club()
+                {
+                    TotalScore = n.Sum(o => o.BountyScore),
+                    Name = n.Key
+                }).OrderByDescending(m => m.TotalScore).Take(count).ToList();
+            return new AppServiceResult<List<Club>>(clubs);
 
             // var topOrgs = orgs.Select(m => new BountyViewModel()
             // {
             //     Bounty = m.Members.Select(n => n.BountyScore).Sum(),
             //     Name = m.Name
             // }).Where(m => m.Bounty > 0).OrderByDescending(m => m.Bounty).Take(10);
+        }
 
+        public AppServiceResult<List<AppUser>> ListUsersByScore(int count)
+        {
+            throw new NotImplementedException();
+            // var topUsers = _uow.UserRepository.GetAll(1,9999).Results
+            //     .OrderByDescending(m => m.BountyScore).Take(count).Select(m => m.ToDto());
             // var topUsers = users.Select(m => new BountyViewModel()
             // {
             //     Bounty = m.BountyScore,
