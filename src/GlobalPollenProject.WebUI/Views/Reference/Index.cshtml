@@ -1,4 +1,4 @@
-﻿@model List<ReferenceCollection>
+﻿@model List<GlobalPollenProject.App.Models.DigitisedCollection>
 
 @{
     ViewBag.Title = "Physical Reference Collections";
@@ -55,7 +55,7 @@
                         <a href="@Url.Action("Collection", new { id = @collection.Id } )">
                             <h4>@collection.Name</h4>
                         </a>
-                        <h6>@collection.Institution, @collection.CountryCode.</h6><h6>@collection.Grains.Count digitised slides</h6>
+                        <h6>@collection.Institution, @collection.CountryCode.</h6><h6>@collection.Slides.Count digitised slides</h6>
                         <p class="region-label">@collection.FocusRegion</p>
                     </li>
                 }

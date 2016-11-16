@@ -33,19 +33,19 @@ namespace GlobalPollenProject.Data.Infrastructure
         public PagedResult<ReferenceCollection> FindBy(Expression<Func<ReferenceCollection, bool>> predicate, int pageNumber, int pageSize)
         {
             return _context.ReferenceCollections.Include(m => m.Slides)
-                .ThenInclude(n => n.Images).Where(predicate).ToPagedList(pageNumber, pageSize);
+                .ThenInclude(n => n.Images).Include(m => m.Owner).Where(predicate).ToPagedList(pageNumber, pageSize);
         }
 
         public ReferenceCollection FirstOrDefault(Expression<Func<ReferenceCollection, bool>> predicate)
         {
             return _context.ReferenceCollections.Include(m => m.Slides)
-                .ThenInclude(n => n.Images).FirstOrDefault(predicate);
+                .ThenInclude(n => n.Images).Include(m => m.Owner).FirstOrDefault(predicate);
         }
 
         public PagedResult<ReferenceCollection> GetAll(int pageNumber, int pageSize)
         {
             return _context.ReferenceCollections.Include(m => m.Slides)
-                .ThenInclude(n => n.Images).ToPagedList(pageNumber, pageSize);
+                .ThenInclude(n => n.Images).Include(m => m.Owner).ToPagedList(pageNumber, pageSize);
         }
     }
 }

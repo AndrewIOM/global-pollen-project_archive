@@ -17,6 +17,8 @@ namespace GlobalPollenProject.Core
         public Rank Rank { get; private set; }
         public string LatinName { get; private set; }
         public string LatinNameAuthorship { get; private set; }
+        public string Reference { get; private set; }
+        public string ReferenceUrl { get; private set; }
 
         public List<string> GetNamesForAllTaxonomicRanks()
         {

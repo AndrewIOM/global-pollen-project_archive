@@ -1,10 +1,11 @@
-﻿@model ReferenceCollection
+﻿@model GlobalPollenProject.App.Models.DigitisedCollection
+@using GlobalPollenProject.App.Models
 @{
     ViewData["Title"] = Model.Name;
     ViewData["Subtitle"] = "Digitised Collection in the Global Pollen Project";
     ViewData["Description"] = "Interested in plant pollen from " + Model.FocusRegion + "? " + Model.Description; 
 
-    var slides = Model.Grains.OrderBy(m => m.Taxon.LatinName).ToList();
+    var slides = Model.Slides.OrderBy(m => m.Taxon.LatinName).ToList();
 }
 
 @section homepageHeader {
@@ -29,13 +30,13 @@
 </div>
 
 @* Alerts *@
-@if (Model.Grains.Count == 0)
+@if (Model.Slides.Count == 0)
 {
     <div class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span> This collection is currently empty</div>
 }
 
     @* Digitisation Features *@
-    @if (Model.User.UserName == User.Identity.Name && User.IsInRole("Digitise"))
+    @if (@*Model.UserId == User.Identity.Name &&*@ User.IsInRole("Digitise"))
     {
         <div class="panel panel-primary">
             <div class="panel-heading"><span class="glyphicon glyphicon-edit"></span> Digitisation Features</div>
@@ -92,7 +93,7 @@
     <div class="panel panel-default">
         <div class="panel-heading"><span class="glyphicon glyphicon-list"></span> Reference Slides</div>
         <div class="panel-body">
-            <p>There are @Model.Grains.Count digitised slides in this collection.</p>
+            <p>There are @Model.Slides.Count digitised slides in this collection.</p>
             <table class="table table-responsive">
                 <thead>
                     <tr>
@@ -108,21 +109,21 @@
                         <tr>
                             @if (grain.Taxon != null)
                             {
-                                if (grain.Taxon.Rank == Taxonomy.Species)
+                                if (grain.Taxon.Rank == Rank.Species)
                                 {
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxa.ParentTaxa.TaxonId })">@grain.Taxon.ParentTaxa.ParentTaxa.LatinName</a></td>
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxa.TaxonId })">@grain.Taxon.ParentTaxa.LatinName</a></td>
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.TaxonId })">@grain.Taxon.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxon.ParentTaxon.Id })">@grain.Taxon.ParentTaxon.ParentTaxon.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxon.Id })">@grain.Taxon.ParentTaxon.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.Id })">@grain.Taxon.LatinName</a></td>
                                 }
-                                else if (grain.Taxon.Rank == Taxonomy.Genus)
+                                else if (grain.Taxon.Rank == Rank.Genus)
                                 {
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxa.TaxonId })">@grain.Taxon.ParentTaxa.LatinName</a></td>
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.TaxonId })">@grain.Taxon.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxon.Id })">@grain.Taxon.ParentTaxon.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.Id })">@grain.Taxon.LatinName</a></td>
                             <td>Unknown</td>
                                 }
                                 else
                                 {
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.TaxonId })">@grain.Taxon.LatinName</a></td>
+                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.Id })">@grain.Taxon.LatinName</a></td>
                             <td>Unknown</td>
                             <td>Unknown</td>
                                 }
@@ -133,10 +134,10 @@
                                 <td>Unable to Retrieve</td>
                             }
                             <td>
-                                <a class="btn btn-default" href="@Url.Action("Grain", "Reference", new { id = @grain.ReferenceGrainId })">View</a>
-                                @if (Model.User.UserName == User.Identity.Name && User.IsInRole("Digitise"))
+                                <a class="btn btn-default" href="@Url.Action("Grain", "Reference", new { id = @grain.Id })">View</a>
+                                @if (@*Model.User.UserName == User.Identity.Name && *@User.IsInRole("Digitise"))
                                 {
-                                    <a role="button" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this slide? This CANNOT be undone.')" href="@Url.Action("DeleteGrain", new { id = grain.ReferenceGrainId } )"><span class="glyphicon glyphicon-trash"></span> Delete</a>
+                                    <a role="button" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this slide? This CANNOT be undone.')" href="@Url.Action("DeleteGrain", new { id = grain.Id } )"><span class="glyphicon glyphicon-trash"></span> Delete</a>
                                 }
                             </td>
                         </tr>

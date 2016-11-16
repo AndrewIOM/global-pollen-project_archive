@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GlobalPollenProject.App.Interfaces;
+using GlobalPollenProject.App.Mapping;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
 using GlobalPollenProject.Core.Interfaces;
@@ -36,17 +37,7 @@ namespace GlobalPollenProject.App.Services
             var result = new AppServiceResult<List<PollenProjectTaxon>>();
 
             var domainResult = _uow.TaxonRepository.GetAll(page, pageSize).Results;
-            var dtoResult = domainResult.Select(m => new PollenProjectTaxon()
-            {
-                Id = m.Id,
-                LatinName = m.LatinName,
-                Rank = (App.Models.Rank) m.Rank,
-                ImageFilename = "",
-                UserSubmissionsConfirmedCount = 1,
-                ReferenceGrainsCount = 1,
-                GbifId = m.GbifId,
-                NeotomaId = m.NeotomaId
-            }).ToList();
+            var dtoResult = domainResult.Select(m => m.ToDto()).ToList();
 
             result.AddResult(dtoResult);
             return result;

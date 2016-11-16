@@ -8,9 +8,10 @@ using GlobalPollenProject.Data.Infrastructure;
 namespace GlobalPollenProject.Infrastructure.Migrations
 {
     [DbContext(typeof(PollenDbContext))]
-    partial class PollenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161116162802_KewBackboneReferences")]
+    partial class KewBackboneReferences
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")

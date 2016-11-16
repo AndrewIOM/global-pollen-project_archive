@@ -1,0 +1,75 @@
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<!--<div class="row">
+    @* Map Pane *@
+    <div class="col-md-12">
+        <div class="panel panel-default" id="analyses-map-pane">
+            <div class="panel-heading">
+                <h3 class="panel-title">My LEFT Analyses</h3>
+            </div>
+            <div class="panel-body" style="padding:0;">
+                <div id='map' style="height:20em;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+-->
+<div class="row">
+    @* Credits Pane *@
+    <div class="col-md-4">
+        <div class="panel panel-default" id="credits-pane">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-piggy-bank"></span> Pollen ID Score</h3>
+            </div>
+            <div class="panel-body" style="text-align:center;">
+                <span id="credit-count" style="font-size:3em;"></span>20<br/><span>Points</span>
+            </div>
+        </div>
+    </div>
+
+    @* Jobs Pane *@
+    <div class="col-md-8">
+        <div class="panel panel-default" id="activity-pane">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-flag"></span> Recent Activity</h3>
+            </div>
+            <div class="panel-body">
+                <!-- ko if: notifications().length > 0-->
+                <table class="table" >
+                    <thead>
+                        <th>Time</th>
+                        <th>Event</th>
+                    </thead>
+                    <tbody data-bind="foreach: notifications">
+                        <tr>
+                            <td data-bind="text: friendlyTime"></td>
+                            <td>
+                                <!-- ko if: linkUrl != null-->
+                                <a data-bind="text: message, attr: {href: linkUrl}"></a>
+                                <!-- /ko -->​
+                                <!-- ko if: linkUrl == null-->
+                                <span data-bind="text: message"></span>
+                                <!-- /ko -->​
+                                </td>
+                        </tr>
+                        <!--<tr>
+                            <td>10 hours ago</td>
+                            <td>You are running low on LEFT credits. You only have enough for 3 more analyses.</td>
+                        </tr>
+                        <tr>
+                            <td>10 hours ago</td>
+                            <td>Your analysis 'Isle of Man' was successfully submitted.</td>
+                        </tr>-->
+                    </tbody>
+                </table>
+                <!-- /ko -->​
+                <!-- ko if: notifications().length == 0-->
+                <span>No recent activity</span>
+                <!-- /ko -->​
+            </div>
+        </div>
+    </div>
+</div>

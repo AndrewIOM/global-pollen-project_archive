@@ -21,7 +21,7 @@ namespace GlobalPollenProject.WebUI.Controllers
 
         public IActionResult Index(int p = 1, int pageSize = 40)
         {
-            var model = _digitiseAppService.GetCollections(p, pageSize).Result;
+            var model = _digitiseAppService.GetCollections(pageSize, p).Result;
             return View(model);
         }
 
@@ -62,20 +62,20 @@ namespace GlobalPollenProject.WebUI.Controllers
         [Authorize(Roles = "Digitise")]
         public IActionResult AddCollection()
         {
-            var model = new DigitisedCollection();
+            var model = new AddDigitisedCollection();
             return View(model);
         }
 
         [HttpPost]
         [Authorize(Roles = "Digitise")]
-        public IActionResult AddCollection(DigitisedCollection result)
+        public async Task<IActionResult> AddCollection(AddDigitisedCollection result)
         {
             if (!ModelState.IsValid)
             {
                 return View(result);
             }
 
-            var serviceResult = _digitiseAppService.CreateCollection(result);
+            var serviceResult = await _digitiseAppService.CreateCollection(result);
             if (!serviceResult.IsValid)
             {
                 ModelState.AddServiceErrors(serviceResult.Messages);

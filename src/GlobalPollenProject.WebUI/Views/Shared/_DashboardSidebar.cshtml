@@ -1,0 +1,13 @@
+@using System.Security.Claims
+
+<nav class="sidenav" role="navigation">
+    <ul>
+    <li><a asp-action="Index" asp-controller="Dashboard"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a><span class="toggle"></li>
+    <li><a asp-action="Index" asp-controller="Notification"><span class="glyphicon glyphicon-flag"></span> Notifications</a></li>
+    <li><a asp-action="UnknownGrains" asp-controller="Dashboard"><span class="glyphicon glyphicon-check"></span> My Submitted Grains</a> <span class="label label-Processing" id="active-job-count" style="display:none">? in progress</span></li>
+    <!-- <<Enable Payments>> Remove style from above a tag. Replace href="#" above with asp-action="Index" asp-controller="Credit" -->
+    @if (User.IsInRole("Admin")) {
+        <li><a asp-action="Index" asp-controller="Admin"><span class="glyphicon glyphicon-cog"></span> Administration</a></li>
+    }
+    </ul>
+</nav>

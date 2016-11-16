@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using GlobalPollenProject.App.Interfaces;
+using GlobalPollenProject.App.Mapping;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
+using GlobalPollenProject.Core;
 using GlobalPollenProject.Core.Interfaces;
 
 namespace GlobalPollenProject.App.Services
@@ -11,10 +15,12 @@ namespace GlobalPollenProject.App.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IExternalDatabaseLinker _databaseLinker;
-        public DigitisationService(IUnitOfWork uow, IExternalDatabaseLinker databaseLinker)
+        private IUserService _userService;
+        public DigitisationService(IUnitOfWork uow, IExternalDatabaseLinker databaseLinker, IUserService userService)
         {
             _uow = uow;
             _databaseLinker = databaseLinker;
+            _userService = userService;
         }
 
         public AppServiceResult AddSlide(int collectionId, AddDigitisedSlide newSlide)
@@ -42,29 +48,38 @@ namespace GlobalPollenProject.App.Services
             // }
         }
 
-        public AppServiceResult CreateCollection(DigitisedCollection newCollection)
-        {
-            throw new NotImplementedException();
-        }
-
         public AppServiceResult<DigitisedCollection> GetCollection(int id)
         {
-            throw new NotImplementedException();
+            var result = new AppServiceResult<DigitisedCollection>();
+            var domainResult = _uow.ReferenceCollectionRepository.FirstOrDefault(m => m.Id == id);
+            if (domainResult == null)
+            {
+                result.AddMessage("", "Specified collection does not exist", AppServiceMessageType.Error);
+                return result;
+            }
+            result.AddResult(domainResult.ToDto());
+            return result;
         }
 
         public AppServiceResult<List<DigitisedCollection>> GetCollections(int pageSize, int page)
         {
-            throw new NotImplementedException();
+            var domainResult = _uow.ReferenceCollectionRepository.GetAll(page, pageSize);
+            var result = new AppServiceResult<List<DigitisedCollection>>(domainResult.Results.Select(m => m.ToDto()).ToList());
+            return result;
         }
 
         public AppServiceResult<DigitisedSlide> GetSlide(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public AppServiceResult HasDigitisationRights()
-        {
-            throw new NotImplementedException();
+            var result = new AppServiceResult<DigitisedSlide>();
+            var domainCollection = _uow.ReferenceCollectionRepository.FirstOrDefault(m => m.Slides.Any(n => n.Id == id));
+            if (domainCollection == null)
+            {
+                result.AddMessage("", "The slide specified does not exist", AppServiceMessageType.Error);
+                return result;
+            }
+            var slide = domainCollection.Slides.First(m => m.Id == id).ToDto();
+            result.AddResult(slide);
+            return result;
         }
 
         public AppServiceResult RemoveSlide(int id)
@@ -97,14 +112,31 @@ namespace GlobalPollenProject.App.Services
             throw new NotImplementedException();
         }
 
-        AppServiceResult<DigitisedCollection> IDigitisationService.CreateCollection(DigitisedCollection newCollection)
+        public AppServiceResult<bool> HasDigitisationRights()
         {
             throw new NotImplementedException();
         }
 
-        AppServiceResult<bool> IDigitisationService.HasDigitisationRights()
+        public async Task<AppServiceResult<DigitisedCollection>> CreateCollection(AddDigitisedCollection newCollection)
         {
-            throw new NotImplementedException();
+            var currentUser = await _userService.GetCurrentUser();
+            var domainUser = currentUser.Result.ToDomainModel();
+
+            var domainCollection = new ReferenceCollection(domainUser);
+            domainCollection.ContactEmail = newCollection.ContactEmail;
+            domainCollection.CountryCode = newCollection.CountryCode;
+            domainCollection.Description = newCollection.Description;
+            domainCollection.FocusRegion = newCollection.FocusRegion;
+            domainCollection.Institution = newCollection.Institution;
+            domainCollection.Name = newCollection.Name;
+            domainCollection.OwnedBy = newCollection.OwnedBy;
+            domainCollection.WebAddress = newCollection.WebAddress;
+
+            _uow.ReferenceCollectionRepository.Add(domainCollection);
+            _uow.SaveChanges();
+
+            var result = new AppServiceResult<DigitisedCollection>(domainCollection.ToDto());
+            return result;
         }
 
         // private string GetName(Taxonomy rank, ReferenceGrain grain)

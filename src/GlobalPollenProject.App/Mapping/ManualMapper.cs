@@ -73,5 +73,49 @@ namespace GlobalPollenProject.App.Mapping
             return result;
         }
 
+        public static DigitisedCollection ToDto(this ReferenceCollection collection)
+        {
+            var result = new DigitisedCollection();
+            result.Id = collection.Id;
+            result.ContactEmail = collection.ContactEmail;
+            result.CountryCode = collection.CountryCode;
+            result.Description = collection.Description;
+            result.FocusRegion = collection.FocusRegion;
+            result.Institution = collection.Institution;
+            result.Name = collection.Name;
+            result.UserId = collection.Owner.Id;
+            result.WebAddress = collection.WebAddress;
+            result.Slides = collection.Slides.Select(m => m.ToDto()).ToList();
+            return result;
+        }
+
+        public static DigitisedSlide ToDto(this ReferenceSlide slide)
+        {
+            var result = new DigitisedSlide();
+            result.BelongsTo = slide.BelongsTo.ToDto();
+            result.Id = slide.Id;
+            result.Images = slide.Images.Select(m => m.ToDto()).ToList();
+            result.MaxDiameter = slide.MaxDiameter;
+            result.Taxon = slide.Taxon.ToDto();
+            result.TimeAdded = slide.TimeAdded;
+            return result;
+        }
+
+        public static PollenProjectTaxon ToDto(this Taxon domainTaxon)
+        {
+            var result = new PollenProjectTaxon()
+            {
+                Id = domainTaxon.Id,
+                LatinName = domainTaxon.LatinName,
+                Rank = (App.Models.Rank) domainTaxon.Rank,
+                ImageFilename = "",
+                UserSubmissionsConfirmedCount = 1,
+                ReferenceGrainsCount = 1,
+                GbifId = domainTaxon.GbifId,
+                NeotomaId = domainTaxon.NeotomaId
+            };
+            return result;
+        }
+
     }
 }

@@ -1,0 +1,29 @@
+@{
+    Layout = "_Layout";
+}
+
+<br/>
+
+@section homepageHeader {
+    <div class="headsection">
+        <div class="container">
+        <h2>@ViewData["Title"]</h2>
+        <h4>@ViewData["SubTitle"]Pollen McPollenFace</h4>
+        </div>
+    </div>
+    <br />
+}
+
+<div class="row">
+    <div class="col-md-3">
+        @await Html.PartialAsync("_DashboardSidebar")
+    </div>
+    <div class="col-md-9">
+        @RenderBody()
+    </div>
+</div>
+
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

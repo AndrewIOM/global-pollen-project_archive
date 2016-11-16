@@ -12,7 +12,7 @@ namespace GlobalPollenProject.Core
             this.Owner = createdBy;
         }
 
-        private readonly IList<ReferenceSlide> _slides = new List<ReferenceSlide>();
+        private readonly List<ReferenceSlide> _slides = new List<ReferenceSlide>();
 
         public int Id { get; set; }
 
@@ -25,9 +25,9 @@ namespace GlobalPollenProject.Core
         public string ContactEmail { get; set; }
 
         // More complex
-        public string CountryCode { get; private set; }
-        public string FocusRegion { get; private set; }
-        public List<ReferenceSlide> Slides { get; private set; }
+        public string CountryCode { get; set; }
+        public string FocusRegion { get; set; }
+        public List<ReferenceSlide> Slides { get { return _slides; } }
         public User Owner { get; private set; }
 
         public bool IsDeleted { get; set; }

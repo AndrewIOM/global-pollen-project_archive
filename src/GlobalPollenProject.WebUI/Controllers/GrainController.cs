@@ -107,13 +107,6 @@ namespace GlobalPollenProject.WebUI.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> MyGrains(int pageSize = 40, int page = 1)
-        {
-            var grains = await _appService.GetMyUnknownGrains(pageSize, page);
-            return View(grains.Result);
-        }
-
-        [Authorize]
         public async Task<IActionResult> RemoveIdentification(int grainId)
         {
             var result = await _appService.RemoveIdentification(grainId);

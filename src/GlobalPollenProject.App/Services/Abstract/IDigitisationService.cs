@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
 
@@ -7,7 +8,7 @@ namespace GlobalPollenProject.App.Interfaces
     public interface IDigitisationService : IAppService
     {
         // Reference Collections
-        AppServiceResult<DigitisedCollection> CreateCollection (DigitisedCollection newCollection);
+        Task<AppServiceResult<DigitisedCollection>> CreateCollection (AddDigitisedCollection newCollection);
         AppServiceResult UpdateCollectionMetadata (DigitisedCollection collection);
         AppServiceResult<List<DigitisedCollection>> GetCollections(int pageSize, int page);
         AppServiceResult<DigitisedCollection> GetCollection(int id);
