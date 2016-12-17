@@ -29,11 +29,10 @@ namespace GlobalPollenProject.App.Services
             _userService = userService;
         }
 
-        public async Task<AppServiceResult<List<UnknownGrain>>> GetMyUnknownGrains(int pageSize, int page)
+        public async Task<PagedAppServiceResult<UnknownGrain>> GetMyUnknownGrains(int pageSize, int page)
         {
-            var result = new AppServiceResult<List<UnknownGrain>>();
+            var result = new PagedAppServiceResult<UnknownGrain>();
 
-            // Service Validation
             var user = await _userService.GetCurrentUser();
             if (!user.IsValid)
             {
@@ -41,10 +40,9 @@ namespace GlobalPollenProject.App.Services
                 return result;
             }
 
-            // Fetch and convert to DTO
             var domainResult = _uow.UnknownGrainRepository.FindBy(m => m.SubmittedBy.Id == user.Result.Id, page, pageSize);
             var dtoResult = domainResult.Results.Select(m => m.ToDto(_nameAlgorithm)).ToList();
-            result.AddResult(dtoResult);
+            result.AddResult(dtoResult, domainResult.CurrentPage, domainResult.PageCount, domainResult.PageSize);
             return result;
         }
 
@@ -64,13 +62,12 @@ namespace GlobalPollenProject.App.Services
             return result;
         }
 
-        public AppServiceResult<List<UnknownGrain>> GetUnknownGrains(GrainSearchFilter criteria, int pageSize, int page)
+        public PagedAppServiceResult<UnknownGrain> GetUnknownGrains(GrainSearchFilter criteria, int pageSize, int page)
         {
-            // TODO Implement criteria
-
+            // TODO Remove this hack and implement criteria properly
             var domainResult = _uow.UnknownGrainRepository.GetAll(page, pageSize);
             var dtoResult = domainResult.Results.Select(m => m.ToDto(_nameAlgorithm)).ToList();
-            var result = new AppServiceResult<List<UnknownGrain>>(dtoResult);
+            var result = new PagedAppServiceResult<UnknownGrain>(dtoResult, domainResult.CurrentPage, domainResult.PageCount, domainResult.PageSize);
             return result;
         }
 

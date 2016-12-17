@@ -1,0 +1,10 @@
+@model GlobalPollenProject.App.Models.AddClub
+
+<h2>Create a new Club</h2>
+
+<form asp-action="Create" asp-controller="Organisation" asp-anti-forgery="true">
+
+@Html.EditorForModel()
+
+<input type="submit" class="btn btn-primary" />
+</form>

@@ -3,6 +3,8 @@ namespace GlobalPollenProject.App.Models
 {
     public class GrainSearchFilter
     {
+        public int TaxonId { get; set; }
+
         //Sort
         public GrainSort Sort { get; set; }
         public bool Descending { get; set; }

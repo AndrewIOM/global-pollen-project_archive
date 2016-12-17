@@ -32,11 +32,11 @@ namespace GlobalPollenProject.Data.Infrastructure
 
         public PagedResult<Taxon> FindBy(Expression<Func<Taxon, bool>> predicate, int pageNumber, int pageSize)
         {
-            var result = _context.Taxa.Include(m => m.ParentTaxon).ThenInclude(n => n.ParentTaxon)
-                .Include(m => m.ChildTaxa).ThenInclude(n => n.UnknownGrains).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(n => n.ReferenceSlides).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(x => x.ChildTaxa).ThenInclude(n => n.UnknownGrains).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(x => x.ChildTaxa).ThenInclude(n => n.ReferenceSlides).ThenInclude(o => o.Images)
+            var result = _context.Taxa
+                .Include(m => m.ParentTaxon)
+                    .ThenInclude(n => n.ParentTaxon)
+                .Include(m => m.ChildTaxa)
+                    .ThenInclude(x => x.ChildTaxa)
                 .Where(predicate)
                 .ToPagedList(pageNumber, pageSize);
             return result;
@@ -44,22 +44,22 @@ namespace GlobalPollenProject.Data.Infrastructure
 
         public Taxon FirstOrDefault(Expression<Func<Taxon, bool>> predicate)
         {
-            var result = _context.Taxa.Include(m => m.ParentTaxon).ThenInclude(n => n.ParentTaxon)
-                .Include(m => m.ChildTaxa).ThenInclude(n => n.UnknownGrains).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(n => n.ReferenceSlides).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(x => x.ChildTaxa).ThenInclude(n => n.UnknownGrains).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(x => x.ChildTaxa).ThenInclude(n => n.ReferenceSlides).ThenInclude(o => o.Images)
+            var result = _context.Taxa
+                .Include(m => m.ParentTaxon)
+                    .ThenInclude(n => n.ParentTaxon)
+                .Include(m => m.ChildTaxa)
+                    .ThenInclude(x => x.ChildTaxa)
                 .FirstOrDefault(predicate);
             return result;
         }
 
         public PagedResult<Taxon> GetAll(int pageNumber, int pageSize)
         {
-            var result = _context.Taxa.Include(m => m.ParentTaxon).ThenInclude(n => n.ParentTaxon)
-                .Include(m => m.ChildTaxa).ThenInclude(n => n.UnknownGrains).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(n => n.ReferenceSlides).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(x => x.ChildTaxa).ThenInclude(n => n.UnknownGrains).ThenInclude(o => o.Images)
-                .Include(m => m.ChildTaxa).ThenInclude(x => x.ChildTaxa).ThenInclude(n => n.ReferenceSlides).ThenInclude(o => o.Images)
+            var result = _context.Taxa
+                .Include(m => m.ParentTaxon)
+                    .ThenInclude(n => n.ParentTaxon)
+                .Include(m => m.ChildTaxa)
+                    .ThenInclude(x => x.ChildTaxa)
                 .ToPagedList(pageNumber, pageSize);
             return result;
         }

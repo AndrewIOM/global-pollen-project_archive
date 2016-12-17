@@ -1,7 +1,10 @@
-﻿@model ReferenceGrain
+﻿@model GlobalPollenProject.App.Models.DigitisedSlide
 
 @{
-    ViewData["Title"] = Model.Taxon.LatinName + " - " + Model.Collection.Name;
+    var name = Model.Family.LatinName;
+    if (!string.IsNullOrEmpty(Model.Genus.LatinName)) {name = Model.Genus.LatinName;}
+    if (!string.IsNullOrEmpty(Model.Species.LatinName)) {name = Model.Species.LatinName;}
+    ViewData["Title"] = name + " - " + Model.Collection.Name;
     ViewData["Subtitle"] = "Digitised Reference Slide in the collection: " + Model.Collection.Name;
 
     var promo = "";
@@ -89,7 +92,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">Traits</div>
             <div class="panel-body">
-                    <span id="traits-size-mean">@Model.MaxSizeNanoMetres</span><span style="font-size:0.75em;line-height:1em;">Maximum Diameter</span>
+                    <span id="traits-size-mean">@Model.MaxSize</span><span style="font-size:0.75em;line-height:1em;">Maximum Diameter</span>
             </div>
         </div>
     </div>

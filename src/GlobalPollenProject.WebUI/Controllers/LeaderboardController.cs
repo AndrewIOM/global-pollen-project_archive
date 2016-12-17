@@ -21,9 +21,9 @@ namespace GlobalPollenProject.WebUI.Controllers
             var topClubs = _service.ListClubsByScore(10).Result;
             var model = new LeaderboardViewModel()
             {
-                TopIndividuals = topUsers.Select(m => new ScoreViewModel() 
-                    { Name = m.FirstName.Substring(0,1) + ". " + m.LastName, Score = m.ScoreTotal  }).ToList(),
-                TopOrgs = topClubs.Select(m => new ScoreViewModel() { Name = m.Name, Score = m.TotalScore }).ToList()
+                TopIndividuals = topUsers.Select(m => new UserScoreViewModel() 
+                    { Name = m.FirstName.Substring(0,1) + ". " + m.LastName, Score = m.ScoreTotal, UserName = m.Email  }).ToList(),
+                TopOrgs = topClubs.Select(m => new ClubScoreViewModel() { Id = m.Id, Name = m.Name, Score = m.TotalScore }).ToList()
             };
             return View(model);
         }

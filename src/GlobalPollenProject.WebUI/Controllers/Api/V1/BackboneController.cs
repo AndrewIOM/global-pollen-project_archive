@@ -7,7 +7,8 @@ using GlobalPollenProject.App.Models;
 
 namespace GlobalPollenProject.WebUI.Controllers.Api.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion( "1.0" )]
+    [Route( "api/v{version:apiVersion}/[controller]" )]
     public class BackboneController : Controller
     {
         private readonly ITaxonomyService _taxonomyAppService;
@@ -19,11 +20,11 @@ namespace GlobalPollenProject.WebUI.Controllers.Api.V1
         }
 
         [HttpGet("suggest")]
-        public IEnumerable<BackboneTaxon> Suggest(string q, Rank? rank, int p, int pageSize, string parent = null)
+        public IEnumerable<BackboneTaxon> Suggest(string q, Rank? rank, string parent = null)
         {
             if (string.IsNullOrEmpty(q)) return null;
 
-            string cacheKey = "PlantListSuggest-" + q + rank + parent;
+            string cacheKey = "BackboneSuggest-" + q + rank + parent;
             List<BackboneTaxon> backboneResult;
 
             if (_memoryCache.TryGetValue(cacheKey, out backboneResult))
@@ -33,13 +34,38 @@ namespace GlobalPollenProject.WebUI.Controllers.Api.V1
             } else
             {
                 //Retrieve new result and cache
-                backboneResult = _taxonomyAppService.SearchBackbone(q, p, pageSize, rank, parent).Result;
+                backboneResult = _taxonomyAppService.SearchBackbone(q, rank, parent).Result;
                 _memoryCache.Set(cacheKey, backboneResult,
                     new MemoryCacheEntryOptions()
                  .SetAbsoluteExpiration(TimeSpan.FromDays(30)));
             }
 
             return backboneResult;
+        }
+
+        [HttpGet("match")]
+        public IActionResult Match(string family, string genus = null, string species = null)
+        {
+            if (string.IsNullOrEmpty(family)) return BadRequest();
+
+            string cacheKey = "BackboneMatch-" + family + "-" + genus + "-" + species;
+            BackboneTaxon backboneResult;
+
+            if (_memoryCache.TryGetValue(cacheKey, out backboneResult))
+            {
+                //Use cached copy of result
+                backboneResult = _memoryCache.Get(cacheKey) as BackboneTaxon;
+            } else
+            {
+                //Retrieve new result and cache
+                backboneResult = _taxonomyAppService.GetStatus(family, genus, species).Result;
+
+                _memoryCache.Set(cacheKey, backboneResult,
+                    new MemoryCacheEntryOptions()
+                 .SetAbsoluteExpiration(TimeSpan.FromDays(30)));
+            }
+
+            return Ok(backboneResult);
         }
 
     }

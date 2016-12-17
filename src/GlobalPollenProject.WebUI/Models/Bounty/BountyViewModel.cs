@@ -2,15 +2,23 @@
 
 namespace GlobalPollenProject.WebUI.Models
 {
-    public class ScoreViewModel
+    public class UserScoreViewModel
     {
+        public string UserName { get; set; }
+        public string Name { get; set; }
+        public double Score { get; set; }
+    }
+
+    public class ClubScoreViewModel
+    {
+        public int Id { get; set; }
         public string Name { get; set; }
         public double Score { get; set; }
     }
 
     public class LeaderboardViewModel
     {
-        public List<ScoreViewModel> TopOrgs { get; set; }
-        public List<ScoreViewModel> TopIndividuals { get; set; }
+        public List<ClubScoreViewModel> TopOrgs { get; set; }
+        public List<UserScoreViewModel> TopIndividuals { get; set; }
     }
 }

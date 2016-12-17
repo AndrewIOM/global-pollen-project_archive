@@ -1,4 +1,4 @@
-﻿@model Im.Acm.Pollen.ViewModels.BountyChartsViewModel
+﻿@model GlobalPollenProject.WebUI.Models.LeaderboardViewModel
 
 @{
     ViewBag.Title = "Leaderboard";
@@ -39,8 +39,8 @@
                     @foreach (var org in Model.TopOrgs)
             {
                         <tr>
-                            <td>@org.Name</td>
-                            <td>@org.Bounty</td>
+                            <td><a href="@Url.Action("View", "Organisation", new {id = org.Id})">@org.Name</a></td>
+                            <td>@org.Score</td>
                         </tr>
                     }
                 </table>
@@ -63,8 +63,8 @@
                     @foreach (var user in Model.TopIndividuals)
             {
                         <tr>
-                            <td>@user.Name</td>
-                            <td>@user.Bounty</td>
+                            <td><a href="@Url.Action("View", "Profile", new {username = user.UserName})">@user.Name</a></td>
+                            <td>@user.Score</td>
                         </tr>
                     }
                 </table>

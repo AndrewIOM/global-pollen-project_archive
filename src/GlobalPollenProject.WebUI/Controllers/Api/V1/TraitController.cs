@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using GlobalPollenProject.App.Interfaces;
+using GlobalPollenProject.WebUI.Extensions;
 
 namespace GlobalPollenProject.WebUI.Controllers.Api.V1
 {
@@ -6,18 +8,23 @@ namespace GlobalPollenProject.WebUI.Controllers.Api.V1
     [Route( "api/v{version:apiVersion}/[controller]" )]
     public class TraitController : Controller
     {
-        // private readonly ITraitService _service;
+        private readonly ITaxonomyService _service;
 
-        // public TraitController(ITraitService service) {
-        //     _service = service;
-        // }
+        public TraitController(ITaxonomyService service) {
+            _service = service;
+        }
 
-        // public IActionResult Size(int taxonId) {
+        [HttpGet("size")]
+        public IActionResult Size(int taxonId) {
 
-        //     var sizes = _service.ListSizes(taxonId);
-        //     if (sizes == null) return BadRequest();
-        //     return Ok(sizes);
-        // }
+            var sizes = _service.GetSizeProfile(taxonId);
+            if (!sizes.IsValid)
+            {
+                ModelState.AddServiceErrors(sizes.Messages);
+                return BadRequest(ModelState);
+            }
+            return Ok(sizes.Result);
+        }
 
     }
 

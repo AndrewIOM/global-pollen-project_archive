@@ -28,7 +28,7 @@ namespace GlobalPollenProject.WebUI.Controllers
             var model = new FilteredGrainsViewModel()
             {
                 Filters = filter,
-                Grains = grains.Result
+                Grains = grains.Result.ToList()
             };
 
             return View(model);

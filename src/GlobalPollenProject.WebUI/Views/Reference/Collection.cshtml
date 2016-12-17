@@ -5,7 +5,7 @@
     ViewData["Subtitle"] = "Digitised Collection in the Global Pollen Project";
     ViewData["Description"] = "Interested in plant pollen from " + Model.FocusRegion + "? " + Model.Description; 
 
-    var slides = Model.Slides.OrderBy(m => m.Taxon.LatinName).ToList();
+    var slides = Model.Slides.OrderBy(m => m.Genus).ToList();
 }
 
 @section homepageHeader {
@@ -44,7 +44,7 @@
                 <p>You own this collection.</p>
                 <div class="row">
                     <div class="col-md-12">
-                        <a role="button" class="btn btn-default" href="@Url.Action("AddGrain", "Reference", new { id = Model.Id })"><span class="glyphicon glyphicon-plus"></span> Add Reference Slide</a>
+                        <a role="button" class="btn btn-default" href="@Url.Action("AddSlide", "Reference", new { id = Model.Id })"><span class="glyphicon glyphicon-plus"></span> Add Reference Slide</a>
                         @*<a role="button" class="btn btn-default" href="@Url.Action("BatchAddGrains", "Reference", new { id = Model.Id })"><span class="glyphicon glyphicon-plus"></span> Batch Add (PREVIEW)</a>*@
                         <a role="button" class="btn btn-default" href="@Url.Action("EditCollection", "Reference", new { id = Model.Id })">Edit Metadata</a>
                         @*<a role="button" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this collection? This CANNOT be undone.')" href="@Url.Action("DeleteCollection", new { id = Model.Id } )"><span class="glyphicon glyphicon-trash"></span> Delete Collection</a>*@
@@ -107,32 +107,9 @@
                     @foreach (var grain in slides)
                     {
                         <tr>
-                            @if (grain.Taxon != null)
-                            {
-                                if (grain.Taxon.Rank == Rank.Species)
-                                {
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxon.ParentTaxon.Id })">@grain.Taxon.ParentTaxon.ParentTaxon.LatinName</a></td>
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxon.Id })">@grain.Taxon.ParentTaxon.LatinName</a></td>
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.Id })">@grain.Taxon.LatinName</a></td>
-                                }
-                                else if (grain.Taxon.Rank == Rank.Genus)
-                                {
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.ParentTaxon.Id })">@grain.Taxon.ParentTaxon.LatinName</a></td>
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.Id })">@grain.Taxon.LatinName</a></td>
-                            <td>Unknown</td>
-                                }
-                                else
-                                {
-                            <td><a href="@Url.Action("View", "Taxon", new { id = grain.Taxon.Id })">@grain.Taxon.LatinName</a></td>
-                            <td>Unknown</td>
-                            <td>Unknown</td>
-                                }
-                            } else
-                            {
-                                <td>Unable to Retrieve</td>
-                                <td>Unable to Retrieve</td>
-                                <td>Unable to Retrieve</td>
-                            }
+                        <td><a href="@Url.Action("View", "Taxon", new { id = 1 })">@grain.Family</a></td>
+                        <td><a href="@Url.Action("View", "Taxon", new { id = 1 })">@grain.Genus</a></td>
+                        <td><a href="@Url.Action("View", "Taxon", new { id = 1 })">@grain.Species</a></td>
                             <td>
                                 <a class="btn btn-default" href="@Url.Action("Grain", "Reference", new { id = @grain.Id })">View</a>
                                 @if (@*Model.User.UserName == User.Identity.Name && *@User.IsInRole("Digitise"))

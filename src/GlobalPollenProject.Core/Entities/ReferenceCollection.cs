@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using GlobalPollenProject.Core.Interfaces;
 
 namespace GlobalPollenProject.Core
@@ -18,7 +17,6 @@ namespace GlobalPollenProject.Core
 
         // Simple
         public string Name { get; set; }
-        public string Institution { get; set; }
         public string OwnedBy { get; set; }
         public string Description { get; set; }
         public string WebAddress { get; set; }
@@ -28,23 +26,35 @@ namespace GlobalPollenProject.Core
         public string CountryCode { get; set; }
         public string FocusRegion { get; set; }
         public List<ReferenceSlide> Slides { get { return _slides; } }
+
+        // Associated Organisation
+        public int InstitutionId { get; private set; }
+        public Organisation Institution { get; private set; }
+
+        public void AssignOrganisation(Organisation org)
+        {
+            Institution = org;
+            InstitutionId = org.Id;
+        }
+
+        // GPP 'Owner' of the collection
         public User Owner { get; private set; }
+
+        public void ChangeOwner(User newOwner)
+        {
+            Owner = newOwner;
+        }
 
         public bool IsDeleted { get; set; }
 
-        internal void AddSlide(ReferenceSlide slide)
+        public void AddSlide(ReferenceSlide slide)
         {
             _slides.Add(slide);
         }
 
-        internal void RemoveSlide(ReferenceSlide slide)
+        public void RemoveSlide(ReferenceSlide slide)
         {
             _slides.Remove(slide);
-        }
-
-        internal List<ReferenceSlide> ListSlides()
-        {
-            return _slides.ToList();
         }
 
     }

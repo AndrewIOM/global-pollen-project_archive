@@ -13,8 +13,10 @@ namespace GlobalPollenProject.Core
 
         public int Id { get; set; }
         public bool IsDeleted { get; set; }
-        public virtual List<User> Members { get; set; }
+        public List<User> Members { get; set; }
+
         public string Name { get; set; }
-        
+        public string Description { get; set; }
+        public string WebUrl { get; set; }
     }
 }

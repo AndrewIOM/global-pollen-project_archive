@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
@@ -23,9 +22,9 @@ namespace GlobalPollenProject.App.Interfaces
         AppServiceResult<UnknownGrain> GetUnknownGrain(int grainId);
 
         /// Identify an unknown grain as the currently logged in user.
-        Task<AppServiceResult<List<UnknownGrain>>> GetMyUnknownGrains(int pageSize, int page);
+        Task<PagedAppServiceResult<UnknownGrain>> GetMyUnknownGrains(int pageSize, int page);
 
         /// List out unidentified grains
-        AppServiceResult<List<UnknownGrain>> GetUnknownGrains(GrainSearchFilter criteria, int pageSize, int page);
+        PagedAppServiceResult<UnknownGrain> GetUnknownGrains(GrainSearchFilter criteria, int pageSize, int page);
     }
 }

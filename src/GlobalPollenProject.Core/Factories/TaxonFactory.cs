@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using GlobalPollenProject.Core.Interfaces;
 
 namespace GlobalPollenProject.Core.Factories
@@ -21,7 +22,7 @@ namespace GlobalPollenProject.Core.Factories
         // TODO Factory should not return existing records
         // Should fill in parent information though
 
-        public Taxon TryCreateTaxon(string family, string genus, string species)
+        public async Task<Taxon> TryCreateTaxon(string family, string genus, string species)
         {
             Taxon familyTaxon = null;
             Taxon genusTaxon = null;
@@ -39,7 +40,7 @@ namespace GlobalPollenProject.Core.Factories
             if (familyTaxon == null && _backbone.IsValidTaxon(Rank.Family, family, null, null))
             {
                 familyTaxon = _taxonCreate(family, Rank.Family, null);
-                familyTaxon.LinkToExternalDatabases(_linker);
+                await familyTaxon.LinkToExternalDatabases(_linker);
                 _taxonRepo.Add(familyTaxon);
             }
 
@@ -53,7 +54,7 @@ namespace GlobalPollenProject.Core.Factories
                 if (genusTaxon == null && _backbone.IsValidTaxon(Rank.Genus, family, genus, null))
                 {
                     genusTaxon = _taxonCreate(genus, Rank.Genus, familyTaxon);
-                    genusTaxon.LinkToExternalDatabases(_linker);
+                    await genusTaxon.LinkToExternalDatabases(_linker);
                     _taxonRepo.Add(genusTaxon);
                 }
             }
@@ -64,10 +65,10 @@ namespace GlobalPollenProject.Core.Factories
                 species = FirstCharToLower(species);
                 speciesTaxon = _taxonRepo.FirstOrDefault(m => m.LatinName == genus + " " + species && m.Rank == Rank.Species
                     && m.ParentTaxon.LatinName == genus);
-                if (speciesTaxon == null && _backbone.IsValidTaxon(Rank.Species, family, genus, species))
+                if (speciesTaxon == null && _backbone.IsValidTaxon(Rank.Species, family, genus, genus + " " + species))
                 {
                     speciesTaxon = _taxonCreate(genus + " " + species, Rank.Species, genusTaxon);
-                    speciesTaxon.LinkToExternalDatabases(_linker);
+                    await speciesTaxon.LinkToExternalDatabases(_linker);
                     _taxonRepo.Add(speciesTaxon);
                 }
             }

@@ -19,7 +19,7 @@ namespace GlobalPollenProject.Core
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        public virtual Organisation Organisation { get; private set; }
+        public Organisation Organisation { get; private set; }
 
         public double BountyScore { get; set; }
         public bool RequestedDigitisationRights { get; private set; }

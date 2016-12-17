@@ -19,6 +19,7 @@ namespace GlobalPollenProject.Data.Infrastructure
         private IRepository<Taxon> _taxonRepo = null;
         private IRepository<ReferenceCollection> _refCollectionRepo = null;
         private IRepository<KewBackboneTaxon> _backboneRepo = null;
+        private ISlideRepository _slideRepo = null;
 
         public ITaxonomyBackbone BackboneCoreService
         {
@@ -66,6 +67,15 @@ namespace GlobalPollenProject.Data.Infrastructure
             {
                 if (_refCollectionRepo == null) _refCollectionRepo = new ReferenceCollectionRepository(_context);
                 return _refCollectionRepo;
+            }
+        }
+
+        public ISlideRepository ReferenceSlideRepository
+        {
+            get
+            {
+                if (_slideRepo == null) _slideRepo = new SlideRepository(_context);
+                return _slideRepo;
             }
         }
 

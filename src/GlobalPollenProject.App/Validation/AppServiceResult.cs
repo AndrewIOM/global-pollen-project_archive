@@ -2,6 +2,28 @@ using System.Collections.Generic;
 
 namespace GlobalPollenProject.App.Validation
 {
+    public class PagedAppServiceResult<TModel> : AppServiceResultBase
+    {
+        public PagedAppServiceResult() { }
+        public PagedAppServiceResult(List<TModel> result, int currentPage, int pageCount, int pageSize)
+        {
+            AddResult(result, currentPage, pageCount, pageSize);
+        }
+
+        public IList<TModel> Result { get; private set; }
+        public int CurrentPage { get; private set; }
+        public int PageCount { get; private set; }
+        public int PageSize { get; private set; }
+
+        public void AddResult(List<TModel> result, int currentPage, int pageCount, int pageSize)
+        {
+            Result = result;
+            CurrentPage = currentPage;
+            PageCount = pageCount;
+            PageSize = pageSize;
+        }
+    }
+
     public class AppServiceResult<TModel> : AppServiceResultBase
     {
         public AppServiceResult() { }

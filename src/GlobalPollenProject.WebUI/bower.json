@@ -9,6 +9,7 @@
     "hammer.js": "2.0.4",
     "jquery": "2.1.4",
     "jquery-validation": "1.11.1",
+    "knockout": "3.4.1",
     "jquery-validation-unobtrusive": "3.2.2",
     "leaflet": "0.7.7",
     "nouislider": "8.2.1",

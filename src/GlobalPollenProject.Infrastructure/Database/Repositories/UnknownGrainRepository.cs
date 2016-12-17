@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GlobalPollenProject.Data.Infrastructure
 {
-    public class UnknownGrainRepository : IRepository<UnknownGrain>
+    public class UnknownGrainRepository : IUnknownGrainRepository
     {
         private PollenDbContext _context;
         public UnknownGrainRepository(PollenDbContext context)
@@ -54,6 +54,11 @@ namespace GlobalPollenProject.Data.Infrastructure
                 .Include(m => m.Identifications).ThenInclude(n => n.User)
                 .Include(m => m.Images)
                 .ToPagedList(pageNumber, pageSize);
+        }
+
+        public PagedResult<ReferenceSlide> GetGrainsIdentifiedAs(int taxonId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

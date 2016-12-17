@@ -6,11 +6,13 @@ namespace GlobalPollenProject.App.Interfaces
 {
     public interface ITaxonomyService : IAppService
     {
-        AppServiceResult AssessValidity (string family, string genus, string species);
-        AppServiceResult<List<BackboneTaxon>> SearchBackbone (string searchTerm, int pageSize, int page, Rank? rank, string parent = null);
+        AppServiceResult<BackboneTaxon> GetStatus (string family, string genus, string species);
+        AppServiceResult<List<BackboneTaxon>> SearchBackbone (string searchTerm, Rank? rank, string parent = null);
         
-        AppServiceResult<List<PollenProjectTaxon>> ListGPPTaxa(int pageSize, int page);
+        PagedAppServiceResult<PollenProjectTaxon> ListGPPTaxa(TaxonFilter filter, int pageSize, int page);
         AppServiceResult<PollenProjectTaxon> GetTaxon(int id);
-        AppServiceResult<List<PollenProjectTaxon>> GetTaxa(string latinName, int pageSize, int page, Rank? rank, string parent = null);
+        PagedAppServiceResult<PollenProjectTaxon> GetTaxa(string latinName, int pageSize, int page, Rank? rank, string parent = null);
+
+        AppServiceResult<SizeProfile> GetSizeProfile(int taxonId);
     }
 }

@@ -154,7 +154,7 @@ function uploadFile(button) {
         }
     }
 
-    ajax.open("POST", "/Reference/AddGrain/" + collectionId);
+    ajax.open("POST", "/Reference/AddSlide/" + collectionId);
     console.log(formData);
     ajax.send(formData);
 }

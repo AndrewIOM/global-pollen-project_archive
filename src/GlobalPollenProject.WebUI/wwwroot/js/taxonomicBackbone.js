@@ -24,7 +24,7 @@ function updateList(entryBox, rank) {
     if (entryBox.value == "") {
 
     } else {
-        var request = "/api/plantlist/suggest?rank=" + rank + "&q=" + query;
+        var request = "/api/v1/backbone/suggest?rank=" + rank + "&q=" + query;
         ajaxHelper(request, 'GET', 'json').done(function (data) {
             var list = document.getElementById(rank + 'List');
             $('#' + rank + 'List').css('display', 'block');

@@ -89,9 +89,9 @@
         <div class="col-md-6">
             <div class="taxon-list-item">
                 <div class="img-container">
-                    @if (!string.IsNullOrEmpty(taxon.ImageFilename))
+                    @if (!string.IsNullOrEmpty(taxon.KeyImageUrl))
                     {
-                        <img src="@taxon.ImageFilename" alt="Pollen from the plant @taxon.Rank @taxon.LatinName." />
+                        <img src="@taxon.KeyImageUrl" alt="Pollen from the plant @taxon.Rank @taxon.LatinName." />
                     }
                 </div>
                 <div class="taxon-details">

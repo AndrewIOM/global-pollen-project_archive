@@ -3,6 +3,7 @@ using GlobalPollenProject.App.Interfaces;
 using GlobalPollenProject.App.Models;
 using System.Linq;
 using GlobalPollenProject.WebUI.Models.Taxon;
+using GlobalPollenProject.WebUI.Extensions;
 
 namespace GlobalPollenProject.WebUI.Controllers
 {
@@ -10,23 +11,31 @@ namespace GlobalPollenProject.WebUI.Controllers
     public class TaxonController : Controller
     {
         private readonly ITaxonomyService _taxonService;
-        public TaxonController(ITaxonomyService taxonService)
+        private readonly IIdentificationService _idService;
+        private readonly IDigitisationService _digitiseService;
+        public TaxonController(ITaxonomyService taxonService, IIdentificationService idService, IDigitisationService digitiseService)
         {
             _taxonService = taxonService;
+            _idService = idService;
+            _digitiseService = digitiseService;
         }
 
         public IActionResult Index(Rank? rank, int p = 1, int s = 40, string query = null)
         {
             Rank r = rank.HasValue ? rank.Value : Rank.Genus;
-            var serviceResult = _taxonService.ListGPPTaxa(s, p).Result;
+            var filter = new TaxonFilter();
+            filter.Rank = r;
+            filter.LatinName = query;
+
+            var serviceResult = _taxonService.ListGPPTaxa(filter, s, p);
             var model = new TaxonIndexViewModel()
             {
-                CurrentPage = p,
-                NumberOfPages = 10,
-                PageSize = s,
+                CurrentPage = serviceResult.CurrentPage,
+                NumberOfPages = serviceResult.PageCount,
+                PageSize = serviceResult.PageSize,
                 Query = query,
                 Rank = r,
-                Taxa = serviceResult
+                Taxa = serviceResult.Result.ToList()
             };
             return View(model);
         }
@@ -35,8 +44,36 @@ namespace GlobalPollenProject.WebUI.Controllers
         {
             if (id == 0) return BadRequest();
             var taxon = _taxonService.GetTaxon(id);
-            if (taxon == null) return NotFound();
-            return View("View", taxon);
+            if (!taxon.IsValid) return NotFound();
+            return View("View", taxon.Result);
+        }
+
+        public IActionResult ListReferenceMaterial(int p, int pageSize, int taxonId)
+        {
+            var criteria = new SlideSearchCriteria()
+            {
+                TaxonId = taxonId
+            };
+            var appResult = _digitiseService.GetSlides(pageSize, p, criteria);
+            if (!appResult.IsValid)
+            {
+                ModelState.AddServiceErrors(appResult.Messages);
+                return BadRequest(ModelState);
+            }
+            return Ok(appResult.Result);
+        }
+
+        public IActionResult ListUserSubmissions(int p, int pageSize, int taxonId)
+        {
+            var criteria = new GrainSearchFilter();
+            criteria.TaxonId = taxonId;
+            var appResult = _idService.GetUnknownGrains(criteria, pageSize, p);
+            if (!appResult.IsValid)
+            {
+                ModelState.AddServiceErrors(appResult.Messages);
+                return BadRequest(ModelState);
+            }
+            return Ok(appResult.Result);
         }
 
         public IActionResult Suggest(string searchTerm, int p = 1, int s = 40)

@@ -1,18 +1,25 @@
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GlobalPollenProject.Core.Factories;
 using GlobalPollenProject.Core.Interfaces;
+using GlobalPollenProject.Core.State;
 
 namespace GlobalPollenProject.Core
 {
     public class Taxon : IEntity
     {
-        private Taxon() {}
+        private TaxonState _state;
+        internal Taxon(TaxonState state)
+        {
+            _state = state;
+        }
+
         private Taxon(string latinName, Rank rank, Taxon parentTaxon) 
         {
-            this.LatinName = latinName;
-            this.Rank = rank;
-            this.ParentTaxon = parentTaxon;
+            _state = new TaxonState();
+            _state.LatinName = latinName;
+            _state.Rank = rank;
+            _state.ParentTaxon = parentTaxon;
         }
 
         public static TaxonFactory GetFactory(IRepository<Taxon> taxonRepo, ITaxonomyBackbone backbone, IExternalDatabaseLinker linker)
@@ -23,20 +30,13 @@ namespace GlobalPollenProject.Core
         public int Id { get; set; }
         public string LatinName { get; private set; }
         public Rank Rank {get; private set; } 
-
         public int GbifId { get; private set; }
         public int NeotomaId { get; private set; }
-
         public List<Taxon> ChildTaxa { get; private set; }
         public Taxon ParentTaxon { get; private set; }
-
-        public List<UnknownGrain> UnknownGrains { get; private set; }
-
-        public List<ReferenceSlide> ReferenceSlides { get; private set; }
-
         public bool IsDeleted { get; set; }
 
-        internal void LinkToExternalDatabases(IExternalDatabaseLinker linker)
+        internal async Task LinkToExternalDatabases(IExternalDatabaseLinker linker)
         {
             string family = "";
             string genus = "";
@@ -55,8 +55,8 @@ namespace GlobalPollenProject.Core
                 family = this.ParentTaxon.ParentTaxon.LatinName;
             }
 
-            this.GbifId = linker.GetGlobalBiodiversityInformationFacilityId(family, genus, species);
-            this.NeotomaId = linker.GetNeotomaDatabaseId(family, genus, species);
+            this.GbifId = await linker.GetGlobalBiodiversityInformationFacilityId(family, genus, species);
+            this.NeotomaId = await linker.GetNeotomaDatabaseId(family, genus, species);
         }
 
         /// <summary>
@@ -65,9 +65,12 @@ namespace GlobalPollenProject.Core
         /// <returns>A dictionary of ranks and their latin names.</returns>
         public Dictionary<Rank,string> GetHeirarchy()
         {
-            throw new NotImplementedException();
+            var heirarchy = new Dictionary<Rank,string>();
+            heirarchy.Add(Rank.Family, "Some family");
+            heirarchy.Add(Rank.Genus, "A cool genus");
+            heirarchy.Add(Rank.Species, "puffinus puffinus");
+            return heirarchy;
         }
-
     }
 
     public enum Rank

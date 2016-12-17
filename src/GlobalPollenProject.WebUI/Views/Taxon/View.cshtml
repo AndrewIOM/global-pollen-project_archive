@@ -1,12 +1,9 @@
-﻿@model Im.Acm.Pollen.ViewModels.Taxon.TaxonDetailViewModel
+﻿@model GlobalPollenProject.App.Models.PollenProjectTaxon
+@using GlobalPollenProject.App.Models
 
 @{
     ViewBag.Title = Model.LatinName + " (" + Model.Rank + ") - Reference Collection";
     ViewData["Description"] = "View reference images for " + Model.LatinName + " pollen, alongside botanical description and geographic range. Use our collections for your pollen identification today.";
-    var queryString = "";
-    if (Model.Rank != Im.Acm.Pollen.Models.Taxonomy.Family) {
-        queryString = "&parent=" + Model.ParentTaxon.LatinName;
-    }
 }
 
 @section pageContentStyles {
@@ -22,7 +19,7 @@
         <div class="container">
             <div class="col-md-12">
                 <h2>@Model.LatinName</h2>
-                <p><strong>@Model.Rank</strong> in the Global Pollen Project Reference Collection</p>
+                <p><strong>@Model.Rank</strong></p>
             </div>
         </div>
     </div>
@@ -59,31 +56,25 @@
                 <div class="row">
                     <div class="col-md-12">
                         <label>Digitised Reference Slides</label>
-                        <ul class="grain-grid columns-8">
-                                @foreach (var grain in Model.ReferenceGrains.OrderBy(m => m.Taxon.LatinName)) {
-                                <li>
-                                    <a href="/Reference/Grain/@grain.ReferenceGrainId">
-                                        <div class="img-container">
-                                            <img src="@grain.Images.First().FileNameThumbnail" />
-                                        </div>
-                                    </a>
-                                </li>
-
-                                }
+                        <ul class="grain-grid columns-8" data-bind="foreach: referenceSlides">
+                            <li>
+                                <a data-bind="attr: {href: '@Url.Action("Slide", "Reference")/' + $data.id}">
+                                    <div class="img-container">
+                                        <img data-bind="attr: { src: $data.images[0].thumbnailUrl }"/>
+                                    </div>
+                                </a>
+                            </li>
                         </ul>
                         <hr />
                         <label>User Submissions</label>
-                        <ul class="grain-grid columns-8">
-                            @foreach (var grain in Model.SubmittedGrains)
-                            {
-                                <li>
-                                    <a href="/Grain/Identify/@grain.Id">
-                                        <div class="img-container">
-                                            <img src="@grain.Images.First().FileNameThumbnail" />
-                                        </div>
-                                    </a>
-                                </li>
-                            }
+                        <ul class="grain-grid columns-8" data-bind="foreach: unknownGrains">
+                            <li>
+                                <a data-bind="attr: {href: '@Url.Action("Identify", "Grain")/' + $data.id}">
+                                    <div class="img-container">
+                                        <img data-bind="attr: { src: $data.thumbnailUri }"/>
+                                    </div>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -151,20 +142,20 @@
                         @if (Model.ParentTaxon != null)
                         {
                             <dl class="dl-horizontal">
-                                @if (Model.Rank == Taxonomy.Genus) {
+                                @if (Model.Rank == Rank.Genus) {
                                     <dt>Family</dt>
                                 } else {
                                     <dt>Genus</dt>
                                 }
                                 <dd>
-                                    <ul class="list-inline"><li><a href="/Taxon/View/@Model.ParentTaxon.TaxonId">@Model.ParentTaxon.LatinName</a></li></ul>
+                                    <ul class="list-inline"><li><a href="/Taxon/View/@Model.ParentTaxon.Id">@Model.ParentTaxon.LatinName</a></li></ul>
                                 </dd>
                             </dl>
                         }
                         @if (Model.SubTaxa.Count > 0)
                         {
                             <dl class="dl-horizontal">
-                                @if (Model.Rank == Taxonomy.Family) {
+                                @if (Model.Rank == Rank.Family) {
                                     <dt>Genera</dt>
                                 } else {
                                     <dt>Species</dt>
@@ -173,7 +164,7 @@
                                     <ul class="list-inline">
                                         @foreach (var subTaxon in Model.SubTaxa.OrderBy(m => m.LatinName))
                                         {
-                                            <li><a href="/Taxon/View/@subTaxon.TaxonId">@subTaxon.LatinName</a></li>
+                                            <li><a href="/Taxon/View/@subTaxon.Id">@subTaxon.LatinName</a></li>
                                         }
                                     </ul>
                                 </dd>
@@ -184,11 +175,11 @@
             </div>
         </div>
 
-        <div class="panel panel-green">
+        <div class="panel panel-green" data-bind="with: taxonomicStatus">
             <div class="panel-heading">Taxonomic Status <a id="view-at-gbif" class="btn btn-default btn-sm" style="float:right" href="http://www.theplantlist.org/tpl1.1/search?q=@Model.LatinName" target="_blank">View on The Plant List</a></div>
             <div class="panel-body">
-                <p id="taxon-status"></p>
-                <!--<p><strong>Reference: </strong> This is some reference...</p>-->
+                <span style="font-size: 2em;display: block;" data-bind="text: $data.status">Loading...</span>
+                <p data-bind="text: $data.reference"></p>
             </div>
         </div>
 
@@ -207,6 +198,17 @@
     <script src="~/lib/wnumb/wNumb.js"></script>
     <script src="~/js/taxon/PastDistribution.js"></script>
 
+    @* Knockout View Model *@
+    <script src="~/lib/knockout/dist/knockout.js"></script>
+    <script src="/js/taxon/taxonview.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var vm = new TaxonViewModel(@Model.Id, '@Model.Family', '@Model.Genus', '@Model.Species');
+        vm.loadData();
+        ko.applyBindings(vm);
+    });
+    </script>
+
     @* Pollen Traits *@
     <script type="text/javascript">
         $(document).ready(function() {
@@ -214,8 +216,8 @@
             var container = $('#traits-size');
             var mean = $('#traits-size-mean');
 
-            d3.json("/Statistics/GrainSize?taxonId=@Model.Id", function (error, values) {
-
+            d3.json("/api/v1/Trait/Size?taxonId=@Model.Id", function (error, result) {
+                var values = result.measurements;
                 if (values.length == 0) {
                 mean.text('Unknown');
                 } else {
@@ -288,24 +290,6 @@ svg.append("g")
 }
             });
         });
-    </script>
-
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $.ajax({
-            url: "/api/PlantList/Suggest?q=@Model.LatinName&rank=@Model.Rank@queryString",
-            context: document.body
-            }).done(function(data) {
-                console.log(data);
-                var status = "unconfirmed";
-                if (data.length > 0) {
-                    if (data[0].status == 0) {
-                        status = "confirmed"
-                    }
-                }
-                $('#taxon-status').text('This taxon is ' + status + ' in our taoxnomic backbone (The Plant List 2014).');
-        });
-    });
     </script>
 }
 

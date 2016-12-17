@@ -10,6 +10,7 @@ namespace GlobalPollenProject.Core.Interfaces
         IRepository<User> UserRepository { get; }
         IRepository<Taxon> TaxonRepository { get; }
         IRepository<ReferenceCollection> ReferenceCollectionRepository { get; }
+        ISlideRepository ReferenceSlideRepository { get; }
 
         void SaveChanges();
     }

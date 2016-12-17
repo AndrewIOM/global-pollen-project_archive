@@ -6,8 +6,8 @@ using GlobalPollenProject.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Linq;
+using GlobalPollenProject.App.Mapping;
 
 namespace GlobalPollenProject.App.Services
 {
@@ -137,7 +137,7 @@ namespace GlobalPollenProject.App.Services
             throw new NotImplementedException();
         }
 
-        public AppServiceResult CreateClub()
+        public AppServiceResult<Club> CreateClub(AddClub club)
         {
             throw new NotImplementedException();
         }
@@ -152,34 +152,26 @@ namespace GlobalPollenProject.App.Services
             throw new NotImplementedException();
         }
 
-        public AppServiceResult<List<Club>> ListClubsByScore(int count)
+        public PagedAppServiceResult<Club> ListClubsByScore(int count)
         {
             // TODO Clean up method call with repository extension
-            var clubs = _uow.UserRepository.GetAll(1,9999).Results
-                .GroupBy(m => m.Organisation.Name).Select(n => new Club()
+            var domainResult = _uow.UserRepository.GetAll(1,9999);
+            var dtoResult = domainResult.Results
+                .Where(m => m.Organisation != null)
+                .GroupBy(m => m.Organisation).Select(n => new Club()
                 {
                     TotalScore = n.Sum(o => o.BountyScore),
-                    Name = n.Key
+                    Name = n.Key.Name,
+                    Id = n.Key.Id
                 }).OrderByDescending(m => m.TotalScore).Take(count).ToList();
-            return new AppServiceResult<List<Club>>(clubs);
-
-            // var topOrgs = orgs.Select(m => new BountyViewModel()
-            // {
-            //     Bounty = m.Members.Select(n => n.BountyScore).Sum(),
-            //     Name = m.Name
-            // }).Where(m => m.Bounty > 0).OrderByDescending(m => m.Bounty).Take(10);
+            return new PagedAppServiceResult<Club>(dtoResult, domainResult.CurrentPage, domainResult.PageCount, domainResult.PageSize);
         }
 
-        public AppServiceResult<List<AppUser>> ListUsersByScore(int count)
+        public PagedAppServiceResult<AppUser> ListUsersByScore(int count)
         {
-            throw new NotImplementedException();
-            // var topUsers = _uow.UserRepository.GetAll(1,9999).Results
-            //     .OrderByDescending(m => m.BountyScore).Take(count).Select(m => m.ToDto());
-            // var topUsers = users.Select(m => new BountyViewModel()
-            // {
-            //     Bounty = m.BountyScore,
-            //     Name = m.FirstName.Substring(0, 1) + ". " + m.LastName
-            // }).Where(m => m.Bounty > 0).OrderByDescending(m => m.Bounty).Take(5);
+            var dtoResult = _uow.UserRepository.GetAll(1,9999).Results
+                .OrderByDescending(m => m.BountyScore).Take(count).Select(m => m.ToDto()).ToList();
+            return new PagedAppServiceResult<AppUser>(dtoResult, 1, 1, 9999);
         }
 
         public AppServiceResult UpdatePublicProfile(AppUser user, PublicProfile profile)
@@ -203,6 +195,31 @@ namespace GlobalPollenProject.App.Services
                 return result;
             }
             result.AddResult(dtoUser.Result);
+            return result;
+        }
+
+        public async Task<AppServiceResult<PublicProfile>> GetPublicProfile(string userName)
+        {
+            var result = new AppServiceResult<PublicProfile>();
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                result.AddMessage("", "User does not exist", AppServiceMessageType.Error);
+                return result;
+            }
+
+            var publicProfile = new PublicProfile()
+            {
+                Title = user.Title,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+            if (user.Organisation != null)
+            {
+                publicProfile.Organisation = user.Organisation.Name;
+            }
+
+            result.AddResult(publicProfile);
             return result;
         }
     }

@@ -1,5 +1,3 @@
-
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.App.Validation;
@@ -12,17 +10,18 @@ namespace GlobalPollenProject.App.Interfaces
         Task<AppServiceResult> Logout();
         Task<AppServiceResult<AppUser>> RegisterForAccount(NewAppUser user);
         Task<AppServiceResult<AppUser>> GetCurrentUser();
+        Task<AppServiceResult<PublicProfile>> GetPublicProfile(string userId);
         Task<AppServiceResult> RequestValidationEmail(string userId, string code);
         AppServiceResult RequestPasswordReset(AppUser user);
         AppServiceResult UpdatePublicProfile(AppUser user, PublicProfile profile); // TODO remove PublicProfile, use AppUser instead?
         
         // Clubs
-        AppServiceResult CreateClub();
+        AppServiceResult<Club> CreateClub(AddClub club);
         AppServiceResult JoinClub();
         AppServiceResult LeaveClub();
-        AppServiceResult<List<Club>> ListClubsByScore(int count);
+        PagedAppServiceResult<Club> ListClubsByScore(int count);
 
         // General User Tasks
-        AppServiceResult<List<AppUser>> ListUsersByScore(int count);
+        PagedAppServiceResult<AppUser> ListUsersByScore(int count);
     }
 }

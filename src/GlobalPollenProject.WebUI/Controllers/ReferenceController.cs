@@ -31,7 +31,7 @@ namespace GlobalPollenProject.WebUI.Controllers
             return View(model);
         }
 
-        public IActionResult Grain(int id)
+        public IActionResult Slide(int id)
         {
             if (id == 0)
             {
@@ -156,7 +156,7 @@ namespace GlobalPollenProject.WebUI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var serviceResult = _digitiseAppService.AddSlide(collection.Id, result);
+            var serviceResult = await _digitiseAppService.AddSlide(collection.Id, result);
             if (!serviceResult.IsValid)
             {
                 ModelState.AddServiceErrors(serviceResult.Messages);

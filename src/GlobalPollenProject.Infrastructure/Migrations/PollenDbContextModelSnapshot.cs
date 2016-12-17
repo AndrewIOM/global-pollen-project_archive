@@ -177,7 +177,7 @@ namespace GlobalPollenProject.Infrastructure.Migrations
 
                     b.HasIndex("TaxonId");
 
-                    b.ToTable("ReferenceSlide");
+                    b.ToTable("Slides");
                 });
 
             modelBuilder.Entity("GlobalPollenProject.Core.Taxon", b =>
@@ -223,15 +223,11 @@ namespace GlobalPollenProject.Infrastructure.Migrations
 
                     b.Property<string>("SubmittedById");
 
-                    b.Property<int?>("TaxonId");
-
                     b.Property<DateTime>("TimeAdded");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SubmittedById");
-
-                    b.HasIndex("TaxonId");
 
                     b.ToTable("UnknownGrains");
                 });
@@ -451,7 +447,7 @@ namespace GlobalPollenProject.Infrastructure.Migrations
                         .HasForeignKey("BelongsToId");
 
                     b.HasOne("GlobalPollenProject.Core.Taxon", "Taxon")
-                        .WithMany("ReferenceSlides")
+                        .WithMany()
                         .HasForeignKey("TaxonId");
                 });
 
@@ -467,10 +463,6 @@ namespace GlobalPollenProject.Infrastructure.Migrations
                     b.HasOne("GlobalPollenProject.Core.User", "SubmittedBy")
                         .WithMany()
                         .HasForeignKey("SubmittedById");
-
-                    b.HasOne("GlobalPollenProject.Core.Taxon")
-                        .WithMany("UnknownGrains")
-                        .HasForeignKey("TaxonId");
                 });
 
             modelBuilder.Entity("GlobalPollenProject.Core.User", b =>

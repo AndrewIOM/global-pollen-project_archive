@@ -10,15 +10,16 @@ namespace GlobalPollenProject.Core
         public ReferenceSlide(
             ReferenceCollection belongsTo, 
             List<Image> images,
-            Taxon identifiedAs)
+            Taxon identifiedAs,
+            double maxDiameter)
         {
             this.BelongsTo = belongsTo;
             TimeAdded = DateTime.UtcNow;
             this.Images = images;
             this.Taxon = identifiedAs;
+            this.MaxDiameter = maxDiameter;
         }
 
-        // Core Invariants
         public int Id { get; set; }
         public DateTime TimeAdded { get; private set; }
         public Taxon Taxon { get; private set; }
@@ -27,5 +28,10 @@ namespace GlobalPollenProject.Core
         public ReferenceCollection BelongsTo { get; private set; }
 
         public bool IsDeleted { get; set; }
+
+        public string GetReference()
+        {
+            return "Some fake reference.";
+        }
     }
 }
