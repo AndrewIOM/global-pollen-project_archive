@@ -325,7 +325,7 @@ namespace Im.Acm.Pollen.Controllers
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                 await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                   "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                                        "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">" + callbackUrl + "</a>. You can also copy and paste the address into your browser.");
                 return View("ForgotPasswordConfirmation");
             }
 

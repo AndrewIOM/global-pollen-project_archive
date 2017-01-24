@@ -92,15 +92,18 @@ function uploadFile(button) {
     }
 
     //Focus Images
-    var focusImageFrames = document.getElementById('focusImages').getElementsByTagName('img');
     var focusImages = [];
-    var focusImageCount = 0;
-    for (var i = 0; i < focusImageFrames.length; i += 5) {
-        formData.append('FocusImages[' + focusImageCount + '].FocusLowUrl', focusImageFrames[i].src);
-        formData.append('FocusImages[' + focusImageCount + '].FocusMedLowUrl', focusImageFrames[i+1].src);
-        formData.append('FocusImages[' + focusImageCount + '].FocusMedUrl', focusImageFrames[i+2].src);
-        formData.append('FocusImages[' + focusImageCount + '].FocusMedHighUrl', focusImageFrames[i+3].src);
-        formData.append('FocusImages[' + focusImageCount + '].FocusHighUrl', focusImageFrames[i+4].src);
+    var focusImageElements = document.getElementById('focusImages').getElementsByTagName('li');
+    console.log('Focus image count = ' + focusImageElements.length);
+
+    for (var i = 0; i < focusImageElements.length; i++) {
+        
+        var imageFrames = focusImageElements[i].getElementsByTagName('img');
+        formData.append('FocusImages[' + i + '].FocusLowUrl', imageFrames[0].src);
+        formData.append('FocusImages[' + i + '].FocusMedLowUrl', imageFrames[1].src);
+        formData.append('FocusImages[' + i + '].FocusMedUrl', imageFrames[2].src);
+        formData.append('FocusImages[' + i + '].FocusMedHighUrl', imageFrames[3].src);
+        formData.append('FocusImages[' + i + '].FocusHighUrl', imageFrames[4].src);
     }
 
     //Progress Bar
@@ -111,6 +114,8 @@ function uploadFile(button) {
     submit1.className = 'btn btn-primary disabled';
     submit2.className = 'btn btn-primary disabled';
     progDiv.setAttribute('style', 'display:""');
+
+    console.log(formData);
 
     //Ajax Request
     ajax = new XMLHttpRequest();
