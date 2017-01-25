@@ -1,0 +1,353 @@
+﻿@model GlobalPollenProject.WebUI.ViewModels.IdentificationViewModel
+
+@{
+    ViewBag.Title = "Grain Details #" + Model.GrainId;
+
+    var timeSinceAdd = DateTime.Now - Model.TimeAdded;
+    var success = (string)ViewData["Success"];
+    var fullyIdentified = string.IsNullOrEmpty(Model.IdentifiedFamily) ||
+        string.IsNullOrEmpty(Model.IdentifiedGenus) || string.IsNullOrEmpty(Model.IdentifiedSpecies) ? false : true;
+
+    if (fullyIdentified)
+    {
+        ViewData["Description"] = "A user-submitted grain identified as " + Model.IdentifiedFamily + " " + Model.IdentifiedGenus + " " + Model.IdentifiedSpecies;
+    }
+    else
+    {
+        ViewData["Description"] = "Unidentified pollen grain submitted " + (DateTime.Now - Model.TimeAdded).Days + " days ago. Submit an identification now.";
+    }
+}
+
+@section scripts {
+    <script type="text/javascript" src="~/js/Grain/ImageZoomer.js"></script>
+}
+
+@* Header *@
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>Pollen Grain #@Model.GrainId</h2>
+            @if (!string.IsNullOrEmpty(Model.IdentifiedFamily))
+            { <p>Family: @Model.IdentifiedFamily</p> }
+            @if (!string.IsNullOrEmpty(Model.IdentifiedGenus))
+            { <p>Genus: @Model.IdentifiedGenus</p> }
+            @if (!string.IsNullOrEmpty(Model.IdentifiedSpecies))
+            { <p>Species: @Model.IdentifiedSpecies</p> }
+            @if (string.IsNullOrEmpty(Model.IdentifiedFamily) && string.IsNullOrEmpty(Model.IdentifiedGenus
+                                                                                            ) && string.IsNullOrEmpty(Model.IdentifiedSpecies))
+            {
+                <p>Unidentified</p>
+            }
+            @if (!string.IsNullOrEmpty(success))
+            {
+                <div class="alert alert-success" role="alert">
+                    <p><span class="glyphicon glyphicon-saved"></span> @success</p>
+                </div>
+            }
+        </div>
+    </div>
+    <br />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+            <li><a asp-action="Index" asp-controller="Grain">Pollen Records</a></li>
+            <li class="active">User Grain #@Model.GrainId</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+
+    @* Left Column: Photos *@
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading"><span class="glyphicon glyphicon-picture"></span> Images</div>
+            <div class="panel-body">
+                <div class="zoom-canvas-container">
+                    <canvas id="displayCanvas" class="zoom-canvas"></canvas>
+                </div>
+                <hr />
+                <div id="zoom-thumbs" class="image-thumbnails" style="height:5em;overflow:hidden;">
+                    @foreach (var image in Model.ImageUrls)
+                    {
+                        <a><img src="@image" onclick="return changeImage(this.src);" style="width:auto; height:5em;display:inline-block" /></a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Details Pane *@
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-leaf"></span> Details
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Maximum Diameter of Grain</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.ImageScale micrometres
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Approximate Age</label>
+                    </div>
+                    <div class="col-md-8">
+                        @if (!Model.Age.HasValue)
+                        {
+                            <span>Unknown</span>
+                        } else {
+                            <span>@Model.Age years</span>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr />
+                        <label>Location</label>
+                        <img style="text-align: left; margin-right: auto; display: block; max-width: 100%" alt="Pollen Location"
+                             src="http://maps.google.com/maps/api/staticmap?center=@Model.Latitude,@Model.Longitude&amp;zoom=5&amp;size=560x200&amp;maptype=terrain&amp;markers=color:blue%7Clabel:Pollen%7C @Model.Latitude,@Model.Longitude&amp&amp;amp;sensor=false">
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Date Added</label>
+                    </div>
+                    <div class="col-md-8">
+                        @if (timeSinceAdd.Days == 0)
+                        {
+                            <p>Added today.</p>
+                        }
+                        else
+                        {
+                            <p>Added @timeSinceAdd.Days.ToString() days ago.</p>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Share</label>
+                    </div>
+                    <div class="col-md-8">
+                        <a href="https://twitter.com/intent/tweet?button_hashtag=GlobalPollenProject&text=Help%20identify%20this%20pollen%20grain!" class="twitter-hashtag-button" url="location.href">Tweet this grain</a>
+                        <script>!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https'; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = p + '://platform.twitter.com/widgets.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'twitter-wjs');</script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Identification Panel *@
+        <div class="panel panel-primary">
+            <div class="panel-heading"><span class="glyphicon glyphicon-search"></span> Identify</div>
+            <div class="panel-body">
+                @if (User.Identity.IsAuthenticated)
+            {
+                    @if (Model.AlreadyIdentifiedByUser)
+                {
+                        <p>You identified this grain as <strong>@Model.UserIdentification.Family @Model.UserIdentification.Genus @Model.UserIdentification.Species</strong> on @Model.UserIdentification.Time</p>
+                        <p>Thank you for your identification.</p>
+                        <a class="btn btn-danger" href="@Url.Action("RemoveIdentification", new {identificationId = Model.UserIdentification.IdentificationId })" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash"></span> Remove Your Identification</a>
+                    }
+                    else
+                    {
+                        <h4>Can you identify this grain?</h4>
+                        @using (Html.BeginForm("Identify", "Grain", FormMethod.Post, new { @class = "form" }))
+                    {
+                            @Html.HiddenFor(m => m.AlreadyIdentifiedByUser)
+                            @Html.HiddenFor(m => m.GrainId)
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>
+                                        I can identify this grain to <select asp-for="TaxonomicResolution" class="form-control input-sm inline-dropdown" id="TaxonomicResolution">
+                                            <option value="3">Species</option>
+                                            <option selected="selected" value="2">Genus</option>
+                                            <option value="1">Family</option>
+                                        </select> level.
+                                    </p>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Family" class="form-control" autocomplete="off" onblur="disable('Family');" onkeyup="suggest(this, 'Family');" placeholder="Family" />
+                                    <ul class="dropdown-menu autocomplete" id="FamilyList" style="display:none"></ul>
+                                    <span asp-validation-for="Family" class="text-danger"></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Genus" class="form-control" autocomplete="off" onblur="disable('Genus');" onkeyup="suggest(this, 'Genus');" placeholder="Genus" />
+                                    <ul class="dropdown-menu autocomplete" id="GenusList" style="display:none"></ul>
+                                    <span asp-validation-for="Genus" class="text-danger"></span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" asp-for="Species" class="form-control" autocomplete="off" onblur="disable('Species');" onkeyup="suggest(this, 'Species');" placeholder="Species" />
+                                    <ul class="dropdown-menu autocomplete" id="SpeciesList" style="display:none"></ul>
+                                    <span asp-validation-for="Species" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input class="btn btn-primary" type="submit" name="Submit" id="Submit" value="Submit" />
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+                else
+                {
+                    <p><a asp-controller="Account" asp-action="Login">Log in</a> to identify this grain</p>
+                }
+
+                @* Current IDs *@
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Current Identifications</h4>
+                        @if (Model.Identifications.Count == 0)
+                        {
+                            <p>None</p>
+                        }
+                        else
+                        {
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Identified as</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var id in Model.Identifications)
+                {
+                    var hello = id.User.UserName == User.Identity.Name ? "myid" : "";
+                                        <tr class="@hello">
+                                            <td>@id.Rank</td>
+                                            @if (id.Rank == Taxonomy.Family)
+                                            {
+                                                <td>@id.Family</td>
+                                            }
+                                            else if (id.Rank == Taxonomy.Genus)
+                                            {
+                                                <td>@id.Genus</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@id.Genus @id.Species</td>
+                                            }
+                                            <td>@((DateTime.Now - id.Time).Days) days ago.</td>
+                                        </tr>
+
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @Html.Partial("_Disqus")
+    </div>
+</div>
+
+@* Autocomplete Suggest for Taxon Names (GBIF) *@
+@*<script type="text/javascript">
+    function updateList(entryBox, rank) {
+        var query = '';
+        if (rank == 'Species') {
+            //Combine genus and species for canonical name
+            var genus = document.getElementById('Genus').value;
+            query += genus + " ";
+        }
+        query += entryBox.value;
+        var request = "http://api.gbif.org/v1/species/suggest?kingdom=Plantae&rank=" + rank + "&q=" + query;
+        ajaxHelper(request, 'GET', 'jsonp').done(function (data) {
+            var list = document.getElementById(rank + 'List');
+            $('#' + rank + 'List').css('display', 'block');
+            list.innerHTML = "";
+            for (var i = 0; i < data.length; i++) {
+                if (i > 10) continue;
+                var option = document.createElement('li');
+                var link = document.createElement('a');
+                option.appendChild(link);
+                link.innerHTML = data[i].canonicalName;
+
+                var matchCount = 0;
+                for (var j = 0; j < data.length; j++) {
+                    if (data[j].canonicalName == data[i].canonicalName) {
+                        matchCount++;
+                    }
+                };
+
+                if (rank == 'Species' || rank == 'Genus') {
+                    var familySpan = document.createElement('span');
+                    familySpan.innerHTML = (data[i].family + ',' + matchCount);
+                    familySpan.className = 'family-name';
+                    link.appendChild(familySpan);
+                }
+                link.addEventListener('click', function (e) {
+                    var name = this.innerHTML.split('<')[0];
+                    if (rank == 'Species') {
+                        var species = name.split(' ')[1];
+                        $('#' + rank).val(species);
+                    } else {
+                        $('#' + rank).val(name);
+                    }
+
+                    //Autofill family name
+                    var family = this.getElementsByClassName("family-name")[0].innerHTML.split(',')[0];
+                    var matchCount = this.getElementsByClassName("family-name")[0].innerHTML.split(',')[1];
+                    if (matchCount == 1) {
+                        $('#Family').val(family);
+                    };
+                    $('#' + rank + 'List').fadeOut();
+                });
+                list.appendChild(option);
+            }
+            $('.family-name').css('display', 'none');
+        });
+    }
+
+    function disable(rank) {
+        var element;
+        if (rank == 'Family') element = 'FamilyList';
+        if (rank == 'Genus') element = 'GenusList';
+        if (rank == 'Species') element = 'SpeciesList';
+
+        setTimeout(func, 100);
+        function func() {
+            $('#' + element).fadeOut();
+        }
+    }
+
+    //Base Functions
+    function ajaxHelper(uri, method, dataType, data) {
+        //self.error('');
+        return $.ajax({
+            type: method,
+            url: uri,
+            dataType: dataType,
+            contentType: 'application/json',
+            data: data ? JSON.stringify(data) : null
+        }).fail(function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+            //self.error(errorThrown);
+        });
+    }
+</script>*@
+
+<script src="~/js/taxonomicBackbone.js"></script>

@@ -1,0 +1,64 @@
+﻿@model List<GlobalPollenProject.WebUI.ViewModels.SimpleGrainViewModel>
+@{
+    ViewBag.Title = "My Grains";
+}
+
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2>My Grains</h2>
+            <p>Intro blurb about viewing the status of your submissions and editing them.</p>
+        </div>
+    </div>
+    <br />
+}
+
+<p>Here you can review the current identification status of your submitted grains.</p>
+<p>
+    We currently do not allow editing of grains once submitted, as identifications may have been made based on the information given.
+    If you made a mistake, please delete your grain and resubmit.
+</p>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>First Image</td>
+                    <td>Time Added</td>
+                    <td>Current Status</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var status = !string.IsNullOrEmpty(item.ConfirmedFamily) ||
+                    !string.IsNullOrEmpty(item.ConfirmedGenus) ||
+                    !string.IsNullOrEmpty(item.ConfirmedSpecies) ? "Identified" : "Unidentified";
+
+                    <tr>
+                        <td>@item.Id</td>
+                        <td><img src="@item.ImageLocation" style="width:5em;height:auto" /></td>
+                        <td>@item.TimeAdded</td>
+                        <td>
+                            @status
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Identify", "Grain", new { id = @item.Id })" class="btn btn-default">View</a>
+                            @if (status == "Identified")
+                            {
+                                <a class="btn btn-danger disabled" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                            }
+                            @if (status == "Unidentified")
+                            {
+                                <a href="@Url.Action("Delete", "Grain", new { id = @item.Id })" class="btn btn-danger" onclick="return confirm('Are you sure?')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

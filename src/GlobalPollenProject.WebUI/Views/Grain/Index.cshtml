@@ -1,0 +1,67 @@
+﻿@model GlobalPollenProject.WebUI.ViewModels.Grain.FilteredGrainsViewModel
+
+@{
+    ViewBag.Title = "Identify Pollen Grains";
+}
+
+@section homepageHeader {
+    <div class="addgrain-section headsection">
+        <div class="container">
+            <h2><span class="glyphicon glyphicon-search"></span> @ViewBag.Title</h2>
+            <p>These pollen grains remain unidentified. Can you help?</p>
+        </div>
+    </div>
+    <br />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+            <li class="active">Pollen Records</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        @* No Unidentified Grains *@
+        @if (Model.Grains.Count == 0)
+        {
+            <p>There are currently no unidentified pollen grains!</p>
+            <p>Why not submit one?</p>
+        }
+        @* Grid of Grains *@
+        else
+        {
+            <ul class="grain-grid columns-4">
+                @foreach (var grain in Model.Grains)
+                {
+                    <li>
+                        <a href="@Url.Action("Identify", "Grain", new { id = @grain.Id } )">
+                            <div class="img-container">
+                                <img src="@grain.ThumbnailLocation" />
+                                <div class="ribbon"><span>@grain.Bounty</span></div>
+                                <span class="Latitude">@grain.Latitude</span>
+                                <span class="Longitude">@grain.Longitude</span>
+                            </div>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    @* Filters and Sorting *@
+    <div class="col-md-4">
+        @Html.Partial("_Filters", Model.Filters)
+    </div>
+</div>
+
+@* Mapping *@
+<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.css">
+@section scripts {
+    <script type="text/javascript" src="~/lib/leaflet/dist/leaflet.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-area/leaflet-area.js"></script>
+    <script type="text/javascript" src="~/js/grain/MapFilter.js"></script>
+}
