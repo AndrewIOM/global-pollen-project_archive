@@ -15,7 +15,7 @@
 }
 
 <div class="row">
-    <nav class="col-xs-3 guide-sidebar">
+    <nav class="col-xs-3 guide-sidebar" id="leftcol">
         <ul id="sidebar" class="nav nav-stacked fixed">
             <li>
                 <a href="#about">What is the Global Pollen Project?</a>
@@ -52,7 +52,7 @@
             </li>
         </ul>
     </nav>
-    <div class="col-md-9">
+    <div class="col-md-9" id="rightcol">
 
         <h3 id="about">What is the Global Pollen Project?</h3>
         <hr />
@@ -256,12 +256,20 @@
 </style>
 
 @section Scripts {
-    <!--<script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function () {
-            $('body').scrollspy({
-                target: '.guide-sidebar',
-                offset: 0
+            $('#sidebar').affix({
+                offset: {
+                    top: 50
+                }
             });
+
+            var navHeight = $('.navbar').outerHeight(true) + 10;
+
+            //$('body').scrollspy({
+            //    target: '#leftCol',
+            //    offset: 0
+            //});
         });
-    </script>-->
+    </script>
 }

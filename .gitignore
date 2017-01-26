@@ -210,7 +210,10 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# Artefacts and User Data for GPP
 /src/GlobalPollenProject.WebUI/wwwroot/user-image-uploads
 /src/GlobalPollenProject.WebUI/wwwroot/lib
 /src/GlobalPollenProject.WebUI/Properties/PublishProfiles
 /src/GlobalPollenProject.WebUI/wwwroot/testdata
+/src/GlobalPollenProject.WebUI/wwwroot/css
