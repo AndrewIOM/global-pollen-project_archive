@@ -2,10 +2,14 @@
 *Key Words: Pollen; Palynology; Reference-Collection; Digitisation; Dissemination; Crowdsourcing*
 
 The Global Pollen Project is a web-based tool to enable:
+
 1. **crowdsourcing** of pollen identification using images; and
+
 2. **digitisation** of existing pollen reference material.
 
+
 The ideas behind the tool, and its development, are discussed in detail in the following paper:
+
 Martin A.C., and Harvey, W. J. (2017). The Global Pollen Project: A New Tool for Pollen Identification and the Dissemination of Physical Reference Collections. *Methods in Ecology and Evolution*. **Accepted**
 
 ## Technologies Used
@@ -26,11 +30,11 @@ To run, you must set up an appsettings.json in the root of GlobalPollenProject.W
 {
   "Account": {
     "Admin": {
-      "DefaultAdminUserName": "", //This must be an email address
+      "DefaultAdminUserName": "",
       "DefaultAdminPassword": ""
     }
   },
-  "Authentication": { // Third-party auth settings are optional
+  "Authentication": {
     "Facebook": {
       "AppId": "",
       "AppSecret": ""
@@ -44,12 +48,20 @@ To run, you must set up an appsettings.json in the root of GlobalPollenProject.W
       "ConsumerSecret": ""
     }
   },
-  "SendGridKey": "", // Sendgrid is used as the email client in this release
+  "SendGridKey": "",
   "SendGridUser": "",
-  "AzureConnectionString": "", // For Azure blob storage - image repository
-  "AzureImageContainer": "" // A container name for the image repository e.g. dev
+  "AzureConnectionString": "", 
+  "AzureImageContainer": "" 
 }
 ```
+
+Admin Account: You must use an email address (e.g. x@y.com) for the Admin user name.
+
+Authentication: These settings are optional, but required for 3rd party logins.
+
+SendGrid: This service is currently used to send emails. Without configuring these settings, emails will not work.
+
+AzureConnectionString + AzureImageContainer: Azure blob storage is used in this implementation for image storage. You need to configure an Azure storage account using these settings.
 
 ### Local Taxonomic Backbone
 The GPP currently implements a local taxonomic backbone. 
