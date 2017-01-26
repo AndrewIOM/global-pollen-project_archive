@@ -135,8 +135,7 @@ namespace GlobalPollenProject.WebUI.Controllers
 
             if (ModelState.ErrorCount > 0)
             {
-                //Repopulate view model
-                //TODO Use a partial to avoid this
+                //Repopulate view model - could use a partial or ajax to avoid this
                 var viewModel = new IdentificationViewModel()
                 {
                     AlreadyIdentifiedByUser = myIdentification != null,
@@ -227,7 +226,6 @@ namespace GlobalPollenProject.WebUI.Controllers
             if (identificationId == 0) return BadRequest();
             var existingId = _idService.GetById(identificationId);
             if (existingId == null) return NotFound();
-            //TODO Stop removal if identity confirmed: if (existingId.Grain.) return BadRequest();
             if (existingId.User.Id != UserManager.GetUserId(User)) return Unauthorized();
 
             //Execute
@@ -241,7 +239,7 @@ namespace GlobalPollenProject.WebUI.Controllers
         {
             var userId = UserManager.GetUserId(User);
             var grain = _grainService.GetById(id);
-            // if (_idService.HasConfirmedIdentity(grain)) return BadRequest("Can't delete grains with confirmed identity");
+            //if (_idService.HasConfirmedIdentity(grain)) return BadRequest("Can't delete grains with confirmed identity");
 
             if (User.IsInRole("Admin") || grain.SubmittedBy.Id != userId)
             {

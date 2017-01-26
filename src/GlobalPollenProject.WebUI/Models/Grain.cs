@@ -28,7 +28,7 @@ namespace GlobalPollenProject.WebUI.Models
         public int? AgeYearsBeforePresent { get; set; }
         public double? LockedBounty { get; set; }
 
-        //Cached Properties (TODO remove)
+        //Cached Properties
         public string Family { get; set; }
         public string Genus { get; set; }
         public string Species { get; set; }

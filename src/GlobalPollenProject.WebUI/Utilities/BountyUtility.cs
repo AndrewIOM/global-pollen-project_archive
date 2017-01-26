@@ -12,13 +12,18 @@ namespace GlobalPollenProject.WebUI.Utilities
                 return grain.LockedBounty.Value;
             }
 
-            int daysSinceSubmission = (DateTime.Now - grain.TimeAdded).Days;
+            // Four Parameter logistic growth function (score (s) on time basis)
+            double s0 = 1.0;
+            double r = 0.015;
+            double l = 10.0;
+            double k = 20.0;
+            int t = (DateTime.Now - grain.TimeAdded).Days;
+            double scoreAtTime = Math.Floor( l + (s0 * (k - l)) / (s0 + (k - l - s0) * Math.Exp(-r * t)) );
 
-            if (daysSinceSubmission == 0) return 4;
-            if (daysSinceSubmission == 1) return 3;
-            if (daysSinceSubmission == 2) return 2;
-            if (daysSinceSubmission == 3) return 1;
-            return 0.4 + (daysSinceSubmission * 0.2);
+            // Early time supression effect to encourage quick identifications
+            if (t < 5) return scoreAtTime * (1 - (0.2 * t));
+            if (t >= 5 && t < 8) return scoreAtTime * (0.2 * (8 - t));
+            return scoreAtTime;
         }
     }
 }

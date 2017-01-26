@@ -23,11 +23,7 @@ namespace GlobalPollenProject.WebUI.Services.Concrete
             Taxon genusTaxon = null;
             Taxon speciesTaxon = null;
 
-            if (string.IsNullOrEmpty(family))
-            {
-                //Log error
-                return null;
-            }
+            if (string.IsNullOrEmpty(family)) return null;
 
             family = FirstCharToUpper(family);
             familyTaxon = _uow.TaxonRepository.Find(m => m.LatinName == family && m.Rank == Taxonomy.Family).FirstOrDefault();

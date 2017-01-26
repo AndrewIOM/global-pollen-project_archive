@@ -27,8 +27,8 @@ namespace GlobalPollenProject.WebUI.Controllers
         {
             var rankFilter = rank.HasValue ? rank.Value : Taxonomy.Genus;
 
-            //Temporary Fix until issue fixed in .net core
-            //Can't use multiple ThenIncludes in current build for single joined query...
+            // Complex context-based includes currently required to overcome issues
+            // present in initial release of Entity Framework Core (1.0.0)
             var allTaxa = _context.Taxa
                 .Include(m => m.ChildTaxa)
                 .Include(m => m.UserGrains)

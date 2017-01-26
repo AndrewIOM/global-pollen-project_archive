@@ -13,7 +13,6 @@ namespace GlobalPollenProject.WebUI.Models
         public double BountyScore { get; set; }
         public bool RequestedDigitisationRights { get; set; }
 
-        //Methods
         public string FullName()
         {
             return Title + " " + FirstName + " " + LastName;

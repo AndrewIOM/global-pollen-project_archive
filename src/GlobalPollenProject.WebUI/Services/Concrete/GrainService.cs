@@ -37,7 +37,6 @@ namespace GlobalPollenProject.WebUI.Services.Concrete
         public IEnumerable<Grain> GetUnidentifiedGrains(Taxonomy rank)
         {
             var result = _uow.GrainRepository.Find(m => m.IdentifiedAs == null); //|| m.IdentifiedAs.Rank < rank);
-            //TODO Fix method
             return result;
         }
 

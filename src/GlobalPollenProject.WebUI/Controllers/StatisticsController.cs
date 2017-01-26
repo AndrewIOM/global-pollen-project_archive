@@ -63,7 +63,6 @@ namespace GlobalPollenProject.WebUI.Controllers
             return Ok(model);
         }
 
-        //TODO Remove use of context
         [HttpGet]
         public IActionResult GrainSize(int taxonId) {
             var taxon = _context.Taxa

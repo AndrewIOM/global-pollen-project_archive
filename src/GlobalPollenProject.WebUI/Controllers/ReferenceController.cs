@@ -87,8 +87,7 @@ namespace GlobalPollenProject.WebUI.Controllers
             user.RequestedDigitisationRights = true;
             _userService.Update(user);
 
-            //Send email to all admins to let them know
-            var adminEmail = "andrew.martin@zoo.ox.ac.uk"; //temporary hack
+            var adminEmail = "admin@globalpollenproject.org"; // TODO remove hardcoding
             _emailSender.SendEmailAsync(adminEmail, "Request for digitisation rights",
                 user.FullName() + " has requested digitisation rights. They write: " + result.Comments).Wait();
             return RedirectToAction("RequestAccess");
@@ -270,16 +269,6 @@ namespace GlobalPollenProject.WebUI.Controllers
                 return false;
             }
         }
-
-        //[Authorize(Roles = "Digitise")]
-        //public IActionResult DeleteCollection(int id)
-        //{
-        //    var collection = _refService.GetCollectionById(id);
-        //    if (collection == null) return BadRequest();
-        //    if (User.Identity.Name != collection.User.UserName) return BadRequest();
-        //    _refService.DeleteCollection(id);
-        //    return RedirectToAction("Index");
-        //}
 
         [Authorize(Roles = "Digitise")]
         public IActionResult DeleteGrain(int id)
