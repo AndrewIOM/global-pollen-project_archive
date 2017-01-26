@@ -1,6 +1,8 @@
 # [GlobalPollenProject](https://globalpollenproject.org) v1
 *Key Words: Pollen; Palynology; Reference-Collection; Digitisation; Dissemination; Crowdsourcing*
 
+[![DOI](https://zenodo.org/badge/80122758.svg)](https://zenodo.org/badge/latestdoi/80122758)
+
 The Global Pollen Project is a web-based tool to enable:
 
 1. **crowdsourcing** of pollen identification using images; and
