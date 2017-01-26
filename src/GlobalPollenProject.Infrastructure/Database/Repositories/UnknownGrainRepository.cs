@@ -33,9 +33,9 @@ namespace GlobalPollenProject.Data.Infrastructure
         public PagedResult<UnknownGrain> FindBy(Expression<Func<UnknownGrain, bool>> predicate, int pageNumber, int pageSize)
         {
             return _context.UnknownGrains
-                .Include(m => m.SubmittedBy)
-                .Include(m => m.Identifications).ThenInclude(n => n.User)
-                .Include(m => m.Images).Where(predicate)
+                .Include(m => m.Identifications)
+                .Include(m => m.Images)
+                .Where(predicate)
                 .ToPagedList(pageNumber, pageSize);
         }
 
@@ -43,7 +43,7 @@ namespace GlobalPollenProject.Data.Infrastructure
         {
             return _context.UnknownGrains
                 .Include(m => m.SubmittedBy)
-                .Include(m => m.Identifications).ThenInclude(n => n.User)
+                .Include(m => m.Identifications)
                 .Include(m => m.Images).FirstOrDefault(predicate);
         }
 
@@ -51,7 +51,7 @@ namespace GlobalPollenProject.Data.Infrastructure
         {
             return _context.UnknownGrains
                 .Include(m => m.SubmittedBy)
-                .Include(m => m.Identifications).ThenInclude(n => n.User)
+                .Include(m => m.Identifications)
                 .Include(m => m.Images)
                 .ToPagedList(pageNumber, pageSize);
         }

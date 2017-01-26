@@ -37,7 +37,7 @@ namespace GlobalPollenProject.App.Services
                 return result;
             }
 
-            var domainRefCollection = _uow.ReferenceCollectionRepository.FirstOrDefault(m => m.Id == newSlide.CollectionId.Value);
+            var domainRefCollection = _uow.ReferenceCollectionRepository.FirstOrDefault(m => m.Id.Equals(newSlide.CollectionId.Value));
             if (domainRefCollection == null)
             {
                 result.AddMessage("", "The specified collection does not exist", AppServiceMessageType.Error);
@@ -118,7 +118,7 @@ namespace GlobalPollenProject.App.Services
         public AppServiceResult<DigitisedCollection> GetCollection(int id)
         {
             var result = new AppServiceResult<DigitisedCollection>();
-            var domainResult = _uow.ReferenceCollectionRepository.FirstOrDefault(m => m.Id == id);
+            var domainResult = _uow.ReferenceCollectionRepository.FirstOrDefault(m => m.Id.Equals(id));
             if (domainResult == null)
             {
                 result.AddMessage("", "Specified collection does not exist", AppServiceMessageType.Error);
@@ -141,13 +141,13 @@ namespace GlobalPollenProject.App.Services
         public AppServiceResult<DigitisedSlide> GetSlide(int id)
         {
             var result = new AppServiceResult<DigitisedSlide>();
-            var domainCollection = _uow.ReferenceCollectionRepository.FirstOrDefault(m => m.Slides.Any(n => n.Id == id));
+            var domainCollection = _uow.ReferenceCollectionRepository.FirstOrDefault(m => m.Slides.Any(n => n.Id.Equals(id)));
             if (domainCollection == null)
             {
                 result.AddMessage("", "The slide specified does not exist", AppServiceMessageType.Error);
                 return result;
             }
-            var slide = domainCollection.Slides.First(m => m.Id == id).ToDto();
+            var slide = domainCollection.Slides.First(m => m.Id.Equals(id)).ToDto();
             result.AddResult(slide);
             return result;
         }

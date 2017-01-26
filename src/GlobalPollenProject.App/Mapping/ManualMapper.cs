@@ -7,21 +7,22 @@ using GlobalPollenProject.Core.Interfaces;
 namespace GlobalPollenProject.App.Mapping
 {
     public static class ManualMapper
-    {   
-        public static App.Models.UnknownGrain ToDto(this Core.UnknownGrain domainGrain, INameConfirmationAlgorithm alg)
+    { 
+        public static App.Models.UnknownGrain ToDto(this Core.UnknownGrainAggregate domainGrain, INameConfirmationAlgorithm alg)
         {
-            var imageThumbnail = domainGrain.Images.Count > 0 ? domainGrain.Images.First().FileNameThumbnail : "";
+            var state = domainGrain.GetState() as UnknownGrainState;
+            var imageThumbnail = state.Images.Count > 0 ? state.Images.First().FileNameThumbnail : "";
 
             var result = new App.Models.UnknownGrain()
             {
-                Id = domainGrain.Id,
+                Id = state.Id.Id,
                 Score = domainGrain.CalculateScore(),
                 ThumbnailUri = imageThumbnail,
-                TimeAdded = domainGrain.TimeAdded,
-                Latitude = domainGrain.Latitude,
-                Longitude = domainGrain.Longitude,
+                TimeAdded = state.TimeAdded,
+                Latitude = state.SpatialContext.Latitude,
+                Longitude = state.SpatialContext.Longitude,
                 Status = domainGrain.ToIdentificationStatusDto(alg),
-                Images = domainGrain.Images.Select(m => ToDto(m)).ToList(),
+                Images = state.Images.Select(m => ToDto(m)).ToList(),
                 MaxDiameter = domainGrain.MaxDiameter,
                 Age = domainGrain.AgeYearsBeforePresent
             };
@@ -199,7 +200,7 @@ namespace GlobalPollenProject.App.Mapping
             return "";
         }
 
-        public static BackboneTaxon ToDto(this KewBackboneTaxon domainTaxon)
+        public static BackboneTaxon ToDto(this BackboneTaxonAggregate domainTaxon)
         {
             var result = new BackboneTaxon();
             result.Id = domainTaxon.Id;

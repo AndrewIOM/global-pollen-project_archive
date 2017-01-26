@@ -18,7 +18,7 @@ namespace GlobalPollenProject.Data.Infrastructure
         private IRepository<User> _userRepo = null;
         private IRepository<Taxon> _taxonRepo = null;
         private IRepository<ReferenceCollection> _refCollectionRepo = null;
-        private IRepository<KewBackboneTaxon> _backboneRepo = null;
+        private IRepository<BackboneTaxonAggregate> _backboneRepo = null;
         private ISlideRepository _slideRepo = null;
 
         public ITaxonomyBackbone BackboneCoreService

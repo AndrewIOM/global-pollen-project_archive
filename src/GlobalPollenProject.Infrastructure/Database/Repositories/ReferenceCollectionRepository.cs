@@ -38,7 +38,9 @@ namespace GlobalPollenProject.Data.Infrastructure
             .Include(m => m.Slides)
                 .ThenInclude(n => n.Taxon)
             .Include(m => m.Owner)
-            .Where(predicate).ToPagedList(pageNumber, pageSize);
+            .Select(m => new ReferenceCollection(m))
+            .Where(predicate)
+            .ToPagedList(pageNumber, pageSize);
         }
 
         public ReferenceCollection FirstOrDefault(Expression<Func<ReferenceCollection, bool>> predicate)
@@ -49,7 +51,8 @@ namespace GlobalPollenProject.Data.Infrastructure
             .Include(m => m.Slides)
                 .ThenInclude(n => n.Taxon)
             .Include(m => m.Owner)
-            .FirstOrDefault(predicate);
+            .Select(m => new ReferenceCollection(m))
+            .FirstOrDefault(n => predicate);
         }
 
         public PagedResult<ReferenceCollection> GetAll(int pageNumber, int pageSize)
@@ -60,6 +63,7 @@ namespace GlobalPollenProject.Data.Infrastructure
             .Include(m => m.Slides)
                 .ThenInclude(n => n.Taxon)
             .Include(m => m.Owner)
+            .Select(m => new ReferenceCollection(m))
             .ToPagedList(pageNumber, pageSize);
         }
     }

@@ -1,5 +1,4 @@
-﻿using System;
-using GlobalPollenProject.App.Interfaces;
+﻿using GlobalPollenProject.App.Interfaces;
 using GlobalPollenProject.App.Models;
 using GlobalPollenProject.WebUI.Extensions;
 using Microsoft.AspNetCore.Mvc;

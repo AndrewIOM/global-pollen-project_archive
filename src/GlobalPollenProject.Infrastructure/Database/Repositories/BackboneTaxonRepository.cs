@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GlobalPollenProject.Data.Infrastructure
 {
-    public class KewBackboneTaxonRepository : IRepository<KewBackboneTaxon>
+    public class KewBackboneTaxonRepository : IRepository<BackboneTaxonAggregate>
     {
         private PollenDbContext _context;
         public KewBackboneTaxonRepository(PollenDbContext context)
@@ -15,22 +15,22 @@ namespace GlobalPollenProject.Data.Infrastructure
             _context = context;
         }
 
-        public void Add(KewBackboneTaxon entity)
+        public void Add(BackboneTaxonAggregate entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(KewBackboneTaxon entity)
+        public void Delete(BackboneTaxonAggregate entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Edit(KewBackboneTaxon entity)
+        public void Edit(BackboneTaxonAggregate entity)
         {
             throw new NotImplementedException();
         }
 
-        public PagedResult<KewBackboneTaxon> FindBy(Expression<Func<KewBackboneTaxon, bool>> predicate, int pageNumber, int pageSize)
+        public PagedResult<BackboneTaxonAggregate> FindBy(Expression<Func<BackboneTaxonAggregate, bool>> predicate, int pageNumber, int pageSize)
         {
             return _context.BackboneTaxa
                 .Include(m => m.ParentTaxa).ThenInclude(n => n.ParentTaxa)
@@ -38,7 +38,7 @@ namespace GlobalPollenProject.Data.Infrastructure
                 .Where(predicate).ToPagedList(pageNumber, pageSize);
         }
 
-        public KewBackboneTaxon FirstOrDefault(Expression<Func<KewBackboneTaxon, bool>> predicate)
+        public BackboneTaxonAggregate FirstOrDefault(Expression<Func<BackboneTaxonAggregate, bool>> predicate)
         {
             return _context.BackboneTaxa
                 .Include(m => m.ParentTaxa).ThenInclude(n => n.ParentTaxa)
@@ -46,10 +46,14 @@ namespace GlobalPollenProject.Data.Infrastructure
                 .FirstOrDefault(predicate);
         }
 
-        public PagedResult<KewBackboneTaxon> GetAll(int pageNumber, int pageSize)
+        public PagedResult<BackboneTaxonAggregate> GetAll(int pageNumber, int pageSize)
         {
-            return _context.BackboneTaxa.Include(m => m.ParentTaxa).ThenInclude(n => n.ParentTaxa)
-                .Include(m => m.ChildTaxa).ThenInclude(o => o.ChildTaxa).ToPagedList(pageNumber, pageSize);
+            return _context.BackboneTaxa
+                .Include(m => m.ParentTaxa)
+                    .ThenInclude(n => n.ParentTaxa)
+                .Include(m => m.ChildTaxa)
+                    .ThenInclude(o => o.ChildTaxa)
+                .ToPagedList(pageNumber, pageSize);
         }
     }
 }

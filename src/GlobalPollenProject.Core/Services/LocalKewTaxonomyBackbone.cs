@@ -6,16 +6,16 @@ namespace GlobalPollenProject.Core.Services
 {
     public class LocalKewTaxonomyBackbone : ITaxonomyBackbone
     {
-        private readonly IRepository<KewBackboneTaxon> _taxonRepo;
+        private readonly IRepository<BackboneTaxonAggregate> _taxonRepo;
 
-        public LocalKewTaxonomyBackbone(IRepository<KewBackboneTaxon> taxonRepo)
+        public LocalKewTaxonomyBackbone(IRepository<BackboneTaxonAggregate> taxonRepo)
         {
             _taxonRepo = taxonRepo;
         }
 
         public bool IsValidTaxon(Rank rank, string family, string genus, string species)
         {
-            KewBackboneTaxon match;
+            BackboneTaxonAggregate match;
             if (rank == Rank.Family)
             {
                 match = _taxonRepo.FirstOrDefault(m => m.LatinName == family && m.Rank == Rank.Family);
@@ -34,7 +34,7 @@ namespace GlobalPollenProject.Core.Services
             return true;
         }
 
-        public KewBackboneTaxon Match(string family, string genus, string species)
+        public BackboneTaxonAggregate Match(string family, string genus, string species)
         {
             var rank = Rank.Family;
             if (string.IsNullOrEmpty(family)) return null;
@@ -63,7 +63,7 @@ namespace GlobalPollenProject.Core.Services
             return null;
         }
 
-        public List<KewBackboneTaxon> Suggest(string latinName, Rank? rank, string parent = null)
+        public List<BackboneTaxonAggregate> Suggest(string latinName, Rank? rank, string parent = null)
         {
             var match = _taxonRepo.FindBy(m => m.LatinName.Contains(latinName) 
                 && (rank.HasValue ? m.Rank == rank.Value : true)

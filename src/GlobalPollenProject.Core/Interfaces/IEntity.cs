@@ -1,10 +1,11 @@
+using System.Collections.Generic;
+using GlobalPollenProject.Core.Events;
 
 namespace GlobalPollenProject.Core.Interfaces
 {
     public interface IEntity
     {
-        bool IsDeleted { get; set; }
-        //ICollection<IDomainEvent> Events { get; }
-        
+        object GetState();
+        ICollection<IDomainEvent> Events { get; }
     }
 }
