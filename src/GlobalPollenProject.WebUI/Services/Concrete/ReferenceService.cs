@@ -95,6 +95,7 @@ namespace GlobalPollenProject.WebUI.Services.Concrete
 
         public List<ReferenceCollection> ListCollections()
         {
+
             return _uow.RefCollectionRepository.GetAll().ToList();
         }
     }

@@ -1,9 +1,9 @@
 /* 
     Global Pollen Project Styles
-    Copyright Andrew Martin, University of Oxford 2015
+    Andrew Martin, University of Oxford 2015
 */
 /* Global Pollen Project: Colour Palette */
-/* Bootstrap Customisations for the GPP */
+/* Bootstrap Customisations for GPP */
 body {
   padding-top: 70px;
   line-height: 1.8em; }
@@ -255,7 +255,6 @@ h1 {
 
 .img-thumbnail {
   list-style: none;
-  margin-bottom: 4em !important;
   display: inline; }
 
 div.img-thumbnail img {
@@ -730,8 +729,8 @@ footer ul {
   border-color: #dddddd; }
 
 .taxon-toggle {
-  float: right;
   display: inline-block;
+  float: right;
   width: 4em;
   height: 6em;
   vertical-align: top;
