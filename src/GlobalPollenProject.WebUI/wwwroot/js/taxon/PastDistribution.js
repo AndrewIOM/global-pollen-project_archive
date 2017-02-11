@@ -99,7 +99,7 @@ $('document').ready(function () {
             yearOldest = value[1] * 1000;
             yearYoungest = value[0] * 1000;
 
-            $('#paleo-range-low').text(value[0] + ' thousand');
+            $('#paleo-range-low').text(value[0]);
     	    $('#paleo-range-hi').text(value[1] + ' thousand');
         }
     }
@@ -111,23 +111,23 @@ function redrawPoints() {
 }
 
 var getNeotomaPoints = function () {
-    var neotomaUri = "http://api.neotomadb.org/v1/data/datasets?callback=neotomaCallback&taxonids=" + neotomaId + "&ageof=taxon&ageold=" + 50000 + "&ageyoung=" + 1000;
-    console.log('Updating Neotoma Points... ' + neotomaUri);
+    var neotomaUri = "https://api.neotomadb.org/v1/data/datasets?callback=neotomaCallback&taxonids=" + neotomaId + "&ageof=taxon&ageold=" + 50000 + "&ageyoung=" + 1000;
     $.ajax({
         url: neotomaUri,
         jsonp: false,
         jsonpCallback: 'neotomaCallback',
         cache: 'true',
-        dataType: 'jsonp'
+        dataType: 'jsonp',
+        error: function(xhr, textStatus, errorThrown){
+            $('#paleo-loading').text("Sorry, we couldn't establish a secure connection with NeotomaDB. Please try later.");
+        }
     });
 }
 
 function neotomaCallback(result) {
     if (result.success == 0) {
-        console.log('neotoma: error');
         //Error
     } else {
-        console.log('neotoma: success');
         points = [];
         for (var i = 0; i < result.data.length; i++) {
             var coord = {
@@ -151,16 +151,4 @@ function neotomaCallback(result) {
         $('#paleo-loading').fadeOut(1000);
         slider.removeAttribute('disabled');
     }
-}
-
-function ajaxHelper(uri, method, dataType, data) {
-    return $.ajax({
-        type: method,
-        url: uri,
-        dataType: dataType,
-        contentType: 'application/json',
-        data: data ? JSON.stringify(data) : null
-    }).fail(function (jqXhr, textStatus, errorThrown) {
-        console.log(errorThrown);
-    });
 }

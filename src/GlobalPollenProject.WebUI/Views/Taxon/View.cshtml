@@ -126,7 +126,7 @@
                 <div id="paleo" style="display:none">
                     <div id="paleo-loading">Fetching from Neotoma...</div>
                     <div id="neotoma-map-unavailable" style="display:none"><p>Past distributions unavailable from Neotoma.</p></div>
-                    <span class="timespan">Showing occurrences from <span id="paleo-range-low"></span> to <span id="paleo-range-hi"></span> years before present.</span>
+                    <span class="timespan">Occurrences between <span id="paleo-range-low"></span> to <span id="paleo-range-hi"></span> years before present. <em>Data Source: <a href="http://neotomadb.org">NeotomaDB</a></em></span>
                     <div id="neotoma-map"></div>
                     <div id="range"></div>
                     
@@ -235,7 +235,6 @@ var x = d3.scale.linear()
       .range([0, width]);
 
 var data = d3.layout.histogram().bins(x.ticks(12))(values);
-console.log(data);
 
 
                 var yMax = d3.max(data, function(d){return d.length});
@@ -296,7 +295,6 @@ svg.append("g")
             url: "/api/PlantList/Suggest?q=@Model.LatinName&rank=@Model.Rank@queryString",
             context: document.body
             }).done(function(data) {
-                console.log(data);
                 var status = "unconfirmed";
                 if (data.length > 0) {
                     if (data[0].status == 0) {

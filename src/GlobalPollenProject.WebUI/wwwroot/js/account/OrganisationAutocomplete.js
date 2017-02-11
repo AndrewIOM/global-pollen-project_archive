@@ -13,10 +13,10 @@
                         var option = document.createElement('li');
                         var link = document.createElement('a');
                         option.appendChild(link);
-                        link.innerHTML = resultJson[i].Name;
+                        console.log(resultJson[i]);
+                        link.innerHTML = resultJson[i].name;
                         link.addEventListener('click', function (e) {
                             var name = this.innerHTML;
-                            console.log(name);
                             $('#Organisation').val(name);
                             $('#organisationsList').fadeOut();
                         });
