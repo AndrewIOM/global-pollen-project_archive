@@ -139,6 +139,16 @@ namespace GlobalPollenProject.WebUI
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "neotomaLookup",
+                    template: "Taxon/NDB/{neotomaId}",
+                    defaults: new { controller = "Taxon", action = "NeotomaLookup" });
+
+                routes.MapRoute(
+                    name: "gbifLookup",
+                    template: "Taxon/GBIF/{gbifId}",
+                    defaults: new { controller = "Taxon", action = "GbifLookup" });
+
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });

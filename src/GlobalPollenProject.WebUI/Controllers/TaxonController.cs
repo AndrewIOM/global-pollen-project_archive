@@ -126,6 +126,22 @@ namespace GlobalPollenProject.WebUI.Controllers
             return View("View", model);
         }
 
+        public IActionResult NeotomaLookup(int neotomaId)
+        {
+            if (neotomaId == 0) return BadRequest();
+            var match = _context.Taxa.FirstOrDefault(m => m.NeotomaId == neotomaId);
+            if (match == null) return NotFound();
+            return RedirectToAction("View", new { id = match.TaxonId });
+        }
+
+        public IActionResult GbifLookup(int gbifId)
+        {
+            if (gbifId == 0) return BadRequest();
+            var match = _context.Taxa.FirstOrDefault(m => m.GbifId == gbifId);
+            if (match == null) return NotFound();
+            return RedirectToAction("View", new { id = match.TaxonId });
+        }
+
         [Authorize(Policy = "AdminOnly")]
         public IActionResult Purge()
         {
