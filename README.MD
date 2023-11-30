@@ -1,3 +1,5 @@
+**Note. This repository contains the as-published / peer-reviewed version of the Global Pollen Project from 2017. It has been superseded by [AndrewIOM/global-pollen-project](https://github.com/AndrewIOM/global-pollen-project/).**
+
 # [GlobalPollenProject](https://globalpollenproject.org) v1
 *Key Words: Pollen; Palynology; Reference-Collection; Digitisation; Dissemination; Crowdsourcing*
 
